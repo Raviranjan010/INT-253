@@ -21,7 +21,7 @@
           <div><i class="bi bi-person-fill text-mint me-1"></i> Instructor: <strong class="text-white">{{ course.instructor.get_full_name|default:course.instructor.username }}</strong></div>
           <div><i class="bi bi-clock text-mint me-1"></i> Duration: <strong class="text-white">{{ course.estimated_hours }} Hours</strong></div>
           <div><i class="bi bi-play-circle text-mint me-1"></i> Lessons: <strong class="text-white">{{ course.total_lessons }} Units</strong></div>
-          <div><i class="bi bi-star-fill text-warning me-1"></i> Rating: <strong class="text-white">{{ course.average_rating }}</strong> ({{ reviews.count }} reviews)</div>
+          <div><i class="bi bi-star-fill text-warning me-1"></i> Rating: <strong class="text-white">{% if course.average_rating %}{{ course.average_rating }} / 5.0{% else %}New (No ratings yet){% endif %}</strong> ({{ reviews.count }} reviews)</div>
         </div>
       </div>
 
@@ -37,14 +37,37 @@
             <div class="alert alert-success py-2 text-center small mb-3 rounded-3">
               <i class="bi bi-check-circle-fill me-1"></i> You are enrolled! Progress: <strong>{{ enrollment.progress_percentage }}%</strong>
             </div>
-            <a href="{% url 'courses:enroll_course' course.slug %}" class="btn btn-mint-action btn-lg w-100 fw-bold mb-2 shadow-sm rounded-pill text-center">
-              <i class="bi bi-play-fill me-1"></i> Continue Learning
-            </a>
+            {% with first_lesson=modules.first.lessons.first %}
+              {% if first_lesson %}
+                <a href="{% url 'courses:lesson_player' course.slug first_lesson.id %}" class="btn btn-mint-action btn-lg w-100 fw-bold mb-2 shadow-sm rounded-pill text-center">
+                  <i class="bi bi-play-fill me-1"></i> Continue Learning
+                </a>
+              {% else %}
+                <button class="btn btn-secondary btn-lg w-100 fw-bold mb-2 rounded-pill" disabled>No Lessons Yet</button>
+              {% endif %}
+            {% endwith %}
           {% else %}
-            <a href="{% url 'courses:enroll_course' course.slug %}" class="btn btn-mint-action btn-lg w-100 fw-bold mb-2 shadow-sm rounded-pill text-center">
-              <i class="bi bi-mortarboard-fill me-1"></i> Enroll Free in 1-Click
-            </a>
+            <form method="post" action="{% url 'courses:enroll_course' course.slug %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-mint-action btn-lg w-100 fw-bold mb-2 shadow-sm rounded-pill text-center">
+                <i class="bi bi-mortarboard-fill me-1"></i> Enroll Free in 1-Click
+              </button>
+            </form>
             <div class="small text-muted text-center" style="font-size: 0.75rem;">Instant Access &bull; No Credit Card Required</div>
+          {% endif %}
+
+          {% if user.is_authenticated and user == course.instructor or user.is_staff %}
+            <div class="d-flex gap-2 mt-3 pt-3 border-top">
+              <a href="{% url 'courses:edit_course' course.slug %}" class="btn btn-sm btn-outline-primary w-50 rounded-pill">
+                <i class="bi bi-pencil me-1"></i> Edit Course
+              </a>
+              <form method="post" action="{% url 'courses:delete_course' course.slug %}" class="w-50" onsubmit="return confirm('Are you sure you want to permanently delete this course?');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-danger w-100 rounded-pill">
+                  <i class="bi bi-trash me-1"></i> Delete
+                </button>
+              </form>
+            </div>
           {% endif %}
 
           <hr class="my-3 border-secondary opacity-25">

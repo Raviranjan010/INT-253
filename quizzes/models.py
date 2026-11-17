@@ -8,6 +8,7 @@ class Quiz(models.Model):
     description = models.TextField(blank=True)
     pass_percentage = models.PositiveIntegerField(default=70, help_text='Passing percentage threshold')
     time_limit_minutes = models.PositiveIntegerField(default=10, help_text='Time limit for the quiz in minutes')
+    max_attempts = models.PositiveIntegerField(default=3, help_text='Maximum attempts allowed per student (0 for unlimited)')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

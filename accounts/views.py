@@ -23,10 +23,25 @@ def register_view(request):
             form = StudentRegistrationForm(request.POST)
 
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit=False)
+            if account_type == 'instructor':
+                user.role = 'instructor'
+                user.is_instructor_approved = False
+            else:
+                user.role = 'student'
+            user.save()
             login(request, user)
             user.update_streak()
-            messages.success(request, f"Welcome to Live School, {user.first_name}! You've been awarded 100 XP points for joining.")
+            user.award_xp('signup_bonus', f'user_{user.id}', 100)
+            
+            if account_type == 'instructor':
+                messages.info(
+                    request, 
+                    f"Welcome to Live School, {user.first_name}! Your instructor registration is pending administrator review. "
+                    "You can enroll in and explore all courses as a student while approval is pending."
+                )
+            else:
+                messages.success(request, f"Welcome to Live School, {user.first_name}! You've been awarded +100 XP points for joining.")
             return redirect('accounts:dashboard_redirect')
         else:
             messages.error(request, "Please correct the errors below to complete registration.")
@@ -66,9 +81,12 @@ def login_view(request):
 
 
 def logout_view(request):
-    logout(request)
-    messages.info(request, "You have been logged out safely.")
-    return redirect('core:home')
+    """Enforces POST for secure logout to prevent cross-site logout request attacks."""
+    if request.method == 'POST':
+        logout(request)
+        messages.info(request, "You have been logged out safely.")
+        return redirect('core:home')
+    return render(request, 'accounts/logout_confirm.html')
 
 
 @login_required

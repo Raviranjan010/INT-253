@@ -38,6 +38,7 @@ class Command(BaseCommand):
                 'first_name': 'Dr. Ananya',
                 'last_name': 'Sharma',
                 'role': 'instructor',
+                'is_instructor_approved': True,
                 'is_staff': True,
                 'demographic_group': 'female_stem',
                 'country': 'India',
@@ -45,6 +46,7 @@ class Command(BaseCommand):
                 'xp_points': 1450,
             }
         )
+        teacher_user.is_instructor_approved = True
         teacher_user.set_password('teacher123')
         teacher_user.save()
 

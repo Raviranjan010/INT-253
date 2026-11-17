@@ -1,12 +1,16 @@
 services:
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: sh -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:8000 liveschool_project.wsgi:application"
     volumes:
       - .:/app
+      - liveschool_media:/app/media
     ports:
       - "8000:8000"
     environment:
-      - DEBUG=True
-      - SECRET_KEY=django-insecure-live-school-compose-secret
+      - DEBUG=False
+      - SECRET_KEY=django-insecure-live-school-compose-production-secret-int253
+      - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
 
+volumes:
+  liveschool_media:

@@ -11,11 +11,23 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-live-school-world-class-free-education-int253-2026')
+# DEBUG Configuration (defaults to True in local development, override with DEBUG=False in production)
+DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 't', 'yes')
 
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
+# SECRET_KEY Handling: Enforce secure key in production; fallback allowed only in DEBUG mode
+SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = 'django-insecure-dev-key-liveschool-int253-local-development-only'
+    else:
+        raise ValueError("Critical Security Error: The SECRET_KEY environment variable must be set when DEBUG is False!")
 
-ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS: Environment-driven host list (no wildcards by default)
+allowed_hosts_env = os.getenv('ALLOWED_HOSTS')
+if allowed_hosts_env:
+    ALLOWED_HOSTS = [h.strip() for h in allowed_hosts_env.split(',') if h.strip()]
+else:
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver']
 
 # Application definition
 INSTALLED_APPS = [
@@ -38,7 +50,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Robust static file serving
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -79,8 +91,17 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-        'OPTIONS': {'min_length': 6},
+        'OPTIONS': {'min_length': 8},
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
 
@@ -95,7 +116,16 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Modern Django STORAGES Configuration
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage" if not DEBUG else "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 
 # Media files
 MEDIA_URL = '/media/'
@@ -109,5 +139,14 @@ LOGIN_URL = 'accounts:login'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
-# Jitsi Meet Domain for Free WebRTC Live Video Classroom
-JITSI_DOMAIN = 'meet.jit.si'
+# Jitsi Meet Domain for WebRTC Live Classroom
+JITSI_DOMAIN = os.getenv('JITSI_DOMAIN', 'meet.jit.si')
+
+# Production Security Hardening
+if not DEBUG:
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

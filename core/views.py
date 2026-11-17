@@ -55,7 +55,12 @@ def newsletter_subscribe(request):
 
 
 def demo_login(request, role):
-    """Convenience 1-click login for demonstration on localhost"""
+    """Convenience 1-click login for demonstration in local development. Strictly disabled in production."""
+    from django.conf import settings
+    if not settings.DEBUG:
+        messages.error(request, "Security Violation: 1-Click Demo Login is disabled in production mode.")
+        return redirect('accounts:login')
+
     if role == 'student':
         user = CustomUser.objects.filter(username='student_demo').first()
     elif role == 'instructor':
@@ -67,7 +72,7 @@ def demo_login(request, role):
 
     if user:
         login(request, user)
-        messages.success(request, f"Logged in as Demo {role.capitalize()} ({user.username})!")
+        messages.success(request, f"Logged in as Demo {role.capitalize()} ({user.username})! Note: Available in DEBUG mode only.")
         return redirect('accounts:dashboard_redirect')
     else:
         messages.warning(request, f"Demo {role} account not seeded yet. Run seed data or register.")

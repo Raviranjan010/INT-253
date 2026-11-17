@@ -84,7 +84,7 @@ class Course(models.Model):
         reviews = self.reviews.all()
         if reviews.exists():
             return round(sum(r.rating for r in reviews) / reviews.count(), 1)
-        return 5.0  # default free high quality baseline
+        return None
 
 
 class Module(models.Model):

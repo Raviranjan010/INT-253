@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}Instructor Hub - Live School{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="card p-4 border custom-card mb-4 bg-body-tertiary">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+      <div>
+        <span class="badge bg-danger mb-1">INSTRUCTOR / TEACHER PORTAL</span>
+        <h2 class="fw-bold mb-1">Welcome, {{ user.get_full_name|default:user.username }}</h2>
+        <p class="text-muted small mb-0">Empowering underprivileged and global students through world-class free education.</p>
+      </div>
+
+      <div class="d-flex gap-2">
+        <a href="{% url 'courses:create_course' %}" class="btn btn-primary btn-sm">
+          <i class="bi bi-plus-lg me-1"></i> Create New Course
+        </a>
+        <a href="{% url 'live_classes:schedule_live_class' %}" class="btn btn-danger btn-sm">
+          <i class="bi bi-camera-video me-1"></i> Schedule Live Class
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Metric Cards -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-4">
+      <div class="card p-4 border custom-card text-center">
+        <div class="fs-1 fw-bold text-primary">{{ courses.count }}</div>
+        <div class="text-muted small fw-semibold">Courses Created</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card p-4 border custom-card text-center">
+        <div class="fs-1 fw-bold text-success">{{ total_students }}</div>
+        <div class="text-muted small fw-semibold">Total Students Reached</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card p-4 border custom-card text-center">
+        <div class="fs-1 fw-bold text-danger">{{ live_sessions.count }}</div>
+        <div class="text-muted small fw-semibold">Live Sessions Conducted</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Courses Table -->
+    <div class="col-lg-7">
+      <div class="card p-4 border custom-card">
+        <h4 class="fw-bold mb-3"><i class="bi bi-journal-text text-primary me-2"></i> My Published Courses</h4>
+        {% if courses %}
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead>
+                <tr>
+                  <th>Course</th>
+                  <th>Level</th>
+                  <th>Students</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for course in courses %}
+                  <tr>
+                    <td>
+                      <a href="{% url 'courses:course_detail' course.slug %}" class="fw-semibold text-decoration-none">
+                        {{ course.title }}
+                      </a>
+                    </td>
+                    <td><span class="badge bg-secondary-subtle text-secondary">{{ course.get_level_display }}</span></td>
+                    <td><span class="badge bg-primary-subtle text-primary">{{ course.enrollment_count }}</span></td>
+                    <td>
+                      <a href="{% url 'courses:course_detail' course.slug %}" class="btn btn-xs btn-outline-primary btn-sm">View</a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="text-center py-4">
+            <p class="text-muted small">You haven't authored any courses yet.</p>
+            <a href="{% url 'courses:create_course' %}" class="btn btn-sm btn-primary">Create Your First Course</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Live Sessions Table -->
+    <div class="col-lg-5">
+      <div class="card p-4 border custom-card">
+        <h4 class="fw-bold mb-3"><i class="bi bi-broadcast text-danger me-2"></i> My Live Sessions</h4>
+        {% if live_sessions %}
+          <div class="d-flex flex-column gap-3">
+            {% for s in live_sessions %}
+              <div class="p-3 border rounded-3 bg-body-tertiary">
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                  <span class="badge {% if s.is_live_now %}bg-danger{% else %}bg-secondary{% endif %}">
+                    {{ s.get_status_display }}
+                  </span>
+                  <small class="text-muted">{{ s.scheduled_start|date:"M d, H:i" }}</small>
+                </div>
+                <h6 class="fw-bold mb-1">{{ s.title }}</h6>
+                <small class="text-muted d-block mb-2">{{ s.target_demographics }}</small>
+                <a href="{% url 'live_classes:live_class_room' s.id %}" class="btn btn-sm btn-outline-danger w-100">
+                  <i class="bi bi-camera-video me-1"></i> Enter Virtual Classroom
+                </a>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-center py-4">
+            <p class="text-muted small">No live sessions scheduled.</p>
+            <a href="{% url 'live_classes:schedule_live_class' %}" class="btn btn-sm btn-danger">Schedule a Live Class</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

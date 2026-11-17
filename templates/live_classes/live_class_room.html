@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block title %}Live Classroom: {{ session.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  #jitsi-meet-container {
+    width: 100%;
+    height: 600px;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-3 px-md-4">
+  <!-- Room Top Header -->
+  <div class="card p-3 border custom-card mb-3 bg-body-tertiary">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+      <div class="d-flex align-items-center gap-2">
+        <span class="live-pulse"><span class="pulse-dot"></span> LIVE CLASSROOM</span>
+        <h4 class="fw-bold mb-0">{{ session.title }}</h4>
+      </div>
+
+      <div class="d-flex align-items-center gap-3 small">
+        <span class="text-muted"><i class="bi bi-person-circle me-1"></i> Instructor: <strong>{{ session.instructor.get_full_name|default:session.instructor.username }}</strong></span>
+        <span class="badge bg-primary text-white"><i class="bi bi-people-fill me-1"></i> {{ session.attendee_count }} Attended</span>
+        <a href="{% url 'live_classes:live_class_list' %}" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-box-arrow-left me-1"></i> Leave Room
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <!-- Jitsi WebRTC Live Video Area -->
+    <div class="col-lg-8">
+      <div class="card p-2 border custom-card shadow">
+        <div id="jitsi-meet-container"></div>
+      </div>
+      <div class="d-flex justify-content-between align-items-center mt-2 px-1 text-muted small">
+        <span><i class="bi bi-info-circle me-1"></i> Powered by open WebRTC. Use your camera, mic, or screen share.</span>
+        <span>Demographic target: <strong>{{ session.target_demographics }}</strong></span>
+      </div>
+    </div>
+
+    <!-- Live Doubts & Teacher Q&A Side Panel -->
+    <div class="col-lg-4">
+      <div class="card p-3 border custom-card h-100 d-flex flex-column">
+        <h5 class="fw-bold mb-2 d-flex align-items-center">
+          <i class="bi bi-chat-quote-fill text-primary me-2"></i> Live Doubt Board
+        </h5>
+        <p class="small text-muted mb-3">Ask questions in real time. The instructor and peers can answer during class.</p>
+
+        <!-- Doubt Submission Form -->
+        <form method="post" action="{% url 'live_classes:post_doubt' session.id %}" class="mb-3">
+          {% csrf_token %}
+          <div class="mb-2">
+            {{ doubt_form.question }}
+          </div>
+          <button type="submit" class="btn btn-sm btn-primary w-100">
+            <i class="bi bi-send me-1"></i> Submit Live Question
+          </button>
+        </form>
+
+        <hr class="my-2">
+
+        <!-- Doubts Stream -->
+        <div class="flex-grow-1 overflow-auto" style="max-height: 420px;">
+          {% for doubt in doubts %}
+            <div class="p-2 mb-2 rounded-2 border {% if doubt.is_answered %}bg-success-subtle border-success-subtle{% else %}bg-body-tertiary{% endif %} small">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <strong>{{ doubt.student.get_full_name|default:doubt.student.username }}</strong>
+                {% if doubt.is_answered %}
+                  <span class="badge bg-success" style="font-size: 0.65rem;">Answered</span>
+                {% else %}
+                  <span class="badge bg-warning text-dark" style="font-size: 0.65rem;">Pending</span>
+                {% endif %}
+              </div>
+              <p class="mb-1 text-body">{{ doubt.question }}</p>
+
+              {% if doubt.is_answered %}
+                <div class="mt-2 p-2 bg-body rounded border border-success-subtle">
+                  <div class="fw-bold text-success" style="font-size: 0.75rem;"><i class="bi bi-check2-circle me-1"></i> Instructor Answer:</div>
+                  <div class="text-secondary">{{ doubt.answer }}</div>
+                </div>
+              {% elif is_instructor %}
+                <!-- Instructor Quick Answer Form -->
+                <form method="post" action="{% url 'live_classes:answer_doubt' doubt.id %}" class="mt-2">
+                  {% csrf_token %}
+                  <div class="input-group input-group-sm">
+                    <input type="text" name="answer" required placeholder="Type answer..." class="form-control">
+                    <button class="btn btn-success" type="submit">Answer</button>
+                  </div>
+                </form>
+              {% endif %}
+            </div>
+          {% empty %}
+            <div class="text-center py-4 text-muted small">
+              <i class="bi bi-chat-dots fs-3"></i>
+              <div class="mt-2">No doubts submitted yet. Be the first to ask!</div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Jitsi Meet External API -->
+<script src="https://meet.jit.si/external_api.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const domain = "{{ jitsi_domain }}";
+    const options = {
+      roomName: "{{ session.room_name }}",
+      width: '100%',
+      height: 600,
+      parentNode: document.querySelector('#jitsi-meet-container'),
+      userInfo: {
+        displayName: "{{ user_display_name }}"
+      },
+      configOverwrite: {
+        startWithAudioMuted: true,
+        startWithVideoMuted: true,
+        prejoinPageEnabled: false,
+        disableDeepLinking: true
+      },
+      interfaceConfigOverwrite: {
+        TOOLBAR_BUTTONS: [
+          'microphone', 'camera', 'closedcaptions', 'desktop', 'embedmeeting', 'fullscreen',
+          'fodeviceselection', 'hangup', 'chat', 'raisehand',
+          'videoquality', 'filmstrip', 'tileview', 'whiteboard'
+        ]
+      }
+    };
+    
+    try {
+      const api = new JitsiMeetExternalAPI(domain, options);
+    } catch (e) {
+      console.warn("Jitsi Meet external script failed or offline. Fallback rendering active:", e);
+      document.querySelector('#jitsi-meet-container').innerHTML = `
+        <div class="d-flex flex-column align-items-center justify-content-center h-100 text-white p-4 text-center">
+          <i class="bi bi-camera-video-fill display-3 text-danger mb-3"></i>
+          <h4>Live Classroom Ready</h4>
+          <p class="small text-muted mb-3" style="max-width: 500px;">
+            The virtual live classroom room has been initialized for room <strong>{{ session.room_name }}</strong>.
+          </p>
+          <a href="https://${domain}/{{ session.room_name }}" target="_blank" class="btn btn-danger fw-bold">
+            <i class="bi bi-box-arrow-up-right me-1"></i> Open Room in Dedicated Window
+          </a>
+        </div>
+      `;
+    }
+  });
+</script>
+{% endblock %}
+

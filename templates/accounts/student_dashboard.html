@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard - Live School{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Top Profile Header -->
+  <div class="card p-4 border custom-card mb-4 bg-body-tertiary">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+      <div class="d-flex align-items-center gap-3">
+        {% if user.avatar %}
+          <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="rounded-circle border" style="width: 70px; height: 70px; object-fit: cover;">
+        {% else %}
+          <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold fs-2" style="width: 70px; height: 70px;">
+            {{ user.first_name|first|default:user.username|first|upper }}
+          </div>
+        {% endif %}
+        <div>
+          <h3 class="fw-bold mb-1">{{ user.get_full_name|default:user.username }}</h3>
+          <div class="d-flex flex-wrap align-items-center gap-2 small text-muted">
+            <span class="badge bg-primary text-white">{{ user.get_role_display }}</span>
+            <span class="badge bg-secondary-subtle text-secondary border">Group: {{ user.get_demographic_group_display }}</span>
+            <span><i class="bi bi-geo-alt me-1"></i>{{ user.country|default:'Global' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-2">
+        <div class="p-3 bg-body rounded-3 border text-center">
+          <div class="fs-4 fw-bold text-warning"><i class="bi bi-lightning-fill"></i> {{ user.xp_points }}</div>
+          <div class="small text-muted fw-semibold">Learning XP</div>
+        </div>
+        <div class="p-3 bg-body rounded-3 border text-center">
+          <div class="fs-4 fw-bold text-danger"><i class="bi bi-fire"></i> {{ user.streak_count }}d</div>
+          <div class="small text-muted fw-semibold">Streak</div>
+        </div>
+        <div class="p-3 bg-body rounded-3 border text-center">
+          <div class="fs-4 fw-bold text-success"><i class="bi bi-award"></i> {{ certificates.count }}</div>
+          <div class="small text-muted fw-semibold">Certificates</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Left Column: Enrolled Courses & Progress -->
+    <div class="col-lg-8">
+      <div class="card p-4 border custom-card mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4 class="fw-bold mb-0"><i class="bi bi-book-half text-primary me-2"></i> My Enrolled Courses</h4>
+          <a href="{% url 'courses:course_list' %}" class="btn btn-sm btn-outline-primary">Browse More</a>
+        </div>
+
+        {% if enrollments %}
+          <div class="d-flex flex-column gap-3">
+            {% for enrollment in enrollments %}
+              <div class="p-3 rounded-3 border bg-body-tertiary">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <div>
+                    <span class="badge bg-secondary-subtle text-secondary border me-2">{{ enrollment.course.category.name }}</span>
+                    {% if enrollment.is_completed %}
+                      <span class="badge bg-success-subtle text-success"><i class="bi bi-check-circle me-1"></i> Completed</span>
+                    {% endif %}
+                    <h5 class="fw-bold mt-1 mb-0">{{ enrollment.course.title }}</h5>
+                  </div>
+                  <span class="fw-bold text-primary">{{ enrollment.progress_percentage }}%</span>
+                </div>
+
+                <div class="progress mb-3" style="height: 8px;">
+                  <div class="progress-bar bg-primary" role="progressbar" style="width: {{ enrollment.progress_percentage }}%;" aria-valuenow="{{ enrollment.progress_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center">
+                  <small class="text-muted">
+                    <i class="bi bi-clock me-1"></i> Enrolled {{ enrollment.enrolled_at|date:"M d, Y" }}
+                  </small>
+                  <a href="{% url 'courses:course_detail' enrollment.course.slug %}" class="btn btn-sm btn-primary">
+                    {% if enrollment.is_completed %}Review Course{% else %}Continue Learning &rarr;{% endif %}
+                  </a>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-center py-5">
+            <i class="bi bi-journal-x display-4 text-muted"></i>
+            <h5 class="fw-bold mt-3">You haven't enrolled in any courses yet</h5>
+            <p class="text-muted small">All courses are 100% free with certificates included.</p>
+            <a href="{% url 'courses:course_list' %}" class="btn btn-primary btn-sm">Explore Free Courses</a>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Earned Certificates Showcase -->
+      {% if certificates %}
+        <div class="card p-4 border custom-card mb-4">
+          <h4 class="fw-bold mb-3"><i class="bi bi-award-fill text-warning me-2"></i> Verified Certificates Earned</h4>
+          <div class="row g-3">
+            {% for cert in certificates %}
+              <div class="col-md-6">
+                <div class="p-3 rounded-3 border border-warning bg-warning-subtle text-dark">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="badge bg-warning text-dark fw-bold">VERIFIED</span>
+                    <small class="fw-mono">{{ cert.certificate_id }}</small>
+                  </div>
+                  <h6 class="fw-bold mb-1">{{ cert.course.title }}</h6>
+                  <p class="small text-muted mb-2">Issued on {{ cert.issued_at|date:"M d, Y" }}</p>
+                  <a href="{% url 'certificates:view_certificate' cert.certificate_id %}" class="btn btn-sm btn-dark w-100">
+                    <i class="bi bi-printer me-1"></i> View / Print Certificate
+                  </a>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Right Column: Upcoming Live & Quizzes -->
+    <div class="col-lg-4">
+      <!-- Live Classes widget -->
+      <div class="card p-4 border custom-card mb-4">
+        <h5 class="fw-bold mb-3 d-flex align-items-center">
+          <i class="bi bi-camera-video text-danger me-2"></i> Upcoming Live Classes
+        </h5>
+        {% if upcoming_live %}
+          <div class="d-flex flex-column gap-3">
+            {% for session in upcoming_live %}
+              <div class="p-3 border rounded-3 bg-body-tertiary">
+                <div class="badge {% if session.is_live_now %}bg-danger{% else %}bg-primary{% endif %} mb-1">
+                  {% if session.is_live_now %}LIVE NOW{% else %}{{ session.scheduled_start|date:"M d, H:i" }}{% endif %}
+                </div>
+                <h6 class="fw-bold mb-1">{{ session.title }}</h6>
+                <small class="text-muted d-block mb-2">Instructor: {{ session.instructor.username }}</small>
+                <a href="{% url 'live_classes:live_class_room' session.id %}" class="btn btn-sm btn-outline-danger w-100">
+                  <i class="bi bi-box-arrow-in-right me-1"></i> Join Room
+                </a>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-muted small">No scheduled live classes right now.</p>
+        {% endif %}
+      </div>
+
+      <!-- Quiz Attempts Widget -->
+      <div class="card p-4 border custom-card">
+        <h5 class="fw-bold mb-3 d-flex align-items-center">
+          <i class="bi bi-patch-question text-info me-2"></i> Recent Assessments
+        </h5>
+        {% if recent_quizzes %}
+          <ul class="list-group list-group-flush small">
+            {% for attempt in recent_quizzes %}
+              <li class="list-group-item px-0 d-flex justify-content-between align-items-center bg-transparent">
+                <div>
+                  <div class="fw-semibold">{{ attempt.quiz.title }}</div>
+                  <small class="text-muted">{{ attempt.completed_at|date:"M d" }}</small>
+                </div>
+                <span class="badge {% if attempt.passed %}bg-success{% else %}bg-secondary{% endif %}">
+                  {{ attempt.score_percentage }}% {% if attempt.passed %}Passed{% else %}Failed{% endif %}
+                </span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-muted small">You haven't attempted any quizzes yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

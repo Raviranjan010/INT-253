@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Schedule Live Session - Live School{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 750px;">
+  <div class="card p-4 p-md-5 border custom-card shadow-sm">
+    <span class="badge bg-danger-subtle text-danger mb-2">Instructor Portal</span>
+    <h2 class="fw-bold mb-3"><i class="bi bi-camera-video me-2 text-danger"></i> Schedule Free Live Session</h2>
+    <p class="text-muted small mb-4">Set up a real-time interactive class with WebRTC video, chat, and whiteboarding.</p>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Class Title</label>
+        {{ form.title }}
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Associated Course (Optional)</label>
+        {{ form.course }}
+      </div>
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Scheduled Date & Time</label>
+          {{ form.scheduled_start }}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Duration (Minutes)</label>
+          {{ form.duration_minutes }}
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Target Demographics & Level</label>
+        {{ form.target_demographics }}
+      </div>
+      <div class="mb-4">
+        <label class="form-label fw-semibold">Class Description & Key Learning Objectives</label>
+        {{ form.description }}
+      </div>
+
+      <div class="d-flex justify-content-between pt-3 border-top">
+        <a href="{% url 'live_classes:live_class_list' %}" class="btn btn-outline-secondary">Cancel</a>
+        <button type="submit" class="btn btn-danger px-4 fw-semibold">Schedule Live Classroom</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+

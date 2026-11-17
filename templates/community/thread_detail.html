@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ thread.title }} - Community Doubt{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 900px;">
+  <a href="{% url 'community:forum_list' %}" class="btn btn-sm btn-outline-secondary mb-3">
+    <i class="bi bi-arrow-left me-1"></i> Back to All Discussions
+  </a>
+
+  <!-- Question Card -->
+  <div class="card p-4 border custom-card mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="d-flex align-items-center gap-2">
+        {% if thread.is_resolved %}
+          <span class="badge bg-success"><i class="bi bi-check-circle-fill me-1"></i> Solved</span>
+        {% else %}
+          <span class="badge bg-secondary">Unsolved Doubt</span>
+        {% endif %}
+        {% if thread.course %}
+          <span class="badge bg-primary-subtle text-primary">{{ thread.course.title }}</span>
+        {% endif %}
+      </div>
+      <small class="text-muted"><i class="bi bi-eye me-1"></i>{{ thread.views_count }} views</small>
+    </div>
+
+    <h2 class="fw-bold mb-3">{{ thread.title }}</h2>
+
+    <div class="p-3 bg-body-tertiary rounded-3 border mb-3 text-secondary" style="line-height: 1.8; font-size: 1.05rem;">
+      {{ thread.content|linebreaks }}
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center small text-muted border-top pt-3">
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-person-circle fs-5 text-primary"></i>
+        <span>Asked by <strong>{{ thread.author.get_full_name|default:thread.author.username }}</strong></span>
+        <span>&bull; {{ thread.created_at|date:"M d, Y H:i" }}</span>
+      </div>
+      <div>
+        {% if thread.tags %}
+          {% for tag in thread.tags.split %}
+            <span class="badge bg-body-secondary text-muted border">#{{ tag }}</span>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Replies Section -->
+  <h4 class="fw-bold mb-3"><i class="bi bi-chat-dots text-primary me-2"></i> {{ replies.count }} Answers & Discussions</h4>
+
+  <div class="d-flex flex-column gap-3 mb-5">
+    {% for reply in replies %}
+      <div class="card p-4 border custom-card {% if reply.is_solution %}border-success bg-success-subtle bg-opacity-10{% endif %}">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-person-fill text-secondary"></i>
+            <strong>{{ reply.author.get_full_name|default:reply.author.username }}</strong>
+            {% if reply.author.is_instructor %}
+              <span class="badge bg-primary text-white" style="font-size: 0.65rem;">Teacher</span>
+            {% endif %}
+            <small class="text-muted">{{ reply.created_at|timesince }} ago</small>
+          </div>
+
+          {% if reply.is_solution %}
+            <span class="badge bg-success"><i class="bi bi-check2-all me-1"></i> Accepted Solution</span>
+          {% endif %}
+        </div>
+
+        <div class="text-secondary mb-3" style="line-height: 1.7;">
+          {{ reply.content|linebreaks }}
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center pt-2 border-top small">
+          <!-- Upvote Button -->
+          {% if user.is_authenticated %}
+            <a href="{% url 'community:upvote_reply' reply.id %}" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1">
+              <i class="bi bi-hand-thumbs-up-fill"></i>
+              <span>Helpful ({{ reply.upvote_count }})</span>
+            </a>
+          {% else %}
+            <span class="text-muted"><i class="bi bi-hand-thumbs-up me-1"></i>{{ reply.upvote_count }} Helpful</span>
+          {% endif %}
+
+          <!-- Author solution marking -->
+          {% if user == thread.author or user.is_staff %}
+            <a href="{% url 'community:toggle_solution' reply.id %}" class="btn btn-sm {% if reply.is_solution %}btn-outline-danger{% else %}btn-outline-success{% endif %}">
+              {% if reply.is_solution %}Unmark Solution{% else %}✓ Mark as Accepted Solution{% endif %}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <div class="card p-4 border custom-card text-center text-muted">
+        No answers posted yet. Help out by replying below!
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Post a Reply -->
+  {% if user.is_authenticated %}
+    <div class="card p-4 border custom-card">
+      <h5 class="fw-bold mb-3">Your Answer / Contribution</h5>
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          {{ form.content }}
+        </div>
+        <button type="submit" class="btn btn-primary fw-semibold px-4">
+          <i class="bi bi-send me-1"></i> Post Answer (+15 XP)
+        </button>
+      </form>
+    </div>
+  {% else %}
+    <div class="alert alert-info text-center py-3">
+      Please <a href="{% url 'accounts:login' %}" class="fw-bold text-decoration-none">log in</a> or <a href="{% url 'accounts:register' %}" class="fw-bold text-decoration-none">sign up for free</a> to join the conversation and answer doubts!
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+

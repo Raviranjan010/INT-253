@@ -1,0 +1,151 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.utils import timezone
+from .forms import StudentRegistrationForm, InstructorRegistrationForm, UserProfileForm, CustomLoginForm
+from .models import CustomUser
+from courses.models import Enrollment, Course
+from live_classes.models import LiveSession
+from quizzes.models import QuizAttempt
+from certificates.models import Certificate
+
+def register_view(request):
+    account_type = request.GET.get('type', 'student')
+    
+    if request.user.is_authenticated:
+        return redirect('accounts:dashboard_redirect')
+
+    if request.method == 'POST':
+        if account_type == 'instructor':
+            form = InstructorRegistrationForm(request.POST)
+        else:
+            form = StudentRegistrationForm(request.POST)
+
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            user.update_streak()
+            messages.success(request, f"Welcome to Live School, {user.first_name}! You've been awarded 100 XP points for joining.")
+            return redirect('accounts:dashboard_redirect')
+        else:
+            messages.error(request, "Please correct the errors below to complete registration.")
+    else:
+        if account_type == 'instructor':
+            form = InstructorRegistrationForm()
+        else:
+            form = StudentRegistrationForm()
+
+    return render(request, 'accounts/register.html', {
+        'form': form,
+        'account_type': account_type
+    })
+
+
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('accounts:dashboard_redirect')
+
+    if request.method == 'POST':
+        form = CustomLoginForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            user.update_streak()
+            messages.success(request, f"Welcome back, {user.first_name or user.username}!")
+            next_url = request.GET.get('next')
+            if next_url:
+                return redirect(next_url)
+            return redirect('accounts:dashboard_redirect')
+        else:
+            messages.error(request, "Invalid username or password. Please check your credentials.")
+    else:
+        form = CustomLoginForm()
+
+    return render(request, 'accounts/login.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    messages.info(request, "You have been logged out safely.")
+    return redirect('core:home')
+
+
+@login_required
+def dashboard_redirect(request):
+    if request.user.is_instructor:
+        return redirect('accounts:instructor_dashboard')
+    elif request.user.is_platform_admin and request.user.is_staff:
+        # If staff/admin wants admin panel or dashboard
+        if request.GET.get('panel') == 'admin':
+            return redirect('admin:index')
+        return redirect('accounts:student_dashboard')
+    else:
+        return redirect('accounts:student_dashboard')
+
+
+@login_required
+def student_dashboard(request):
+    user = request.user
+    user.update_streak()
+
+    enrollments = Enrollment.objects.filter(student=user).select_related('course', 'course__category')
+    completed_courses_count = enrollments.filter(is_completed=True).count()
+    in_progress_count = enrollments.filter(is_completed=False).count()
+    
+    # Upcoming live classes relevant to enrolled courses or general
+    upcoming_live = LiveSession.objects.filter(
+        status__in=['scheduled', 'live']
+    ).order_by('scheduled_start')[:4]
+
+    # Recent quiz attempts
+    recent_quizzes = QuizAttempt.objects.filter(student=user).select_related('quiz', 'quiz__course')[:5]
+
+    # Certificates earned
+    certificates = Certificate.objects.filter(student=user).select_related('course')
+
+    context = {
+        'enrollments': enrollments,
+        'completed_courses_count': completed_courses_count,
+        'in_progress_count': in_progress_count,
+        'upcoming_live': upcoming_live,
+        'recent_quizzes': recent_quizzes,
+        'certificates': certificates,
+    }
+    return render(request, 'accounts/student_dashboard.html', context)
+
+
+@login_required
+def instructor_dashboard(request):
+    if not (request.user.is_instructor or request.user.is_staff):
+        messages.warning(request, "Only instructors have access to the Instructor Hub.")
+        return redirect('accounts:student_dashboard')
+
+    user = request.user
+    courses = Course.objects.filter(instructor=user)
+    live_sessions = LiveSession.objects.filter(instructor=user).order_by('-scheduled_start')
+    
+    # Compute totals
+    total_students = Enrollment.objects.filter(course__instructor=user).values('student').distinct().count()
+
+    context = {
+        'courses': courses,
+        'live_sessions': live_sessions,
+        'total_students': total_students,
+    }
+    return render(request, 'accounts/instructor_dashboard.html', context)
+
+
+@login_required
+def profile_view(request):
+    user = request.user
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your profile has been updated successfully!")
+            return redirect('accounts:profile')
+    else:
+        form = UserProfileForm(instance=user)
+
+    return render(request, 'accounts/profile.html', {'form': form})

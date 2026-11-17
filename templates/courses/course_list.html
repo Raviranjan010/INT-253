@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Free World-Class Courses - Live School{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-oxford-hero text-white position-relative overflow-hidden border-bottom border-dark" style="background-color: var(--bg-oxford-dark);">
+  <div class="hero-ledger-grid" aria-hidden="true"></div>
+  <div class="container py-3 position-relative z-2 text-center">
+    <div class="hero-seal-badge mb-3">
+      <span class="seal-icon-box"><i class="bi bi-mortarboard-fill"></i></span>
+      <span class="seal-text">100% Free Public Catalog &bull; Cryptographic Certificates Included</span>
+    </div>
+    <h1 class="section-title-editorial display-5 text-white mb-2">Explore Free World-Class Courses</h1>
+    <p class="hero-subtitle-text mx-auto mb-4" style="max-width: 680px;">
+      Master high-demand Computing, Machine Learning, Mathematics, and Global Skills without tuition paywalls or hidden fees.
+    </p>
+
+    <!-- Search & Filter Bar -->
+    <div class="row justify-content-center">
+      <div class="col-lg-9">
+        <form method="get" class="card p-3 border-0 shadow-2xl rounded-4 bg-white text-dark">
+          <div class="row g-2 align-items-center">
+            <div class="col-md-5">
+              <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                <input type="text" name="q" value="{{ query }}" class="form-control border-start-0 rounded-end-pill" placeholder="Search Python, Calculus, Web...">
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <select name="category" class="form-select rounded-pill">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                  <option value="{{ cat.slug }}" {% if selected_category == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-6 col-md-2">
+              <select name="level" class="form-select rounded-pill">
+                <option value="all">All Levels</option>
+                <option value="beginner" {% if selected_level == 'beginner' %}selected{% endif %}>Beginner</option>
+                <option value="intermediate" {% if selected_level == 'intermediate' %}selected{% endif %}>Intermediate</option>
+                <option value="advanced" {% if selected_level == 'advanced' %}selected{% endif %}>Advanced</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <button type="submit" class="btn btn-mint-action w-100 justify-content-center rounded-pill py-2">
+                Filter
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Course Grid -->
+<section class="py-5 bg-natural-canvas">
+  <div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div class="text-secondary small fw-semibold">
+        Showing <strong>{{ courses.count }}</strong> free accredited courses
+      </div>
+      {% if query or selected_category or selected_level %}
+        <a href="{% url 'courses:course_list' %}" class="btn btn-sm btn-outline-secondary rounded-pill">
+          <i class="bi bi-x-circle me-1"></i> Clear Filters
+        </a>
+      {% endif %}
+    </div>
+
+    <div class="row g-4">
+      {% for course in courses %}
+        <div class="col-md-6 col-lg-4">
+          <div class="course-editorial-card h-100 d-flex flex-column">
+            <!-- Thumbnail -->
+            <div class="course-card-cover position-relative">
+              {% if course.thumbnail %}
+                <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}">
+              {% else %}
+                <div class="cover-academic-fallback d-flex align-items-center justify-content-center h-100">
+                  <div class="fallback-seal-circle">
+                    <i class="bi {{ course.category.icon|default:'bi-journal-bookmark' }} display-5 text-mint opacity-90"></i>
+                  </div>
+                </div>
+              {% endif %}
+              <div class="cover-level-badge">{{ course.get_level_display }}</div>
+              <div class="cover-free-badge">FREE &bull; ZERO TUITION</div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="course-card-body p-4 d-flex flex-column flex-grow-1">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="course-category-tag cat-{{ course.category.slug }}">{{ course.category.name }}</span>
+                <span class="course-rating-pill">
+                  <i class="bi bi-star-fill text-warning me-1"></i> {{ course.average_rating }}
+                </span>
+              </div>
+
+              <h5 class="course-title-link mb-2">
+                <a href="{% url 'courses:course_detail' course.slug %}">{{ course.title }}</a>
+              </h5>
+
+              <p class="course-desc-snip text-muted small flex-grow-1">
+                {{ course.short_description|truncatewords:20 }}
+              </p>
+
+              <div class="course-meta-row border-top pt-3 mt-2 d-flex justify-content-between align-items-center small text-muted">
+                <span><i class="bi bi-clock me-1 text-mint"></i> {{ course.estimated_hours }} hrs</span>
+                <span><i class="bi bi-play-circle me-1 text-mint"></i> {{ course.total_lessons }} lessons</span>
+                <span><i class="bi bi-shield-check me-1 text-mint"></i> Certificate</span>
+              </div>
+            </div>
+
+            <!-- Card Action -->
+            <div class="course-card-footer px-4 pb-4 pt-0">
+              <a href="{% url 'courses:course_detail' course.slug %}" class="btn-enroll-card w-100 text-center">
+                Enroll Free &bull; View Syllabus
+              </a>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="col-12 text-center py-5">
+          <i class="bi bi-search display-3 text-muted"></i>
+          <h4 class="fw-bold mt-3">No courses found matching your criteria</h4>
+          <p class="text-muted small">Try selecting another category or clear your search term.</p>
+          <a href="{% url 'courses:course_list' %}" class="btn-editorial-outline">Clear Filters</a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

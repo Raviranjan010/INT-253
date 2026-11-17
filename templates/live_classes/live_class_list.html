@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Live School Classes & Schedule - World-Class Free Education{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-oxford-hero text-white position-relative overflow-hidden border-bottom border-dark" style="background-color: var(--bg-oxford-dark);">
+  <div class="hero-ledger-grid" aria-hidden="true"></div>
+  <div class="container py-3 position-relative z-2 text-center">
+    <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-danger bg-opacity-20 text-danger border border-danger border-opacity-30 mb-3 small fw-bold">
+      <span class="live-pulse-dot"></span> SYNCHRONOUS INTERACTIVE WEBRTC TEACHING
+    </div>
+    <h1 class="section-title-editorial display-5 text-white mb-2">Live Interactive Classrooms</h1>
+    <p class="hero-subtitle-text mx-auto mb-4" style="max-width: 700px;">
+      Direct interaction with expert volunteer teachers. Ask questions in real time, collaborate on digital blackboards, and solve tough problems together—completely free.
+    </p>
+
+    {% if user.is_instructor or user.is_staff %}
+      <a href="{% url 'live_classes:schedule_live_class' %}" class="btn btn-mint-action btn-sm shadow-sm rounded-pill px-4 py-2">
+        <i class="bi bi-camera-video-fill me-1"></i> Schedule a New Live Session
+      </a>
+    {% endif %}
+  </div>
+</section>
+
+<section class="py-5 bg-natural-canvas">
+  <div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3 class="fw-bold mb-0 d-flex align-items-center text-dark">
+        <i class="bi bi-broadcast text-danger me-2"></i> Upcoming & Active Sessions
+      </h3>
+      <span class="badge bg-mint text-dark">{{ upcoming_sessions.count }} Classes Scheduled</span>
+    </div>
+
+    <div class="row g-4 mb-5">
+      {% for session in upcoming_sessions %}
+        <div class="col-md-6 col-lg-4">
+          <div class="course-editorial-card h-100 p-4 d-flex flex-column {% if session.is_live_now %}border-danger shadow-lg{% endif %}">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              {% if session.is_live_now %}
+                <span class="live-pill-tag"><i class="bi bi-broadcast"></i> LIVE NOW</span>
+              {% else %}
+                <span class="badge bg-light text-dark border">
+                  <i class="bi bi-calendar-event text-mint-dark me-1"></i> {{ session.scheduled_start|date:"M d, H:i" }}
+                </span>
+              {% endif %}
+              <small class="text-muted"><i class="bi bi-clock me-1"></i>{{ session.duration_minutes }} mins</small>
+            </div>
+
+            <h5 class="fw-bold mb-2">
+              <a href="{% url 'live_classes:live_class_room' session.id %}" class="text-decoration-none text-dark">
+                {{ session.title }}
+              </a>
+            </h5>
+
+            <p class="small text-muted mb-3 flex-grow-1">
+              {{ session.description|truncatewords:20 }}
+            </p>
+
+            <div class="p-3 rounded-3 bg-light border mb-3 small">
+              <div class="d-flex justify-content-between mb-1">
+                <span class="text-muted">Instructor:</span>
+                <strong class="text-dark">{{ session.instructor.get_full_name|default:session.instructor.username }}</strong>
+              </div>
+              <div class="d-flex justify-content-between">
+                <span class="text-muted">Demographics:</span>
+                <span class="text-truncate text-mint-dark fw-semibold" style="max-width: 160px;">{{ session.target_demographics }}</span>
+              </div>
+            </div>
+
+            <a href="{% url 'live_classes:live_class_room' session.id %}" class="btn {% if session.is_live_now %}btn-danger{% else %}btn-mint-action{% endif %} w-100 fw-bold rounded-pill">
+              <i class="bi bi-door-open-fill me-1"></i> {% if session.is_live_now %}Join Classroom Now{% else %}Enter Class Room{% endif %}
+            </a>
+          </div>
+        </div>
+      {% empty %}
+        <div class="col-12 text-center py-5">
+          <i class="bi bi-camera-video-off display-3 text-muted"></i>
+          <h4 class="fw-bold mt-3 text-dark">No live sessions scheduled right now</h4>
+          <p class="text-muted small">New live classes are scheduled weekly. Explore self-paced courses in the meantime!</p>
+          <a href="{% url 'courses:course_list' %}" class="btn btn-mint-action btn-sm rounded-pill px-4">Explore Free Courses</a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

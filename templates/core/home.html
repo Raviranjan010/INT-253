@@ -1,0 +1,1026 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Live School - World-Class Free Education for Every Demographic{% endblock %}
+
+{% block content %}
+<!-- REAL-TIME ACADEMIC NEWS WIRE & LEARNER PRESENCE TICKER -->
+<aside class="news-wire-bar" aria-label="Live learning activity ticker">
+  <div class="container d-flex align-items-center justify-content-between overflow-hidden">
+    <div class="d-flex align-items-center gap-2 news-wire-label">
+      <span class="live-pulse-ring"></span>
+      <span class="fw-bold text-uppercase tracking-wider small">Live Learning Desk:</span>
+    </div>
+    <div class="news-wire-carousel flex-grow-1 mx-3" id="live-presence-ticker">
+      <span class="news-item active">
+        <i class="bi bi-people-fill text-mint me-1"></i> <strong>1,482 students</strong> actively learning across 38 regions right now
+      </span>
+      <span class="news-item">
+        <i class="bi bi-broadcast text-danger me-1"></i> <strong>Dr. Ananya Sharma</strong> is conducting Calculus Room #3 &bull; 248 students tuned in
+      </span>
+      <span class="news-item">
+        <i class="bi bi-patch-check-fill text-warning me-1"></i> <strong>Priya K. (Bihar)</strong> just completed Python OOP Quiz with 100% (+50 XP)
+      </span>
+      <span class="news-item">
+        <i class="bi bi-mortarboard-fill text-mint me-1"></i> <strong>100% Free Forever</strong> &bull; Zero tuition paywalls &bull; UN SDG 4 Aligned
+      </span>
+    </div>
+    <div class="d-none d-md-flex align-items-center gap-2 text-white-50 small">
+      <span class="badge-status-dot"></span>
+      <span>WebRTC Low-Latency Mesh: <strong>Active</strong></span>
+    </div>
+  </div>
+</aside>
+
+<!-- BESPOKE EDITORIAL HERO SECTION (Human-Crafted, Non-Generic AI) -->
+<section class="hero-liveschool position-relative overflow-hidden">
+  <!-- Subtle Architectural Ledger Grid (Archival Blueprint, Not Blurry AI Glow) -->
+  <div class="hero-ledger-grid" aria-hidden="true"></div>
+
+  <div class="container hero-content-container position-relative z-2">
+    <div class="row align-items-center g-5 min-vh-hero">
+      
+      <!-- Left Column: Copy, Editorial Headline & Actions -->
+      <div class="col-lg-6 hero-text-col">
+        <!-- Scholarly Seal Badge -->
+        <div class="hero-seal-badge mb-3">
+          <span class="seal-icon-box"><i class="bi bi-bank2"></i></span>
+          <span class="seal-text">A Public-Benefit Academic Initiative &bull; 100% Free For All</span>
+        </div>
+
+        <!-- Main Headline with Editorial Serif Emphasis -->
+        <h1 class="hero-title-display mb-3">
+          Live School for<br>
+          World-Class<br>
+          <span class="hero-serif-accent">Free Education</span>
+        </h1>
+
+        <!-- Narrative Subtitle -->
+        <p class="hero-subtitle-text mb-4">
+          Dismantling tuition paywalls and geographic boundaries. An inclusive, open-access platform providing synchronous live WebRTC classrooms, university-grade curricula, and verifiable certificates to students across all demographics.
+        </p>
+
+        <!-- CTA Action Buttons -->
+        <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+          <a href="{% url 'accounts:register' %}" class="btn-hero-primary" id="btn-hero-start">
+            <span class="btn-play-icon"><i class="bi bi-play-fill"></i></span>
+            <span>Start Learning Free</span>
+            <i class="bi bi-arrow-right ms-1"></i>
+          </a>
+          <a href="#explore-courses-dock" class="btn-hero-secondary">
+            <i class="bi bi-book me-2"></i>
+            <span>Explore 100+ Courses</span>
+          </a>
+          <a href="{% url 'live_classes:live_class_list' %}" class="btn-hero-live-pill">
+            <span class="live-dot-pulse"></span>
+            <span>Live Classrooms</span>
+          </a>
+        </div>
+
+        <!-- 4 Distinctive Inclusivity Checkmarks -->
+        <div class="hero-features-row d-flex flex-wrap align-items-center gap-4 pt-1">
+          <div class="hero-check-item" title="No tuition fees or hidden microtransactions">
+            <span class="check-icon">✓</span>
+            <span>100% Free Forever</span>
+          </div>
+          <div class="hero-check-item" title="Classes led by accredited professors and volunteer engineers">
+            <span class="check-icon">✓</span>
+            <span>Real Human Educators</span>
+          </div>
+          <div class="hero-check-item" title="Accessible on 2G/3G rural networks with offline notes">
+            <span class="check-icon">✓</span>
+            <span>2G Low-Bandwidth Ready</span>
+          </div>
+          <div class="hero-check-item" title="Tamper-evident certificates with public cryptographic hash">
+            <span class="check-icon">✓</span>
+            <span>Verifiable Certificates</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive Live Learning Studio -->
+      <div class="col-lg-6 hero-visual-col position-relative">
+        <div class="hero-studio-card shadow-2xl">
+          
+          <!-- Studio Header & Switchable Tabs -->
+          <div class="studio-header d-flex align-items-center justify-content-between p-3 border-bottom border-secondary border-opacity-25">
+            <div class="d-flex align-items-center gap-2">
+              <span class="studio-traffic-dot red"></span>
+              <span class="studio-traffic-dot yellow"></span>
+              <span class="studio-traffic-dot green"></span>
+              <span class="studio-title-badge ms-2">LIVE SCHOOL LAB v2.6</span>
+            </div>
+            
+            <!-- Tab Navigation Buttons -->
+            <div class="studio-tabs-nav d-flex gap-1" role="tablist">
+              <button class="studio-tab-btn active" id="tab-btn-chalkboard" data-target="studio-tab-chalkboard" role="tab" aria-selected="true">
+                <i class="bi bi-easel-fill me-1"></i> <span>Chalkboard</span>
+              </button>
+              <button class="studio-tab-btn" id="tab-btn-terminal" data-target="studio-tab-terminal" role="tab" aria-selected="false">
+                <i class="bi bi-terminal-fill me-1"></i> <span>Python IDE</span>
+              </button>
+              <button class="studio-tab-btn" id="tab-btn-stream" data-target="studio-tab-stream" role="tab" aria-selected="false">
+                <i class="bi bi-broadcast text-danger me-1"></i> <span>Live Stream</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- TAB 1: INTERACTIVE DIGITAL CHALKBOARD -->
+          <div class="studio-tab-pane active" id="studio-tab-chalkboard" role="tabpanel">
+            <div class="chalkboard-surface p-4">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="chalk-title">
+                  <span class="chalk-course-badge">CALCULUS & OPTIMIZATION</span>
+                  <h4 class="chalk-heading mb-0">The Intuitive Gradient: \( f(x) = x^2 \)</h4>
+                </div>
+                <div class="chalk-status">
+                  <span class="chalk-tag"><i class="bi bi-calculator me-1"></i> Interactive Math</span>
+                </div>
+              </div>
+
+              <!-- Interactive Math Formula Board -->
+              <div class="chalk-math-card p-3 rounded-3 mb-3">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                  <div class="chalk-formula">
+                    <span class="formula-label">Function:</span>
+                    <span class="formula-latex">\( f(x) = x^2 \)</span>
+                  </div>
+                  <div class="chalk-formula">
+                    <span class="formula-label">Derivative (Slope):</span>
+                    <span class="formula-latex chalk-emerald">\( f'(x) = \frac{df}{dx} = 2x \)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Interactive Variable Slider -->
+              <div class="chalk-slider-control p-3 rounded-3 mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <label for="chalk-x-slider" class="form-label text-white small mb-0 fw-semibold">
+                    <i class="bi bi-sliders me-1 text-mint"></i> Drag to adjust input value <span class="badge bg-mint-subtle text-mint px-2">\( x \)</span>:
+                  </label>
+                  <span class="chalk-value-display" id="chalk-x-val">x = 2.0</span>
+                </div>
+                <input type="range" class="form-range custom-chalk-range" id="chalk-x-slider" min="-4" max="4" step="0.5" value="2">
+                <div class="d-flex justify-content-between text-muted small mt-1" style="font-size: 0.75rem;">
+                  <span>-4.0 (Steep Left)</span>
+                  <span>0.0 (Global Minimum)</span>
+                  <span>+4.0 (Steep Right)</span>
+                </div>
+              </div>
+
+              <!-- Dynamic Real-time Output Metrics -->
+              <div class="row g-2 text-center chalk-metrics-grid">
+                <div class="col-4">
+                  <div class="metric-box p-2 rounded-2">
+                    <span class="metric-label">Output \( f(x) \)</span>
+                    <span class="metric-val text-white" id="chalk-fx-val">4.00</span>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="metric-box p-2 rounded-2">
+                    <span class="metric-label">Slope \( \frac{df}{dx} \)</span>
+                    <span class="metric-val text-mint" id="chalk-df-val">+4.00</span>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="metric-box p-2 rounded-2">
+                    <span class="metric-label">Descent Step</span>
+                    <span class="metric-val text-warning" id="chalk-step-val">-0.40</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Explanation Callout -->
+              <div class="chalk-footer-tip mt-3 d-flex align-items-center justify-content-between">
+                <small class="text-white-50" id="chalk-tip-text">
+                  <i class="bi bi-lightbulb-fill text-warning me-1"></i> At \( x = 2.0 \), gradient is positive (+4.0); gradient descent moves left toward the minimum at \( x = 0 \).
+                </small>
+                <button class="btn btn-xs btn-outline-mint" id="chalk-reset-btn" title="Reset to x=0">
+                  Find Minimum
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: INTERACTIVE LIVE PYTHON TERMINAL -->
+          <div class="studio-tab-pane d-none" id="studio-tab-terminal" role="tabpanel">
+            <div class="ide-surface p-3">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="ide-file-pill"><i class="bi bi-file-earmark-code-fill text-warning me-1"></i> main.py</span>
+                  <span class="ide-runtime-badge">Python 3.12 (Interactive Wasm)</span>
+                </div>
+                <div class="d-flex gap-2">
+                  <select class="ide-preset-select form-select form-select-sm" id="ide-snippet-select" aria-label="Select Code Snippet">
+                    <option value="impact">1. Universal Education Impact</option>
+                    <option value="fibonacci">2. Recursive Fibonacci</option>
+                    <option value="bandwidth">3. Rural Bandwidth Optimizer</option>
+                  </select>
+                  <button class="btn btn-sm btn-mint-action px-3" id="ide-run-btn">
+                    <i class="bi bi-play-fill me-1"></i> Run Code
+                  </button>
+                </div>
+              </div>
+
+              <!-- Code Editor Window -->
+              <div class="code-editor-box rounded-3 p-3 mb-2 font-monospace">
+                <div class="code-line"><span class="line-num">1</span> <span class="syntax-keyword">def</span> <span class="syntax-func">calculate_impact</span>(learners, tuition_saved_per_student=1500):</div>
+                <div class="code-line"><span class="line-num">2</span>     total_saved = learners * tuition_saved_per_student</div>
+                <div class="code-line"><span class="line-num">3</span>     <span class="syntax-keyword">return</span> {</div>
+                <div class="code-line"><span class="line-num">4</span>         <span class="syntax-string">"status"</span>: <span class="syntax-string">"Education Accessible Worldwide"</span>,</div>
+                <div class="code-line"><span class="line-num">5</span>         <span class="syntax-string">"students_empowered"</span>: <span class="syntax-func">f"{learners:,}"</span>,</div>
+                <div class="code-line"><span class="line-num">6</span>         <span class="syntax-string">"tuition_barrier_eliminated"</span>: <span class="syntax-func">f"${total_saved:,}"</span></div>
+                <div class="code-line"><span class="line-num">7</span>     }</div>
+                <div class="code-line"><span class="line-num">8</span> </div>
+                <div class="code-line"><span class="line-num">9</span> <span class="syntax-keyword">print</span>(<span class="syntax-string">"⚡ Initializing LiveSchool Global Dispatch..."</span>)</div>
+                <div class="code-line"><span class="line-num">10</span> result = <span class="syntax-func">calculate_impact</span>(learners=10000)</div>
+                <div class="code-line"><span class="line-num">11</span> <span class="syntax-keyword">print</span>(result)</div>
+              </div>
+
+              <!-- Terminal Output Display -->
+              <div class="ide-terminal-output p-3 rounded-3 font-monospace">
+                <div class="terminal-bar d-flex justify-content-between align-items-center mb-1 pb-1 border-bottom border-dark">
+                  <span class="terminal-title"><i class="bi bi-terminal me-1"></i> Console Output</span>
+                  <span class="terminal-status text-mint small" id="ide-status-text">Ready to execute</span>
+                </div>
+                <pre class="terminal-pre mb-0" id="ide-output-text">Click "Run Code" above to execute this Python program in real time...</pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: LIVE CLASSROOM STREAM & SIMULATED PEER DOUBTS -->
+          <div class="studio-tab-pane d-none" id="studio-tab-stream" role="tabpanel">
+            <div class="stream-surface p-3">
+              <!-- Live Video Feed Mockup with Active Visualizer -->
+              <div class="stream-video-container rounded-3 position-relative overflow-hidden mb-3">
+                <div class="stream-bg-ambient">
+                  <div class="stream-chalk-bg"></div>
+                  <div class="stream-instructor-stage text-center">
+                    <div class="instructor-avatar-ring mb-2">
+                      <span class="fs-2">👩‍🏫</span>
+                    </div>
+                    <h6 class="text-white fw-bold mb-0">Dr. Ananya Sharma</h6>
+                    <small class="text-mint-light">Lead Volunteer Educator &bull; Computer Science & AI</small>
+                    <div class="stream-audio-wave mt-2 d-flex justify-content-center align-items-center gap-1">
+                      <span class="wave-bar"></span>
+                      <span class="wave-bar"></span>
+                      <span class="wave-bar"></span>
+                      <span class="wave-bar"></span>
+                      <span class="wave-bar"></span>
+                      <span class="wave-bar"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Floating Video Stream Badges -->
+                <div class="stream-badge-top-left">
+                  <span class="live-stream-tag"><i class="bi bi-record-circle me-1 text-danger"></i> LIVE WEBRTC STREAM</span>
+                </div>
+                <div class="stream-badge-top-right">
+                  <span class="badge bg-dark bg-opacity-75 text-white small"><i class="bi bi-people-fill me-1 text-mint"></i> 248 Students</span>
+                </div>
+                <div class="stream-badge-bottom-left">
+                  <span class="stream-course-pill">Calculus & Neural Networks: Gradient Descent</span>
+                </div>
+              </div>
+
+              <!-- Live Peer Doubt Stream & Interaction Row -->
+              <div class="stream-interaction-box p-3 rounded-3 bg-dark border border-secondary border-opacity-25">
+                <div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom border-secondary border-opacity-25">
+                  <span class="small fw-bold text-white"><i class="bi bi-chat-left-dots-fill text-mint me-1"></i> Live Doubt Stream</span>
+                  <small class="text-muted" style="font-size: 0.7rem;">Synchronous WebRTC Chat</small>
+                </div>
+
+                <!-- Simulated Live Chat Items -->
+                <div class="stream-chat-scroll" id="stream-chat-box">
+                  <div class="chat-msg-item">
+                    <span class="chat-user">Ravi (Bihar):</span>
+                    <span class="chat-text">Does the learning rate \(\alpha\) change automatically in Adam optimizer?</span>
+                    <span class="chat-time">1m ago</span>
+                  </div>
+                  <div class="chat-msg-item">
+                    <span class="chat-user">Carlos (Bogota):</span>
+                    <span class="chat-text">Crystal clear explanation of partial derivatives, thanks doctor!</span>
+                    <span class="chat-time">Just now</span>
+                  </div>
+                </div>
+
+                <!-- Interactive Raise Hand CTA -->
+                <div class="d-flex align-items-center justify-content-between pt-2 mt-2 border-top border-secondary border-opacity-25">
+                  <button class="btn btn-sm btn-outline-warning rounded-pill px-3" id="stream-raise-hand-btn">
+                    <i class="bi bi-hand-index-thumb-fill me-1"></i> Raise Hand / Ask Doubt
+                  </button>
+                  <a href="{% url 'live_classes:live_class_list' %}" class="btn btn-sm btn-mint-action rounded-pill px-3">
+                    Enter Full Classroom &rarr;
+                  </a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Studio Footer Quick Stats -->
+          <div class="studio-card-footer px-3 py-2 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center small text-white-50">
+            <div>
+              <i class="bi bi-shield-check text-mint me-1"></i> Open-Source &bull; Zero Licensing Paywalls
+            </div>
+            <div class="font-monospace" style="font-size: 0.72rem;">
+              LATENCY: <span class="text-mint">18ms</span> | COMPRESSION: <span class="text-mint">94%</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FLOATING CATEGORIES DOCK (Interactive Category Switchboard) -->
+  <div class="container dock-container" id="explore-courses-dock">
+    <div class="categories-floating-dock shadow-2xl">
+      <div class="row align-items-center g-3">
+        <!-- Dock Header Title -->
+        <div class="col-xl-2 col-lg-3 col-md-12 dock-title-col">
+          <div class="dock-title-box">
+            <span class="badge-dock-mini">CATALOG</span>
+            <h4 class="dock-title mb-1">Explore<br>Courses</h4>
+            <div class="dock-accent-bar"></div>
+          </div>
+        </div>
+
+        <!-- 7 Category Filter Buttons (Instant Client-Side Filtering) -->
+        <div class="col-xl-10 col-lg-9 col-md-12">
+          <div class="category-pills-grid" role="tablist">
+            
+            <!-- All Courses -->
+            <button class="cat-pill cat-all active" data-filter="all" title="View all courses">
+              <span class="cat-pill-icon"><i class="bi bi-grid-fill"></i></span>
+              <span class="cat-pill-name">All ({{ featured_courses.count }})</span>
+            </button>
+
+            <!-- 1. Computer Science -->
+            <button class="cat-pill cat-cs" data-filter="cs-coding" title="Filter Computer Science">
+              <span class="cat-pill-icon">&lt;/&gt;</span>
+              <span class="cat-pill-name">Computer Science</span>
+            </button>
+
+            <!-- 2. Data Science & AI -->
+            <button class="cat-pill cat-data" data-filter="data-ai" title="Filter Data Science & AI">
+              <span class="cat-pill-icon"><i class="bi bi-cpu-fill"></i></span>
+              <span class="cat-pill-name">Data Science & AI</span>
+            </button>
+
+            <!-- 3. Mathematics -->
+            <button class="cat-pill cat-math" data-filter="maths-stats" title="Filter Mathematics">
+              <span class="cat-pill-icon"><i class="bi bi-calculator-fill"></i></span>
+              <span class="cat-pill-name">Mathematics</span>
+            </button>
+
+            <!-- 4. Web & Cloud -->
+            <button class="cat-pill cat-web" data-filter="web-cloud" title="Filter Web & Cloud Development">
+              <span class="cat-pill-icon"><i class="bi bi-globe2"></i></span>
+              <span class="cat-pill-name">Web & Cloud</span>
+            </button>
+
+            <!-- 5. Languages & Communication -->
+            <button class="cat-pill cat-languages" data-filter="languages" title="Filter Languages">
+              <span class="cat-pill-icon"><i class="bi bi-chat-heart-fill"></i></span>
+              <span class="cat-pill-name">Languages</span>
+            </button>
+
+            <!-- 6. Career Prep -->
+            <button class="cat-pill cat-career" data-filter="career-skills" title="Filter Career Prep">
+              <span class="cat-pill-icon"><i class="bi bi-briefcase-fill"></i></span>
+              <span class="cat-pill-name">Career Prep</span>
+            </button>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GREEN STATS RIBBON WITH HISTORICAL SCHOLARLY MASCOT -->
+<section class="stats-ribbon-section">
+  <div class="container">
+    <div class="stats-ribbon-content d-flex flex-wrap align-items-center justify-content-between gap-3">
+      
+      <!-- Academic Seal & Global Reach -->
+      <div class="stats-school-building d-flex align-items-center gap-3">
+        <div class="school-icon-wrapper">
+          <svg width="44" height="44" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 4L4 14V18H44V14L24 4Z" fill="#10B981"/>
+            <path d="M8 18V38H40V18" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+            <path d="M20 38V28H28V38" fill="#10B981"/>
+            <rect x="12" y="22" width="5" height="6" rx="1" fill="#FFFFFF"/>
+            <rect x="31" y="22" width="5" height="6" rx="1" fill="#FFFFFF"/>
+            <path d="M2 38H46V42H2V38Z" fill="#064E3B"/>
+            <circle cx="24" cy="11" r="2.5" fill="#F59E0B"/>
+          </svg>
+        </div>
+        <div>
+          <div class="fw-bold text-white fs-6">Live School Global</div>
+          <div class="text-mint-light small" style="font-size: 0.75rem;">World-Class Free Education for Every Demographic</div>
+        </div>
+      </div>
+
+      <div class="stats-vertical-divider d-none d-lg-block"></div>
+
+      <!-- Stat 1: 10,000+ Learners -->
+      <div class="stat-ribbon-item d-flex align-items-center gap-3">
+        <div class="stat-icon-circle"><i class="bi bi-mortarboard-fill"></i></div>
+        <div>
+          <div class="stat-number">10,000+</div>
+          <div class="stat-label">Active Learners</div>
+        </div>
+      </div>
+
+      <div class="stats-vertical-divider d-none d-lg-block"></div>
+
+      <!-- Stat 2: 500+ Expert Classes -->
+      <div class="stat-ribbon-item d-flex align-items-center gap-3">
+        <div class="stat-icon-circle"><i class="bi bi-play-btn-fill"></i></div>
+        <div>
+          <div class="stat-number">500+</div>
+          <div class="stat-label">Synchronous Live Classes</div>
+        </div>
+      </div>
+
+      <div class="stats-vertical-divider d-none d-lg-block"></div>
+
+      <!-- Stat 3: 100+ Free Courses -->
+      <div class="stat-ribbon-item d-flex align-items-center gap-3">
+        <div class="stat-icon-circle"><i class="bi bi-book-half"></i></div>
+        <div>
+          <div class="stat-number">100+</div>
+          <div class="stat-label">University Curricula</div>
+        </div>
+      </div>
+
+      <div class="stats-vertical-divider d-none d-lg-block"></div>
+
+      <!-- Stat 4: Free Verified Certificates -->
+      <div class="stat-ribbon-item d-flex align-items-center gap-3">
+        <div class="stat-icon-circle"><i class="bi bi-patch-check-fill"></i></div>
+        <div>
+          <div class="stat-number">100% Free</div>
+          <div class="stat-label">Verifiable Certificates</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CURATED POPULAR COURSES SECTION (Dynamic Filterable Deck) -->
+<section class="py-5 bg-natural-canvas position-relative" id="courses-section">
+  <div class="container py-4">
+    
+    <!-- Section Header with Search Bar -->
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end mb-4 gap-3">
+      <div>
+        <span class="badge-academic-pill mb-2"><i class="bi bi-award-fill me-1"></i> VERIFIED ACCREDITED CURRICULA</span>
+        <h2 class="section-title-editorial mb-1">Explore Free Accredited Courses</h2>
+        <p class="section-subtitle-editorial mb-0">Taught by university educators and industry engineers with tamper-evident completion certificates.</p>
+      </div>
+
+      <!-- Live Search & Course Count -->
+      <div class="d-flex align-items-center gap-3">
+        <div class="course-filter-search-box">
+          <i class="bi bi-search search-box-icon"></i>
+          <input type="text" id="course-live-filter-input" class="form-control form-control-sm rounded-pill ps-5" placeholder="Filter by title, topic...">
+        </div>
+        <a href="{% url 'courses:course_list' %}" class="btn-editorial-outline text-nowrap">
+          Full Catalog &rarr;
+        </a>
+      </div>
+    </div>
+
+    <!-- Active Filter Status Indicator -->
+    <div class="d-flex align-items-center justify-content-between mb-3 px-1">
+      <div class="small text-muted" id="active-filter-indicator">
+        Showing <strong id="visible-course-count">{{ featured_courses.count }}</strong> of {{ featured_courses.count }} courses
+      </div>
+      <button class="btn btn-sm btn-link text-decoration-none text-muted p-0 d-none" id="reset-course-filter-btn">
+        <i class="bi bi-x-circle me-1"></i> Reset to All
+      </button>
+    </div>
+
+    <!-- Course Cards Grid -->
+    <div class="row g-4" id="courses-grid-container">
+      {% for course in featured_courses %}
+        <div class="col-md-6 col-lg-4 course-card-wrapper" data-category="{{ course.category.slug }}" data-title="{{ course.title|lower }}" data-level="{{ course.level }}">
+          <div class="course-editorial-card h-100 d-flex flex-column">
+            
+            <!-- Card Cover with Clean Graphic Seal -->
+            <div class="course-card-cover position-relative">
+              {% if course.thumbnail %}
+                <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}">
+              {% else %}
+                <div class="cover-academic-fallback d-flex align-items-center justify-content-center">
+                  <div class="fallback-seal-circle">
+                    <i class="bi {{ course.category.icon|default:'bi-journal-bookmark' }} display-5 text-mint opacity-90"></i>
+                  </div>
+                </div>
+              {% endif %}
+              <div class="cover-level-badge">{{ course.get_level_display }}</div>
+              <div class="cover-free-badge">FREE &bull; ZERO TUITION</div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="course-card-body p-4 d-flex flex-column flex-grow-1">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="course-category-tag cat-{{ course.category.slug }}">{{ course.category.name }}</span>
+                <span class="course-rating-pill">
+                  <i class="bi bi-star-fill text-warning me-1"></i> {{ course.average_rating }}
+                </span>
+              </div>
+
+              <h5 class="course-title-link mb-2">
+                <a href="{% url 'courses:course_detail' course.slug %}">{{ course.title }}</a>
+              </h5>
+
+              <p class="course-desc-snip text-muted small flex-grow-1">
+                {{ course.short_description|truncatewords:18 }}
+              </p>
+
+              <!-- Course Meta Stats -->
+              <div class="course-meta-row border-top pt-3 mt-2 d-flex justify-content-between align-items-center small text-muted">
+                <span><i class="bi bi-clock me-1 text-mint"></i> {{ course.estimated_hours }} hrs</span>
+                <span><i class="bi bi-play-circle me-1 text-mint"></i> {{ course.total_lessons }} lessons</span>
+                <span><i class="bi bi-shield-check me-1 text-mint"></i> Certificate</span>
+              </div>
+            </div>
+
+            <!-- Card Footer with 2 Action Buttons -->
+            <div class="course-card-footer px-4 pb-4 pt-0 d-flex gap-2">
+              <a href="{% url 'courses:course_detail' course.slug %}" class="btn-enroll-card flex-grow-1 text-center">
+                Enroll Free &bull; Start
+              </a>
+              <button class="btn btn-outline-secondary rounded-pill px-3 btn-syllabus-peek" 
+                      data-title="{{ course.title }}"
+                      data-desc="{{ course.short_description }}"
+                      data-lessons="{{ course.total_lessons }}"
+                      data-hours="{{ course.estimated_hours }}"
+                      data-url="{% url 'courses:course_detail' course.slug %}"
+                      title="Quick Syllabus Overview">
+                <i class="bi bi-list-check"></i>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Empty State when filter matches nothing -->
+    <div class="alert alert-light border text-center py-5 d-none rounded-4 mt-3" id="no-courses-found-box">
+      <i class="bi bi-search display-6 text-muted mb-2 d-block"></i>
+      <h5 class="fw-bold text-dark">No courses match your filter</h5>
+      <p class="text-muted small">Try searching a different term or click below to view all free courses.</p>
+      <button class="btn btn-sm btn-mint-action px-3 rounded-pill" id="clear-all-filters-btn">View All Courses</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- INTERACTIVE "60-SECOND KNOWLEDGE CHALLENGE" (Gamified Interactive Diagnostic) -->
+<section class="py-5 bg-white border-top border-bottom">
+  <div class="container py-4">
+    <div class="row align-items-center g-5">
+      
+      <!-- Challenge Description Left -->
+      <div class="col-lg-5">
+        <span class="badge-academic-pill mb-2"><i class="bi bi-lightning-charge-fill text-warning me-1"></i> TRY LIVESCHOOL FREE</span>
+        <h2 class="section-title-editorial mb-3">
+          Test Your Intuition in <br>
+          <span class="hero-serif-accent text-mint-dark">60 Seconds</span>
+        </h2>
+        <p class="text-secondary lead fs-6 mb-4">
+          Experience how our interactive explanations turn complex computing, mathematics, and science into intuitive, unforgettable knowledge.
+        </p>
+
+        <!-- Topic Switcher Buttons -->
+        <div class="d-flex flex-column gap-2 mb-4">
+          <button class="quiz-topic-btn active" data-topic="python">
+            <i class="bi bi-filetype-py text-warning me-2 fs-5"></i>
+            <div class="text-start">
+              <div class="fw-bold small">Python & Algorithmic Logic</div>
+              <small class="text-muted">List comprehensions & data structures</small>
+            </div>
+          </button>
+          <button class="quiz-topic-btn" data-topic="math">
+            <i class="bi bi-calculator-fill text-mint me-2 fs-5"></i>
+            <div class="text-start">
+              <div class="fw-bold small">Calculus & Optimization</div>
+              <small class="text-muted">Derivatives & machine learning slopes</small>
+            </div>
+          </button>
+          <button class="quiz-topic-btn" data-topic="web">
+            <i class="bi bi-diagram-3-fill text-primary me-2 fs-5"></i>
+            <div class="text-start">
+              <div class="fw-bold small">Full-Stack Web Systems</div>
+              <small class="text-muted">MVT architecture, APIs & HTTP</small>
+            </div>
+          </button>
+        </div>
+
+        <div class="d-flex align-items-center gap-3 text-muted small">
+          <span><i class="bi bi-gift-fill text-mint me-1"></i> Earn <strong>+50 XP</strong> on first try</span>
+          <span>&bull;</span>
+          <span><i class="bi bi-soundwave text-warning me-1"></i> Interactive sound feedback</span>
+        </div>
+      </div>
+
+      <!-- Challenge Interactive Card Right -->
+      <div class="col-lg-7">
+        <div class="quiz-interactive-card shadow-xl p-4 rounded-4 bg-forest-card text-white position-relative">
+          
+          <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge bg-mint text-dark fw-bold" id="quiz-badge">PYTHON 3</span>
+              <span class="text-white-50 small" id="quiz-question-number">Question 1 of 1</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span class="xp-badge-pill"><i class="bi bi-lightning-fill text-warning"></i> +50 XP Reward</span>
+            </div>
+          </div>
+
+          <!-- Question Text -->
+          <div class="quiz-question-body mb-4">
+            <h5 class="fw-bold text-white mb-2" id="quiz-question-text">
+              What is the output of the following Python list comprehension?
+            </h5>
+            <div class="quiz-code-block p-3 rounded-3 font-monospace mb-3" id="quiz-code-box">
+              numbers = [1, 2, 3, 4]<br>
+              result = [x * 2 for x in numbers if x % 2 == 0]<br>
+              print(result)
+            </div>
+          </div>
+
+          <!-- 4 Interactive Option Buttons -->
+          <div class="row g-2 mb-3" id="quiz-options-container">
+            <div class="col-sm-6">
+              <button class="quiz-option-card w-100 text-start p-3 rounded-3" data-option="A">
+                <span class="opt-letter">A</span>
+                <span class="opt-text">[2, 4, 6, 8]</span>
+              </button>
+            </div>
+            <div class="col-sm-6">
+              <button class="quiz-option-card w-100 text-start p-3 rounded-3" data-option="B" data-correct="true">
+                <span class="opt-letter">B</span>
+                <span class="opt-text">[4, 8]</span>
+              </button>
+            </div>
+            <div class="col-sm-6">
+              <button class="quiz-option-card w-100 text-start p-3 rounded-3" data-option="C">
+                <span class="opt-letter">C</span>
+                <span class="opt-text">[2, 4]</span>
+              </button>
+            </div>
+            <div class="col-sm-6">
+              <button class="quiz-option-card w-100 text-start p-3 rounded-3" data-option="D">
+                <span class="opt-letter">D</span>
+                <span class="opt-text">[1, 2, 3, 4]</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Interactive Feedback Box (Initially Hidden) -->
+          <div class="quiz-feedback-box p-3 rounded-3 d-none mb-3" id="quiz-feedback-box">
+            <div class="d-flex align-items-start gap-2">
+              <span class="feedback-icon fs-4" id="quiz-feedback-icon">🎉</span>
+              <div>
+                <strong class="d-block" id="quiz-feedback-title">Correct! +50 XP Earned!</strong>
+                <p class="small mb-0 text-white-50" id="quiz-feedback-desc">
+                  The conditional <code>if x % 2 == 0</code> filters for even numbers (2 and 4), and <code>x * 2</code> doubles them, producing <code>[4, 8]</code>.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reset / Try Another Question Button -->
+          <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-25">
+            <small class="text-white-50">
+              <i class="bi bi-shield-check text-mint me-1"></i> Part of the free <em>Python for Everyone</em> syllabus
+            </small>
+            <button class="btn btn-sm btn-outline-light rounded-pill px-3" id="quiz-reset-btn">
+              <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Question
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- INTERACTIVE UNIVERSAL ACCESSIBILITY & DEMOGRAPHICS SANDBOX -->
+<section class="py-5 bg-natural-canvas">
+  <div class="container py-4 text-center">
+    <span class="badge-academic-pill mb-2">INCLUSION BENCHMARK & DEMOGRAPHICS</span>
+    <h2 class="section-title-editorial mb-3">Engineered for Every Demographic</h2>
+    <p class="section-subtitle-editorial mx-auto mb-5" style="max-width: 760px;">
+      Live School actively removes economic, physical, and infrastructural boundaries. Test our interactive accessibility tools below to see how our architecture adapts to each learner.
+    </p>
+
+    <!-- 4 Interactive Demo Stations Grid -->
+    <div class="row g-4 text-start">
+      
+      <!-- Station 1: Rural 2G Bandwidth Simulator -->
+      <div class="col-lg-6">
+        <div class="interactive-sandbox-card p-4 rounded-4 bg-white shadow-sm h-100">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="d-flex align-items-center gap-2">
+              <div class="sandbox-icon-circle bg-amber-soft text-amber"><i class="bi bi-reception-2"></i></div>
+              <div>
+                <h5 class="fw-bold mb-0">🌾 Rural 2G Bandwidth Simulator</h5>
+                <small class="text-muted">Simulate low-connectivity rural classrooms</small>
+              </div>
+            </div>
+            <span class="badge bg-secondary bg-opacity-10 text-dark font-monospace" id="bandwidth-saved-badge">96.4% Saved</span>
+          </div>
+
+          <p class="text-secondary small mb-3">
+            Students in remote villages often face 2G/3G connectivity. LiveSchool dynamically strips heavy client assets and converts streams into audio-first and lightweight Markdown notes.
+          </p>
+
+          <!-- Bandwidth Toggle Controls -->
+          <div class="btn-group w-100 mb-3" role="group" aria-label="Network Speed Simulator">
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-net-fiber">
+              <i class="bi bi-lightning-charge-fill text-warning me-1"></i> 5G / Fiber Speed
+            </button>
+            <button type="button" class="btn btn-sm btn-mint-action active" id="btn-net-rural">
+              <i class="bi bi-speedometer2 me-1"></i> Rural 2G / Edge Mode
+            </button>
+          </div>
+
+          <!-- Dynamic Network Metrics Comparison Table -->
+          <div class="p-3 bg-light rounded-3 font-monospace small" id="bandwidth-stats-box">
+            <div class="d-flex justify-content-between py-1 border-bottom">
+              <span class="text-muted">Payload Size:</span>
+              <strong class="text-mint-dark" id="net-payload-val">18.4 KB (Text-First)</strong>
+            </div>
+            <div class="d-flex justify-content-between py-1 border-bottom">
+              <span class="text-muted">Load Time on 2G:</span>
+              <strong class="text-mint-dark" id="net-load-val">0.38 seconds</strong>
+            </div>
+            <div class="d-flex justify-content-between py-1">
+              <span class="text-muted">Data Plan Consumption:</span>
+              <strong class="text-mint-dark" id="net-cost-val">0.02 MB / hour (Essentially Free)</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Station 2: Web Speech Audio Narration (Diff-Abled & Screen Readers) -->
+      <div class="col-lg-6">
+        <div class="interactive-sandbox-card p-4 rounded-4 bg-white shadow-sm h-100">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="d-flex align-items-center gap-2">
+              <div class="sandbox-icon-circle bg-emerald-soft text-emerald"><i class="bi bi-volume-up-fill"></i></div>
+              <div>
+                <h5 class="fw-bold mb-0">🎧 Speech Synthesis Narrator</h5>
+                <small class="text-muted">Audio reading for visually impaired & auditory learners</small>
+              </div>
+            </div>
+            <span class="badge bg-success bg-opacity-10 text-success">Web Speech API</span>
+          </div>
+
+          <p class="text-secondary small mb-3">
+            Every lecture note and practice question can be read aloud in natural spoken audio. Test the native text-to-speech reader right now:
+          </p>
+
+          <!-- Audio Player Controls -->
+          <div class="audio-narration-player p-3 bg-light rounded-3 mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="small fw-semibold text-dark" id="narration-status">
+                <i class="bi bi-headphones me-1 text-mint-dark"></i> Ready to narrate sample lesson
+              </span>
+              <div class="d-flex gap-1">
+                <button class="btn btn-xs btn-outline-secondary" id="btn-speed-1x">1.0x</button>
+                <button class="btn btn-xs btn-outline-secondary" id="btn-speed-125x">1.25x</button>
+              </div>
+            </div>
+            <p class="small text-muted italic mb-2" id="sample-narration-text" style="font-style: italic;">
+              "Welcome to Live School. Knowledge is a universal human right, accessible without tuition, credentials, or barriers to every learner worldwide."
+            </p>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-mint-action px-3" id="btn-play-narration">
+                <i class="bi bi-play-circle-fill me-1"></i> Listen Aloud
+              </button>
+              <button class="btn btn-sm btn-outline-danger px-3 d-none" id="btn-stop-narration">
+                <i class="bi bi-stop-circle-fill me-1"></i> Stop Audio
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Station 3: Neurodiversity & Dyslexia Focus Ruler -->
+      <div class="col-lg-6">
+        <div class="interactive-sandbox-card p-4 rounded-4 bg-white shadow-sm h-100">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <div class="sandbox-icon-circle bg-purple-soft text-purple"><i class="bi bi-fonts"></i></div>
+            <div>
+              <h5 class="fw-bold mb-0">♿ Neurodiversity & Reading Tools</h5>
+              <small class="text-muted">Assisting ADHD, dyslexia & visual tracking</small>
+            </div>
+          </div>
+
+          <p class="text-secondary small mb-3">
+            LiveSchool features native toggles for a reading focus mask and open-dyslexic font kerning, helping students maintain visual line concentration.
+          </p>
+
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <button class="btn btn-sm btn-outline-secondary rounded-pill" id="demo-toggle-dyslexia">
+              <i class="bi bi-fonts me-1"></i> Toggle Dyslexia Font
+            </button>
+            <button class="btn btn-sm btn-outline-secondary rounded-pill" id="demo-toggle-ruler">
+              <i class="bi bi-distribute-vertical me-1"></i> Toggle Reading Focus Ruler
+            </button>
+            <button class="btn btn-sm btn-outline-secondary rounded-pill" id="demo-toggle-contrast">
+              <i class="bi bi-circle-half me-1"></i> Toggle High Contrast Mode
+            </button>
+          </div>
+
+          <div class="p-3 bg-light rounded-3 small text-muted">
+            <i class="bi bi-info-circle me-1 text-primary"></i> These tools can be toggled at any moment from the top utility bar on every single page across the platform.
+          </div>
+        </div>
+      </div>
+
+      <!-- Station 4: Real-time Cryptographic Certificate Generator -->
+      <div class="col-lg-6">
+        <div class="interactive-sandbox-card p-4 rounded-4 bg-white shadow-sm h-100">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <div class="sandbox-icon-circle bg-sky-soft text-sky"><i class="bi bi-patch-check-fill"></i></div>
+            <div>
+              <h5 class="fw-bold mb-0">📜 Tamper-Evident Certificate Preview</h5>
+              <small class="text-muted">Type your name to preview your verified credential</small>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="cert-demo-name-input" class="form-label small text-muted mb-1">Your Full Name:</label>
+            <input type="text" id="cert-demo-name-input" class="form-control form-control-sm rounded-pill" value="Ravi Ranjan" placeholder="Enter student name...">
+          </div>
+
+          <!-- Certificate Live Mini Canvas / Card -->
+          <div class="cert-mini-preview p-3 rounded-3 text-center position-relative">
+            <div class="cert-mini-border p-2 rounded-2">
+              <div class="cert-mini-seal mb-1">
+                <i class="bi bi-award-fill text-warning fs-3"></i>
+              </div>
+              <div class="cert-mini-title small text-uppercase tracking-wider fw-bold">Live School Verified Credential</div>
+              <div class="cert-mini-recipient my-1 fw-bold fs-6" id="cert-preview-name">Ravi Ranjan</div>
+              <div class="cert-mini-course small text-muted">Python for Everyone: From Zero to Hero</div>
+              <div class="cert-mini-hash font-monospace mt-2 text-muted" id="cert-preview-hash" style="font-size: 0.65rem;">
+                VERIFICATION ID: LS-2026-9E4B-883F &bull; SHA-256 VERIFIED
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- LIVE CLASSROOM SPOTLIGHT -->
+<section class="py-5 bg-white border-top">
+  <div class="container py-4">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <span class="badge-academic-danger mb-2"><i class="bi bi-broadcast me-1"></i> SYNCHRONOUS REAL-TIME TEACHING</span>
+        <h2 class="section-title-editorial mb-3">
+          Interactive Live Classrooms <br>
+          <span class="hero-serif-accent text-danger">with Real Teachers</span>
+        </h2>
+        <p class="text-secondary lead fs-6 mb-4" style="line-height: 1.8;">
+          Unlike passive, pre-recorded video sites, <strong>Live School</strong> conducts live, interactive classes where students directly speak with instructors, view digital blackboard derivations, and submit doubts live on screen.
+        </p>
+
+        <div class="d-flex flex-column gap-3 mb-4">
+          <div class="d-flex align-items-start gap-3">
+            <div class="feature-bullet-icon"><i class="bi bi-camera-video-fill"></i></div>
+            <div>
+              <strong class="text-dark d-block">Zero Software Downloads</strong>
+              <small class="text-muted">Runs directly inside any browser powered by open WebRTC peer-to-peer technology.</small>
+            </div>
+          </div>
+          <div class="d-flex align-items-start gap-3">
+            <div class="feature-bullet-icon"><i class="bi bi-chat-left-quote-fill"></i></div>
+            <div>
+              <strong class="text-dark d-block">Live Doubt Submission Board</strong>
+              <small class="text-muted">Submit questions during the live stream. Instructors solve them on the digital blackboard.</small>
+            </div>
+          </div>
+          <div class="d-flex align-items-start gap-3">
+            <div class="feature-bullet-icon"><i class="bi bi-archive-fill"></i></div>
+            <div>
+              <strong class="text-dark d-block">Archived for Low-Bandwidth Learners</strong>
+              <small class="text-muted">Every session is recorded and transcribed so students with power or network outages never miss a lesson.</small>
+            </div>
+          </div>
+        </div>
+
+        <a href="{% url 'live_classes:live_class_list' %}" class="btn-editorial-primary px-4 py-2">
+          <span class="live-pulse-dot me-2"></span> View Full Live Class Schedule
+        </a>
+      </div>
+
+      <div class="col-lg-6">
+        <!-- Live Class Interactive Showcase Card -->
+        <div class="live-showcase-card shadow-2xl p-3 rounded-4 bg-forest-card text-white">
+          <div class="d-flex justify-content-between align-items-center mb-2 px-2">
+            <span class="live-pill-tag"><i class="bi bi-broadcast"></i> LIVE NOW</span>
+            <small class="text-mint-light"><i class="bi bi-people-fill me-1"></i> 248 Students in Room</small>
+          </div>
+          <div class="live-screen-mockup rounded-3 overflow-hidden position-relative">
+            <div class="live-screen-chalk-preview p-4 d-flex flex-column justify-content-between" style="min-height: 240px; background: #0f241c;">
+              <div class="d-flex justify-content-between">
+                <span class="badge bg-dark text-mint small font-monospace">ROOM #LS-3829</span>
+                <span class="badge bg-danger text-white small">WebRTC ACTIVE</span>
+              </div>
+              <div class="my-3 text-center">
+                <h4 class="text-white fw-bold mb-1">Gradient Descent from Scratch</h4>
+                <div class="text-mint font-monospace small">\( \theta_{j} := \theta_{j} - \alpha \frac{\partial}{\partial \theta_{j}} J(\theta) \)</div>
+              </div>
+              <div class="d-flex justify-content-between align-items-center text-white-50 small">
+                <span><i class="bi bi-person-fill text-mint"></i> Dr. Ananya Sharma</span>
+                <span>Calculus & Neural Networks</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-3 bg-forest-mid rounded-3 mt-3 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-2">
+              <div class="instructor-mini-avatar"><i class="bi bi-person-fill"></i></div>
+              <div>
+                <div class="small fw-bold text-white">Dr. Ananya Sharma</div>
+                <div class="text-mint-light" style="font-size: 0.7rem;">Lead Volunteer Educator &bull; Ph.D.</div>
+              </div>
+            </div>
+            <a href="{% url 'live_classes:live_class_list' %}" class="btn btn-sm btn-mint-action px-3">
+              Enter Room &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CALL TO ACTION BANNER (Inspiring, Non-Generic) -->
+<section class="py-5 bg-forest-hero text-white text-center position-relative overflow-hidden">
+  <div class="hero-ledger-grid" aria-hidden="true"></div>
+  <div class="container py-4 position-relative z-2" style="max-width: 800px;">
+    <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-white bg-opacity-10 text-mint mb-3 small fw-bold">
+      <i class="bi bi-award-fill"></i> 100% Free Public Academic Platform
+    </div>
+    <h2 class="display-6 fw-extrabold mb-3">Join the Free Education Movement</h2>
+    <p class="text-white-50 lead fs-6 mb-4">
+      Unlock unlimited world-class learning without spending a single rupee or dollar. Join ambitious students, self-learners, and volunteer professors worldwide.
+    </p>
+    <div class="d-flex flex-wrap justify-content-center gap-3">
+      <a href="{% url 'accounts:register' %}" class="btn-hero-primary px-4 py-3">
+        <span>Create Free Account in 10 Seconds</span>
+        <i class="bi bi-arrow-right ms-2"></i>
+      </a>
+      <a href="{% url 'courses:course_list' %}" class="btn-hero-secondary px-4 py-3">
+        <span>Browse All 100+ Courses</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- MODAL: QUICK SYLLABUS PEEK -->
+<div class="modal fade" id="syllabusPeekModal" tabindex="-1" aria-labelledby="syllabusPeekModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-2xl rounded-4">
+      <div class="modal-header bg-forest-card text-white border-0 py-3">
+        <div>
+          <span class="badge bg-mint text-dark small mb-1">COURSE CURRICULUM</span>
+          <h5 class="modal-title fw-bold mb-0" id="syllabusModalTitle">Course Title</h5>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <p class="text-muted small mb-3" id="syllabusModalDesc"></p>
+        <div class="d-flex justify-content-between p-3 bg-light rounded-3 mb-3 small">
+          <div><i class="bi bi-clock me-1 text-mint-dark"></i> Duration: <strong id="syllabusModalHours">--</strong> hrs</div>
+          <div><i class="bi bi-play-circle me-1 text-mint-dark"></i> Lessons: <strong id="syllabusModalLessons">--</strong> units</div>
+          <div><i class="bi bi-patch-check me-1 text-warning"></i> Certificate: <strong>Free</strong></div>
+        </div>
+        <div class="d-grid">
+          <a href="#" class="btn btn-mint-action rounded-pill py-2" id="syllabusModalEnrollBtn">
+            Enroll Free &bull; View Full Syllabus &rarr;
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

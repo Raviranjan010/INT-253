@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz: {{ quiz.title }} - Live School{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 850px;">
+  <!-- Quiz Card Header -->
+  <div class="card p-4 border custom-card mb-4 bg-body-tertiary">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+      <div>
+        <span class="badge bg-primary mb-1">{{ quiz.course.title }}</span>
+        <h2 class="fw-bold mb-1">{{ quiz.title }}</h2>
+        <p class="text-muted small mb-0">{{ quiz.description|default:'Test your understanding and reinforce your knowledge.' }}</p>
+      </div>
+      <div class="d-flex gap-2 text-center">
+        <div class="p-2 px-3 bg-body rounded-3 border">
+          <div class="fw-bold text-primary">{{ quiz.total_questions }}</div>
+          <small class="text-muted">Questions</small>
+        </div>
+        <div class="p-2 px-3 bg-body rounded-3 border">
+          <div class="fw-bold text-success">{{ quiz.pass_percentage }}%</div>
+          <small class="text-muted">Passing</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="d-flex flex-column gap-4 mb-4">
+      {% for question in questions %}
+        <div class="card p-4 border custom-card">
+          <div class="d-flex align-items-start gap-3 mb-3">
+            <span class="badge bg-primary rounded-circle p-2 px-3 fw-bold fs-6">{{ forloop.counter }}</span>
+            <h5 class="fw-bold mb-0 pt-1" style="line-height: 1.4;">{{ question.text }}</h5>
+          </div>
+
+          <div class="d-flex flex-column gap-2 ms-md-4">
+            {% for choice in question.choices.all %}
+              <div class="form-check p-3 rounded-2 border bg-body-tertiary">
+                <input class="form-check-input ms-0 me-3" type="radio" name="question_{{ question.id }}" id="choice_{{ choice.id }}" value="{{ choice.id }}" required>
+                <label class="form-check-label fw-medium w-100 cursor-pointer" for="choice_{{ choice.id }}">
+                  {{ choice.text }}
+                </label>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="card p-3 border custom-card bg-body-tertiary text-center">
+      <button type="submit" class="btn btn-primary btn-lg px-5 fw-bold shadow-sm">
+        <i class="bi bi-send-check me-2"></i> Submit Assessment & View Results
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+

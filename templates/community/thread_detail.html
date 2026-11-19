@@ -72,21 +72,27 @@
         </div>
 
         <div class="d-flex justify-content-between align-items-center pt-2 border-top small">
-          <!-- Upvote Button -->
+          <!-- Upvote Button (POST-only with CSRF) -->
           {% if user.is_authenticated %}
-            <a href="{% url 'community:upvote_reply' reply.id %}" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1">
-              <i class="bi bi-hand-thumbs-up-fill"></i>
-              <span>Helpful ({{ reply.upvote_count }})</span>
-            </a>
+            <form method="post" action="{% url 'community:upvote_reply' reply.id %}" class="d-inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1">
+                <i class="bi bi-hand-thumbs-up-fill"></i>
+                <span>Helpful ({{ reply.upvote_count }})</span>
+              </button>
+            </form>
           {% else %}
             <span class="text-muted"><i class="bi bi-hand-thumbs-up me-1"></i>{{ reply.upvote_count }} Helpful</span>
           {% endif %}
 
-          <!-- Author solution marking -->
+          <!-- Author solution marking (POST-only with CSRF) -->
           {% if user == thread.author or user.is_staff %}
-            <a href="{% url 'community:toggle_solution' reply.id %}" class="btn btn-sm {% if reply.is_solution %}btn-outline-danger{% else %}btn-outline-success{% endif %}">
-              {% if reply.is_solution %}Unmark Solution{% else %}✓ Mark as Accepted Solution{% endif %}
-            </a>
+            <form method="post" action="{% url 'community:toggle_solution' reply.id %}" class="d-inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm {% if reply.is_solution %}btn-outline-danger{% else %}btn-outline-success{% endif %}">
+                {% if reply.is_solution %}Unmark Solution{% else %}✓ Mark as Accepted Solution{% endif %}
+              </button>
+            </form>
           {% endif %}
         </div>
       </div>

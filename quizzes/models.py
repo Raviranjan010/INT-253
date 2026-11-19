@@ -41,6 +41,18 @@ class Choice(models.Model):
     text = models.CharField(max_length=300)
     is_correct = models.BooleanField(default=False)
 
+    def clean(self):
+        super().clean()
+        if self.is_correct and self.question_id:
+            existing = Choice.objects.filter(question_id=self.question_id, is_correct=True).exclude(pk=self.pk)
+            if existing.exists():
+                from django.core.exceptions import ValidationError
+                raise ValidationError("A question can have only one correct choice.")
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.text} ({'Correct' if self.is_correct else 'Wrong'})"
 

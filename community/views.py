@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import HttpResponseNotAllowed
 from django.db.models import Q
 from .models import DiscussionThread, DiscussionReply
 from .forms import ThreadForm, ReplyForm
@@ -44,14 +45,18 @@ def thread_detail(request, thread_id):
     replies = thread.replies.all()
     form = ReplyForm()
 
-    if request.method == 'POST' and request.user.is_authenticated:
+    if request.method == 'POST':
+        if not request.user.is_authenticated:
+            messages.error(request, "You must be signed in to post a reply.")
+            return redirect('accounts:login')
+
         form = ReplyForm(request.POST)
         if form.is_valid():
             reply = form.save(commit=False)
             reply.thread = thread
             reply.author = request.user
             reply.save()
-            request.user.add_xp(15)
+            request.user.award_xp('reply_created', reply.id, 15)
             messages.success(request, "Your reply has been posted! +15 XP")
             return redirect('community:thread_detail', thread_id=thread.id)
 
@@ -71,7 +76,7 @@ def create_thread(request):
             thread = form.save(commit=False)
             thread.author = request.user
             thread.save()
-            request.user.add_xp(25)
+            request.user.award_xp('thread_created', thread.id, 25)
             messages.success(request, "Your question has been posted to the global community! +25 XP")
             return redirect('community:thread_detail', thread_id=thread.id)
     else:
@@ -82,17 +87,28 @@ def create_thread(request):
 
 @login_required
 def upvote_reply(request, reply_id):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
+
     reply = get_object_or_404(DiscussionReply, id=reply_id)
     if request.user in reply.upvotes.all():
         reply.upvotes.remove(request.user)
+        messages.info(request, "Upvote removed.")
     else:
         reply.upvotes.add(request.user)
-        reply.author.add_xp(5)
+        # Prevent self-upvoting XP and prevent repeated farming
+        if reply.author != request.user:
+            reply.author.award_xp('reply_upvoted', f"{reply.id}_{request.user.id}", 5)
+        messages.success(request, "Upvoted!")
+
     return redirect('community:thread_detail', thread_id=reply.thread.id)
 
 
 @login_required
 def toggle_solution(request, reply_id):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
+
     reply = get_object_or_404(DiscussionReply, id=reply_id)
     thread = reply.thread
     if request.user != thread.author and not request.user.is_staff:
@@ -108,7 +124,8 @@ def toggle_solution(request, reply_id):
     thread.save(update_fields=['is_resolved'])
 
     if reply.is_solution:
-        reply.author.add_xp(40)
+        # Prevent repeated solution toggle XP farming
+        reply.author.award_xp('solution_accepted', thread.id, 40)
         messages.success(request, "Marked as accepted answer! 40 XP awarded to the helper.")
     else:
         messages.info(request, "Solution unmarked.")

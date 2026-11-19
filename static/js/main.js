@@ -877,16 +877,8 @@ f'(2) = 6(2) + 5 = ?`,
     certNameInput.addEventListener('input', function () {
       const val = this.value.trim() || 'Your Name';
       certPreviewName.textContent = val;
-      
-      // Compute a deterministic pseudo-hash for realism
-      let hash = 0;
-      for (let i = 0; i < val.length; i++) {
-        hash = (hash << 5) - hash + val.charCodeAt(i);
-        hash |= 0;
-      }
-      const hex = Math.abs(hash).toString(16).toUpperCase().padStart(8, '0');
       if (certPreviewHash) {
-        certPreviewHash.textContent = `VERIFICATION ID: LS-2026-${hex} • SHA-256 VERIFIED`;
+        certPreviewHash.textContent = 'SAMPLE DEMO PREVIEW • Authentic certificates are cryptographically signed with HMAC-SHA256 upon 100% course completion';
       }
     });
   }

@@ -7,8 +7,11 @@ def view_certificate(request, certificate_id):
         Certificate.objects.select_related('student', 'course', 'course__instructor'),
         certificate_id=certificate_id
     )
+    is_signature_valid = cert.verify_signature()
+
     context = {
         'certificate': cert,
+        'is_signature_valid': is_signature_valid,
     }
     return render(request, 'certificates/view_certificate.html', context)
 
@@ -18,18 +21,23 @@ def verify_certificate(request, certificate_id=None):
     cert = None
     searched = bool(cert_code)
     is_valid = False
+    is_signature_valid = False
 
     if cert_code:
         cert = Certificate.objects.filter(certificate_id__iexact=cert_code).select_related('student', 'course').first()
         if not cert:
             # Check by verification hash
             cert = Certificate.objects.filter(verification_code__iexact=cert_code).select_related('student', 'course').first()
-        is_valid = cert is not None
+        
+        if cert:
+            is_valid = True
+            is_signature_valid = cert.verify_signature()
 
     context = {
         'certificate': cert,
         'cert_code': cert_code,
         'searched': searched,
         'is_valid': is_valid,
+        'is_signature_valid': is_signature_valid,
     }
     return render(request, 'certificates/verify_certificate.html', context)

@@ -515,7 +515,7 @@ print(compress_for_rural_edge(500))`,
   // ========================================================================
   // 6. DYNAMIC CATEGORY FILTERING ON COURSES DOCK
   // ========================================================================
-  const catFilterPills = document.querySelectorAll('.cat-pill');
+  const catFilterPills = document.querySelectorAll('.dock-cat-btn, .cat-pill');
   const courseCards = document.querySelectorAll('.course-card-wrapper');
   const courseFilterInput = document.getElementById('course-live-filter-input');
   const visibleCountEl = document.getElementById('visible-course-count');

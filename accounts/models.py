@@ -59,6 +59,10 @@ class CustomUser(AbstractUser):
     def is_platform_admin(self):
         return self.role == 'admin' or self.is_superuser
 
+    @property
+    def xp(self):
+        return self.xp_points
+
     def award_xp(self, action, reference_id, amount):
         """
         Atomically and uniquely awards XP. Prevents repeated XP farming.
@@ -88,7 +92,8 @@ class CustomUser(AbstractUser):
     def update_streak(self):
         today = timezone.now().date()
         if self.last_active_date:
-            diff = (today - self.last_active_date).days
+            last_date = self.last_active_date.date() if hasattr(self.last_active_date, 'date') else self.last_active_date
+            diff = (today - last_date).days
             if diff == 1:
                 self.streak_count += 1
             elif diff > 1:

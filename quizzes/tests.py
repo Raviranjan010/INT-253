@@ -103,6 +103,7 @@ class QuizSecurityAndValidationTests(TestCase):
         """Passing the quiz awards 50 XP, and repeated pass does not farm XP."""
         Enrollment.objects.create(student=self.student, course=self.course)
         self.client.login(username='quiz_student', password='Password123!')
+        initial_xp = self.student.xp
 
         # Initial GET to initialize session start timestamp
         self.client.get(reverse('quizzes:take_quiz', kwargs={'quiz_id': self.quiz.id}))
@@ -114,7 +115,7 @@ class QuizSecurityAndValidationTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
         self.student.refresh_from_db()
-        self.assertEqual(self.student.xp, 50)
+        self.assertEqual(self.student.xp, initial_xp + 50)
         self.assertEqual(QuizAttempt.objects.filter(student=self.student, passed=True).count(), 1)
 
         # Second attempt (allowed because max_attempts=2)
@@ -124,7 +125,7 @@ class QuizSecurityAndValidationTests(TestCase):
 
         # XP should NOT increase again
         self.student.refresh_from_db()
-        self.assertEqual(self.student.xp, 50)
+        self.assertEqual(self.student.xp, initial_xp + 50)
 
     def test_quiz_time_limit_enforced(self):
         """Submitting past the allowed time limit rejects the attempt."""

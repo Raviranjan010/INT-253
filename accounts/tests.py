@@ -27,9 +27,11 @@ class AccountsSecurityAndAuthTests(TestCase):
             'email': 'newstudent@example.com',
             'first_name': 'New',
             'last_name': 'Student',
-            'password': 'ComplexPassword123!',
+            'password1': 'ComplexPassword123!',
+            'password2': 'ComplexPassword123!',
             'demographic_group': 'rural',
             'country': 'India',
+            'preferred_language': 'English',
         })
         self.assertEqual(res.status_code, 302)
         new_user = CustomUser.objects.get(username='newstudent')
@@ -45,9 +47,9 @@ class AccountsSecurityAndAuthTests(TestCase):
             'email': 'newteacher@example.com',
             'first_name': 'New',
             'last_name': 'Teacher',
-            'password': 'ComplexPassword123!',
+            'password1': 'ComplexPassword123!',
+            'password2': 'ComplexPassword123!',
             'bio': 'Passionate mathematics educator',
-            'demographic_group': 'general',
             'country': 'India',
         })
         self.assertEqual(res.status_code, 302)

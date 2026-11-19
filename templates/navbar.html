@@ -58,7 +58,7 @@
         </div>
         <div class="d-flex flex-column">
           <span class="brand-title">Live<span class="brand-title-accent">School</span></span>
-          <span class="brand-subtitle">World-Class Free Education</span>
+          <span class="brand-subtitle">Free Education for Everyone</span>
         </div>
       </a>
 
@@ -71,7 +71,7 @@
         <!-- Navigation Links -->
         <ul class="navbar-nav mx-auto mb-2 mb-lg-0 align-items-lg-center gap-1 gap-lg-3">
           <li class="nav-item">
-            <a class="nav-link nav-link-custom active" href="{% url 'core:home' %}">Home</a>
+            <a class="nav-link nav-link-custom" href="{% url 'core:home' %}">Home</a>
           </li>
           <li class="nav-item">
             <a class="nav-link nav-link-custom" href="{% url 'courses:course_list' %}">Courses</a>
@@ -88,9 +88,6 @@
             <a class="nav-link nav-link-custom" href="{% url 'community:forum_list' %}">Resources</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link nav-link-custom" href="{% url 'core:demographics_impact' %}">Demographics</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link nav-link-custom" href="{% url 'core:about' %}">About</a>
           </li>
         </ul>
@@ -105,15 +102,16 @@
             </div>
           </form>
 
-          <!-- Interactive XP Score Badge (Dynamic for demo & authenticated) -->
-          <div class="d-none d-xl-flex align-items-center gap-1">
-            <span id="nav-xp-counter" class="xp-pill-glass" title="Learning Experience Points">
-              <i class="bi bi-lightning-fill text-warning"></i> <span id="nav-xp-value">{% if user.is_authenticated %}{{ user.xp_points }}{% else %}150{% endif %}</span> XP
-            </span>
-            <span class="streak-pill-glass" title="Daily Learning Streak">
-              <i class="bi bi-fire text-danger"></i> {% if user.is_authenticated %}{{ user.streak_count }}{% else %}3{% endif %}d
-            </span>
-          </div>
+          {% if user.is_authenticated %}
+            <!-- Real User Gamification Badges -->
+            <div class="d-none d-xl-flex align-items-center gap-1">
+              <span id="nav-xp-counter" class="xp-pill-glass" title="Learning Experience Points">
+                <i class="bi bi-lightning-fill text-warning"></i> <span id="nav-xp-value">{{ user.xp_points }}</span> XP
+              </span>
+              <span class="streak-pill-glass" title="Daily Learning Streak">
+                <i class="bi bi-fire text-danger"></i> {{ user.streak_count }}d
+              </span>
+            </div>
 
           {% if user.is_authenticated %}
             <!-- User Profile Dropdown -->

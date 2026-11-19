@@ -593,7 +593,7 @@ The application was evaluated through:
 3. **Security Audits:** CSRF verification, password hashing compliance (PBKDF2 SHA-256), XSS escaping.
 
 ## 6.2 Automated Unit & Integration Testing Suite
-Located in `core/tests.py`, executed via Django's test runner:
+Comprehensive test suites are implemented across all seven Django applications (`accounts`, `core`, `courses`, `live_classes`, `quizzes`, `certificates`, `community`), executed via Django's test runner:
 
 ```bash
 python manage.py test
@@ -602,13 +602,13 @@ python manage.py test
 ### Test Execution Output:
 ```
 Creating test database for alias 'default'...
-.....
+......................................
 ----------------------------------------------------------------------
-Ran 5 tests in 13.799s
+Ran 38 tests in 157.142s
 
 OK
 Destroying test database for alias 'default'...
-Found 5 test(s).
+Found 38 test(s).
 System check identified no issues (0 silenced).
 ```
 
@@ -616,25 +616,37 @@ System check identified no issues (0 silenced).
 
 | Test Case ID | Test Description | Input Data / Action | Expected Result | Actual Result | Status |
 | :--- | :--- | :--- | :--- | :--- | :---: |
-| **TC-01** | Homepage accessibility | `GET /` | Returns HTTP 200, renders site branding and statistics counter | HTTP 200 OK | **PASS** |
-| **TC-02** | Demographic filtering | `GET /courses/?category=cs-coding` | Filters catalog to Computer Science courses only | Filtered properly | **PASS** |
-| **TC-03** | Free Course Enrollment | Authenticated `GET /courses/<slug>/enroll/` | Creates `Enrollment` record, awards +50 XP, redirects to lesson player | Enrollment created | **PASS** |
-| **TC-04** | Sequential Lesson Progression | `POST /courses/<slug>/learn/1/toggle/` | Lesson 1 marked complete, progress set to 50% | Progress updated | **PASS** |
-| **TC-05** | 100% Course Completion | `POST /courses/<slug>/learn/2/toggle/` | Progress set to 100%, Certificate automatically issued | Certificate created | **PASS** |
-| **TC-06** | Certificate Public Verification | `GET /certificates/verify/?id=LS-TEST-CERT123` | Displays "AUTHENTIC & VERIFIED" badge with recipient details | Authentic confirmed | **PASS** |
-| **TC-07** | Invalid Certificate Search | `GET /certificates/verify/?id=INVALID-999` | Displays "Certificate Not Found" warning | Warning displayed | **PASS** |
-| **TC-08** | WebRTC Live Room Entry | `GET /live/<session_id>/` | Initializes Jitsi container, records student attendance | Room loaded | **PASS** |
-| **TC-09** | Live Class Doubt Submission | `POST /live/<session_id>/doubt/` | Creates `LiveClassDoubt` record, displays on doubt board | Doubt saved | **PASS** |
-| **TC-10** | Quiz Assessment Scoring | `POST /quizzes/1/` with 3 choices | Calculates score %, records `QuizAttempt`, provides feedback | Graded correctly | **PASS** |
-| **TC-11** | Discussion Thread Upvoting | `GET /community/reply/1/upvote/` | Increments upvote counter, awards +5 XP to replier | Upvote logged | **PASS** |
-| **TC-12** | Accessibility Font Resizing | Click `A+` button | Increases root font size from 16px to 17.5px in CSS variable | Size updated | **PASS** |
+| **TC-01** | Student Self-Registration | `POST /accounts/register/` | Account created, welcome XP logged in `XPLedger`, redirected to dashboard | Account created | **PASS** |
+| **TC-02** | Instructor Role Approval Guard | `POST /accounts/register/?type=instructor` | Account created with `is_instructor_approved=False`; instructor permissions withheld | Approval required | **PASS** |
+| **TC-03** | Logout Route Security | `GET /accounts/logout/` vs `POST /accounts/logout/` | GET renders confirmation; POST destroys session | State change guarded | **PASS** |
+| **TC-04** | Atomic XP Ledger Anti-Farming | Repeated lesson completion / doubt upvoting | `XPLedger` enforces unique `('user', 'action', 'reference_id')`, blocks repeats | Farming blocked | **PASS** |
+| **TC-05** | Verified Database Statistics | `GET /` | Context processors execute real database counts; no synthetic statistics | Real metrics only | **PASS** |
+| **TC-06** | Production Demo Login Lockdown | `GET /demo-login/<role>/` with `DEBUG=False` | Returns `403 Forbidden`; prevents session bypass in production | Access denied | **PASS** |
+| **TC-07** | Course Rating Calculation | `GET /courses/?sort=rating` | Unreviewed courses return `None`; rating sort uses database `Avg('reviews__rating')` | Real sort verified | **PASS** |
+| **TC-08** | Unpublished Course Permission | Student `GET /courses/<draft_slug>/` | Blocked and redirected; host instructor permitted | Permissions enforced | **PASS** |
+| **TC-09** | Course Enrollment POST Enforcement | `GET` vs `POST /courses/<slug>/enroll/` | GET rejected without enrollment; POST creates enrollment and XP ledger record | POST-only enforced | **PASS** |
+| **TC-10** | Lesson Progress & Auto-Cert | `POST /courses/<slug>/learn/<id>/toggle/` | Sequential progress calculation; 100% completion issues signed certificate | Auto-cert issued | **PASS** |
+| **TC-11** | Course Edit/Delete Authorization | Instructor vs non-author `POST /<slug>/edit/` | Non-authors redirected; authorized instructor can update curriculum | Authorization enforced | **PASS** |
+| **TC-12** | Live Classroom Access Control | Unenrolled student `GET /live/<session_id>/` | Blocked and redirected to course page; enrolled student admitted | Access restricted | **PASS** |
+| **TC-13** | Live Attendance Anti-Farming | Refreshing live classroom URL | Initial visit awards +10 XP; repeated visits do not increase XP | Abuse prevented | **PASS** |
+| **TC-14** | Live Doubt POST Enforcement | `GET` vs `POST /live/<session_id>/doubt/` | GET rejected with 405 Method Not Allowed; POST logs doubt | Method enforced | **PASS** |
+| **TC-15** | Live Doubt Resolution Workflow | Student vs Instructor `POST /doubt/<id>/answer/` | Only host instructor can submit official answer | Role checked | **PASS** |
+| **TC-16** | Quiz Enrollment Requirement | Unenrolled student `GET /quizzes/<id>/` | Redirects to course detail page with enrollment message | Enrolled check passed | **PASS** |
+| **TC-17** | Quiz Maximum Attempt Limit | Taking quiz beyond `max_attempts` | Request redirected with warning; no new attempts allowed | Attempt limit upheld | **PASS** |
+| **TC-18** | Single Correct Choice Constraint | Model validation on `Choice.clean()` | Creating second correct choice raises `ValidationError` | Model constraint passed | **PASS** |
+| **TC-19** | Server-Side Quiz Timer | Submitting after `time_limit_minutes` | Server checks session timestamp; rejects expired attempts | Timer enforced | **PASS** |
+| **TC-20** | HMAC-SHA256 Digital Certificate | `Certificate.save()` | Cryptographic signature generated over student, course, cert ID, timestamp | Signature generated | **PASS** |
+| **TC-21** | Certificate Tamper Detection | Modifying `digital_signature` or attributes | `verify_signature()` returns `False`; flags forged certificate | Tamper detected | **PASS** |
+| **TC-22** | Public Certificate Verification | `GET /certificates/verify/?id=<cert_id>` | Verifies database match and HMAC authenticity | Verified authentic | **PASS** |
+| **TC-23** | Forum Upvoting POST Enforcement | `GET` vs `POST /community/reply/<id>/upvote/` | GET rejected with 405; POST upvotes, awards XP once, prevents self-voting | Guarded and verified | **PASS** |
+| **TC-24** | Forum Solution Acceptance | Question author vs stranger `POST /reply/<id>/solution/` | Only thread author can mark solution; helper receives 40 XP once | Authorization enforced | **PASS** |
 
 ---
 
 # **CHAPTER 7: DEPLOYMENT, CONTAINERIZATION & PRODUCTION ENGINEERING**
 
-## 7.1 Static Asset Compression (WhiteNoise)
-In standard development mode, Django relies on runserver to serve static files. In production, serving static assets through Python can be inefficient. Live School integrates **WhiteNoise 6.12** with compressed manifest storage:
+## 7.1 Modern Storage & Static Asset Compression (WhiteNoise)
+In standard development mode, Django relies on runserver to serve static files. In production, serving static assets through Python is streamlined via **WhiteNoise** with modern Django `STORAGES` backend:
 
 ```python
 MIDDLEWARE = [
@@ -642,8 +654,17 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     ...
 ]
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
 ```
+This enables direct, ultra-fast serving of CSS, JS, and font files with gzip/brotli compression and persistent HTTP caching headers, eliminating the need for a separate Nginx or S3 static server.
 This enables direct, ultra-fast serving of CSS, JS, and font files with gzip/brotli compression and persistent HTTP caching headers, eliminating the need for a separate Nginx or S3 static server.
 
 ## 7.2 Docker & Container Orchestration

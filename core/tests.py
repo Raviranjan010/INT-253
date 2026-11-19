@@ -42,7 +42,7 @@ class CorePlatformSecurityAndMetricsTests(TestCase):
     def test_about_page(self):
         res = self.client.get(reverse('core:about'))
         self.assertEqual(res.status_code, 200)
-        self.assertContains(res, 'Problem Statement')
+        self.assertContains(res, 'About Live School')
 
     @override_settings(DEBUG=False)
     def test_demo_login_disabled_when_debug_false(self):

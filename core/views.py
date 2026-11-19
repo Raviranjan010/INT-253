@@ -10,14 +10,21 @@ from .forms import ContactForm, NewsletterForm
 def home(request):
     featured_courses = Course.objects.filter(is_published=True).select_related('category', 'instructor')[:6]
     upcoming_live = LiveSession.objects.filter(status__in=['scheduled', 'live']).select_related('course', 'instructor')[:3]
-    categories = Category.objects.all()[:6]
+    categories = Category.objects.all()[:8]
     announcements = Announcement.objects.filter(is_active=True)[:2]
+    
+    from community.models import DiscussionThread
+    from certificates.models import Certificate
+    recent_threads = DiscussionThread.objects.select_related('author', 'course').prefetch_related('replies')[:3]
+    sample_cert = Certificate.objects.select_related('student', 'course').first()
 
     context = {
         'featured_courses': featured_courses,
         'upcoming_live': upcoming_live,
         'categories': categories,
         'announcements': announcements,
+        'recent_threads': recent_threads,
+        'sample_cert': sample_cert,
     }
     return render(request, 'core/home.html', context)
 

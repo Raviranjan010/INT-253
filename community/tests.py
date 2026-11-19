@@ -30,6 +30,7 @@ class CommunityForumTests(TestCase):
 
     def test_thread_creation_and_xp(self):
         """Creating a discussion thread awards 25 XP once."""
+        initial_xp = self.user1.xp
         self.client.login(username='author_alice', password='Password123!')
         response = self.client.post(reverse('community:create_thread'), {
             'title': 'Understanding Big-O Notation',
@@ -38,10 +39,11 @@ class CommunityForumTests(TestCase):
         })
         self.assertEqual(response.status_code, 302)
         self.user1.refresh_from_db()
-        self.assertEqual(self.user1.xp, 25)
+        self.assertEqual(self.user1.xp, initial_xp + 25)
 
     def test_reply_creation_and_xp(self):
         """Posting a reply awards 15 XP to the author."""
+        initial_xp = self.user2.xp
         self.client.login(username='helper_bob', password='Password123!')
         response = self.client.post(
             reverse('community:thread_detail', kwargs={'thread_id': self.thread.id}),
@@ -50,10 +52,11 @@ class CommunityForumTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.helper_bob_reply = DiscussionReply.objects.get(thread=self.thread, author=self.user2)
         self.user2.refresh_from_db()
-        self.assertEqual(self.user2.xp, 15)
+        self.assertEqual(self.user2.xp, initial_xp + 15)
 
     def test_upvote_post_enforced_and_no_xp_farming(self):
         """Upvoting must be POST-only, awards 5 XP to reply author, and cannot be farmed by toggling."""
+        initial_xp = self.user2.xp
         reply = DiscussionReply.objects.create(
             thread=self.thread,
             author=self.user2,
@@ -69,7 +72,7 @@ class CommunityForumTests(TestCase):
         self.assertEqual(post_resp.status_code, 302)
         self.assertTrue(reply.upvotes.filter(id=self.user1.id).exists())
         self.user2.refresh_from_db()
-        self.assertEqual(self.user2.xp, 5)
+        self.assertEqual(self.user2.xp, initial_xp + 5)
 
         # Remove upvote
         self.client.post(reverse('community:upvote_reply', kwargs={'reply_id': reply.id}))
@@ -78,10 +81,11 @@ class CommunityForumTests(TestCase):
         # Upvote again: XP should NOT increase again
         self.client.post(reverse('community:upvote_reply', kwargs={'reply_id': reply.id}))
         self.user2.refresh_from_db()
-        self.assertEqual(self.user2.xp, 5)
+        self.assertEqual(self.user2.xp, initial_xp + 5)
 
     def test_toggle_solution_permissions_and_xp(self):
         """Only thread author can mark solution, POST is enforced, and awards 40 XP once."""
+        initial_xp = self.user2.xp
         reply = DiscussionReply.objects.create(
             thread=self.thread,
             author=self.user2,
@@ -112,10 +116,10 @@ class CommunityForumTests(TestCase):
         self.assertTrue(self.thread.is_resolved)
 
         self.user2.refresh_from_db()
-        self.assertEqual(self.user2.xp, 40)
+        self.assertEqual(self.user2.xp, initial_xp + 40)
 
         # Author unmarks and remarks: XP should not be awarded again
         self.client.post(reverse('community:toggle_solution', kwargs={'reply_id': reply.id}))
         self.client.post(reverse('community:toggle_solution', kwargs={'reply_id': reply.id}))
         self.user2.refresh_from_db()
-        self.assertEqual(self.user2.xp, 40)
+        self.assertEqual(self.user2.xp, initial_xp + 40)

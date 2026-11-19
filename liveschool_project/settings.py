@@ -7,9 +7,10 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
-
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load local environment variables (overriding ambient OS build variables if present in .env)
+load_dotenv(BASE_DIR / '.env', override=True)
 
 # DEBUG Configuration (defaults to True in local development, override with DEBUG=False in production)
 DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 't', 'yes')
@@ -117,13 +118,13 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-# Modern Django STORAGES Configuration
+# Modern Django STORAGES Configuration with Whitenoise compression
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage" if not DEBUG else "django.contrib.staticfiles.storage.StaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 

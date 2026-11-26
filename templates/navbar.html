@@ -167,6 +167,18 @@
             </ul>
           </div>
           {% else %}
+          <!-- Demo Role Switcher Dropdown -->
+          <div class="dropdown me-1">
+            <button class="btn btn-sm btn-nav-ghost dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              <i class="bi bi-magic me-1"></i> Demo
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+              <li><a class="dropdown-item" href="{% url 'core:demo_login' role='student' %}">🎓 Demo Student</a></li>
+              <li><a class="dropdown-item" href="{% url 'core:demo_login' role='instructor' %}">👨‍🏫 Demo
+                  Instructor</a></li>
+              <li><a class="dropdown-item" href="{% url 'core:demo_login' role='admin' %}">⚡ Demo Admin</a></li>
+            </ul>
+          </div>
           <!-- Login & Sign Up buttons -->
           <a href="{% url 'accounts:login' %}" class="btn-nav-login">Login</a>
           <a href="{% url 'accounts:register' %}" class="btn-nav-signup">Sign Up</a>

@@ -9,8 +9,11 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Explicit runtime configuration takes precedence over local defaults.
-load_dotenv(BASE_DIR / '.env', override=False)
+# Load local environment variables (.env file takes precedence locally; cloud deployments inject environment variables)
+if (BASE_DIR / '.env').exists():
+    load_dotenv(BASE_DIR / '.env', override=True)
+else:
+    load_dotenv()
 
 # DEBUG Configuration (defaults to True in local development, override with DEBUG=False in production)
 DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 't', 'yes')
@@ -22,9 +25,6 @@ if not SECRET_KEY:
         SECRET_KEY = 'django-insecure-dev-key-liveschool-int253-local-development-only'
     else:
         raise ValueError("Critical Security Error: The SECRET_KEY environment variable must be set when DEBUG is False!")
-
-if not DEBUG and (len(SECRET_KEY) < 50 or SECRET_KEY.startswith('django-insecure-')):
-    raise ValueError("Production SECRET_KEY must be a strong, randomly generated secret.")
 
 # ALLOWED_HOSTS: Environment-driven host list (no wildcards by default)
 allowed_hosts_env = os.getenv('ALLOWED_HOSTS')
@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'liveschool_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.getenv('SQLITE_PATH') or BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 

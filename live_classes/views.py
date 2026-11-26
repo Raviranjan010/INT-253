@@ -72,7 +72,7 @@ def schedule_live_class(request):
         return redirect('live_classes:live_class_list')
 
     if request.method == 'POST':
-        form = LiveSessionScheduleForm(request.POST)
+        form = LiveSessionScheduleForm(request.POST, user=request.user)
         if form.is_valid():
             live_session = form.save(commit=False)
             live_session.instructor = request.user
@@ -80,7 +80,7 @@ def schedule_live_class(request):
             messages.success(request, f"Live class '{live_session.title}' scheduled successfully!")
             return redirect('live_classes:live_class_list')
     else:
-        form = LiveSessionScheduleForm()
+        form = LiveSessionScheduleForm(user=request.user)
 
     return render(request, 'live_classes/schedule_live_class.html', {'form': form})
 
@@ -91,6 +91,15 @@ def post_doubt(request, session_id):
         return HttpResponseNotAllowed(['POST'])
 
     session = get_object_or_404(LiveSession, id=session_id)
+    is_host = request.user == session.instructor or request.user.is_staff
+    if session.course and not is_host and not Enrollment.objects.filter(
+        student=request.user, course=session.course
+    ).exists():
+        messages.error(request, "You must be enrolled in this course to post questions in its live class.")
+        return redirect('courses:course_detail', slug=session.course.slug)
+    if session.status == 'cancelled':
+        messages.error(request, "Questions cannot be posted to a cancelled live class.")
+        return redirect('live_classes:live_class_list')
     form = DoubtForm(request.POST)
     if form.is_valid():
         doubt = form.save(commit=False)

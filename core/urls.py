@@ -9,6 +9,6 @@ urlpatterns = [
     path('demographics-impact/', views.demographics_impact, name='demographics_impact'),
     path('contact/', views.contact, name='contact'),
     path('subscribe/', views.newsletter_subscribe, name='subscribe'),
-    path('demo-login/<str:role>/', views.demo_login, name='demo_login'),
+    path('health/', views.health_check, name='health_check'),
 ]
 

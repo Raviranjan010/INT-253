@@ -35,7 +35,10 @@ def take_quiz(request, quiz_id):
     if request.method == 'POST':
         # 4. Server-Side Time Limit Enforcement
         start_ts = request.session.pop(f'quiz_start_{quiz.id}', None)
-        if quiz.time_limit_minutes > 0 and start_ts:
+        if not start_ts:
+            messages.error(request, "Your quiz session expired or was not started. Please open the quiz and try again.")
+            return redirect('quizzes:take_quiz', quiz_id=quiz.id)
+        if quiz.time_limit_minutes > 0:
             elapsed_seconds = timezone.now().timestamp() - start_ts
             # Grace period of 60 seconds for slow network latency on submit
             allowed_seconds = (quiz.time_limit_minutes * 60) + 60

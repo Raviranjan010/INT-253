@@ -143,3 +143,13 @@ class QuizSecurityAndValidationTests(TestCase):
         response = self.client.post(reverse('quizzes:take_quiz', kwargs={'quiz_id': self.quiz.id}), post_data)
         self.assertRedirects(response, reverse('courses:course_detail', kwargs={'slug': self.course.slug}))
         self.assertEqual(QuizAttempt.objects.filter(student=self.student).count(), 0)
+
+    def test_quiz_direct_post_without_start_is_rejected(self):
+        Enrollment.objects.create(student=self.student, course=self.course)
+        self.client.login(username='quiz_student', password='Password123!')
+        response = self.client.post(
+            reverse('quizzes:take_quiz', kwargs={'quiz_id': self.quiz.id}),
+            {f'question_{self.question.id}': self.choice_correct.id},
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(QuizAttempt.objects.filter(student=self.student).count(), 0)

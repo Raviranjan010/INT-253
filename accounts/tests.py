@@ -69,6 +69,17 @@ class AccountsSecurityAndAuthTests(TestCase):
         self.student.refresh_from_db()
         self.assertGreaterEqual(self.student.streak_count, 1)
 
+    def test_login_rejects_external_next_redirect(self):
+        response = self.client.post(
+            reverse('accounts:login') + '?next=https://evil.example/phish',
+            {'username': 'learner1', 'password': 'Password123!'},
+        )
+        self.assertRedirects(
+            response,
+            reverse('accounts:dashboard_redirect'),
+            fetch_redirect_response=False,
+        )
+
     def test_logout_enforces_post(self):
         self.client.login(username='learner1', password='Password123!')
         

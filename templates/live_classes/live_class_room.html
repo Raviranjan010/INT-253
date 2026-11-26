@@ -112,17 +112,17 @@
 
 {% block extra_js %}
 <!-- Jitsi Meet External API -->
-<script src="https://meet.jit.si/external_api.js"></script>
+<script src="https://{{ jitsi_domain }}/external_api.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    const domain = "{{ jitsi_domain }}";
+    const domain = "{{ jitsi_domain|escapejs }}";
     const options = {
-      roomName: "{{ session.room_name }}",
+      roomName: "{{ session.room_name|escapejs }}",
       width: '100%',
       height: 600,
       parentNode: document.querySelector('#jitsi-meet-container'),
       userInfo: {
-        displayName: "{{ user_display_name }}"
+        displayName: "{{ user_display_name|escapejs }}"
       },
       configOverwrite: {
         startWithAudioMuted: true,
@@ -143,18 +143,13 @@
       const api = new JitsiMeetExternalAPI(domain, options);
     } catch (e) {
       console.warn("Jitsi Meet external script failed or offline. Fallback rendering active:", e);
-      document.querySelector('#jitsi-meet-container').innerHTML = `
-        <div class="d-flex flex-column align-items-center justify-content-center h-100 text-white p-4 text-center">
-          <i class="bi bi-camera-video-fill display-3 text-danger mb-3"></i>
-          <h4>Live Classroom Ready</h4>
-          <p class="small text-muted mb-3" style="max-width: 500px;">
-            The virtual live classroom room has been initialized for room <strong>{{ session.room_name }}</strong>.
-          </p>
-          <a href="https://${domain}/{{ session.room_name }}" target="_blank" class="btn btn-danger fw-bold">
-            <i class="bi bi-box-arrow-up-right me-1"></i> Open Room in Dedicated Window
-          </a>
-        </div>
-      `;
+      const link = document.createElement('a');
+      link.href = 'https://' + domain + '/' + encodeURIComponent(options.roomName);
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.className = 'btn btn-danger m-4';
+      link.textContent = 'Open the classroom in a new tab';
+      options.parentNode.replaceChildren(link);
     }
   });
 </script>

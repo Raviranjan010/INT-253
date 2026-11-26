@@ -1,7 +1,13 @@
 from django import forms
 from .models import LiveSession, LiveClassDoubt
+from courses.models import Course
 
 class LiveSessionScheduleForm(forms.ModelForm):
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if user is not None and not user.is_staff:
+            self.fields['course'].queryset = Course.objects.filter(instructor=user)
+
     class Meta:
         model = LiveSession
         fields = ('title', 'course', 'scheduled_start', 'duration_minutes', 'description', 'target_demographics')

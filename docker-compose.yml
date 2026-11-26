@@ -1,16 +1,24 @@
 services:
   web:
     build: .
-    command: sh -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:8000 liveschool_project.wsgi:application"
+    command: sh -c "python manage.py migrate && exec gunicorn --bind 0.0.0.0:8000 liveschool_project.wsgi:application"
     volumes:
-      - .:/app
+      - liveschool_db:/app/data
       - liveschool_media:/app/media
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     environment:
-      - DEBUG=False
-      - SECRET_KEY=django-insecure-live-school-compose-production-secret-int253
+      - DEBUG=True
+      - SQLITE_PATH=/app/data/db.sqlite3
+      - SECRET_KEY=${SECRET_KEY:?Set SECRET_KEY in your environment or .env file}
       - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
 
 volumes:
+  liveschool_db:
   liveschool_media:

@@ -45,15 +45,17 @@
         <div class="brand-icon-box">
           <svg width="36" height="36" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <!-- Open Book Pages with academic geometry -->
-            <path d="M20 11C15.8 7.5 7.5 7.5 3.5 8.8V29.5C8 28.2 15.5 28.2 20 31.8V11Z" fill="#10B981"/>
-            <path d="M20 11C24.2 7.5 32.5 7.5 36.5 8.8V29.5C32 28.2 24.5 28.2 20 31.8V11Z" fill="#059669"/>
-            <path d="M20 11V31.8" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-            <path d="M3.5 8.8C7.5 7.5 15.8 7.5 20 11C24.2 7.5 32.5 7.5 36.5 8.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round"/>
-            <path d="M3.5 29.5C8 28.2 15.5 28.2 20 31.8C24.5 28.2 32 28.2 36.5 29.5" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M20 11C15.8 7.5 7.5 7.5 3.5 8.8V29.5C8 28.2 15.5 28.2 20 31.8V11Z" fill="#10B981" />
+            <path d="M20 11C24.2 7.5 32.5 7.5 36.5 8.8V29.5C32 28.2 24.5 28.2 20 31.8V11Z" fill="#059669" />
+            <path d="M20 11V31.8" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" />
+            <path d="M3.5 8.8C7.5 7.5 15.8 7.5 20 11C24.2 7.5 32.5 7.5 36.5 8.8" stroke="#FFFFFF" stroke-width="1.6"
+              stroke-linecap="round" />
+            <path d="M3.5 29.5C8 28.2 15.5 28.2 20 31.8C24.5 28.2 32 28.2 36.5 29.5" stroke="#FFFFFF" stroke-width="1.6"
+              stroke-linecap="round" />
             <!-- Laurel Branch / Bookmark -->
-            <path d="M13 9V18L16 15.5L19 18V10" fill="#FDFBF7" opacity="0.95"/>
+            <path d="M13 9V18L16 15.5L19 18V10" fill="#FDFBF7" opacity="0.95" />
             <!-- Subtle Gold Accent Dot -->
-            <circle cx="20" cy="6" r="2" fill="#F59E0B"/>
+            <circle cx="20" cy="6" r="2" fill="#F59E0B" />
           </svg>
         </div>
         <div class="d-flex flex-column">
@@ -63,7 +65,9 @@
       </a>
 
       <!-- Mobile Hamburger -->
-      <button class="navbar-toggler border-0 shadow-none text-white" type="button" data-bs-toggle="collapse" data-bs-target="#liveSchoolNav" aria-controls="liveSchoolNav" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler border-0 shadow-none text-white" type="button" data-bs-toggle="collapse"
+        data-bs-target="#liveSchoolNav" aria-controls="liveSchoolNav" aria-expanded="false"
+        aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
@@ -80,7 +84,7 @@
             <a class="nav-link nav-link-custom position-relative" href="{% url 'live_classes:live_class_list' %}">
               Live Classes
               {% if UPCOMING_LIVE_COUNT > 0 %}
-                <span class="nav-live-dot" title="Live sessions scheduled"></span>
+              <span class="nav-live-dot" title="Live sessions scheduled"></span>
               {% endif %}
             </a>
           </li>
@@ -98,73 +102,74 @@
           <form class="nav-search-form" method="get" action="{% url 'courses:course_list' %}">
             <div class="nav-search-wrapper">
               <i class="bi bi-search nav-search-icon"></i>
-              <input type="search" name="q" class="nav-search-input" placeholder="Search courses, topics..." aria-label="Search">
+              <input type="search" name="q" class="nav-search-input" placeholder="Search courses, topics..."
+                aria-label="Search">
             </div>
           </form>
 
           {% if user.is_authenticated %}
-            <!-- Real User Gamification Badges -->
-            <div class="d-none d-xl-flex align-items-center gap-1">
-              <span id="nav-xp-counter" class="xp-pill-glass" title="Learning Experience Points">
-                <i class="bi bi-lightning-fill text-warning"></i> <span id="nav-xp-value">{{ user.xp_points }}</span> XP
-              </span>
-              <span class="streak-pill-glass" title="Daily Learning Streak">
-                <i class="bi bi-fire text-danger"></i> {{ user.streak_count }}d
-              </span>
-            </div>
+          <!-- Real User Gamification Badges -->
+          <div class="d-none d-xl-flex align-items-center gap-1">
+            <span id="nav-xp-counter" class="xp-pill-glass" title="Learning Experience Points">
+              <i class="bi bi-lightning-fill text-warning"></i> <span id="nav-xp-value">{{ user.xp_points }}</span> XP
+            </span>
+            <span class="streak-pill-glass" title="Daily Learning Streak">
+              <i class="bi bi-fire text-danger"></i> {{ user.streak_count }}d
+            </span>
+          </div>
 
-          {% if user.is_authenticated %}
-            <!-- User Profile Dropdown -->
-            <div class="dropdown">
-              <button class="btn btn-sm btn-nav-user dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
-                {% if user.avatar %}
-                  <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="rounded-circle" style="width: 26px; height: 26px; object-fit: cover;">
-                {% else %}
-                  <div class="user-avatar-mini">{{ user.first_name|first|default:user.username|first|upper }}</div>
-                {% endif %}
-                <span class="fw-semibold text-white small">{{ user.first_name|default:user.username }}</span>
-              </button>
-              <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2">
-                <li class="dropdown-header">
-                  <strong>{{ user.get_full_name|default:user.username }}</strong>
-                  <div class="text-muted small">{{ user.get_role_display }}</div>
-                </li>
-                <li><hr class="dropdown-divider"></li>
-                {% if user.is_instructor or user.is_staff %}
-                  <li><a class="dropdown-item" href="{% url 'accounts:instructor_dashboard' %}"><i class="bi bi-speedometer2 me-2 text-success"></i> Instructor Dashboard</a></li>
-                  <li><a class="dropdown-item" href="{% url 'courses:create_course' %}"><i class="bi bi-plus-circle me-2 text-primary"></i> Create Course</a></li>
-                  <li><a class="dropdown-item" href="{% url 'live_classes:schedule_live_class' %}"><i class="bi bi-broadcast me-2 text-danger"></i> Schedule Live Class</a></li>
-                {% else %}
-                  <li><a class="dropdown-item" href="{% url 'accounts:student_dashboard' %}"><i class="bi bi-speedometer2 me-2 text-success"></i> Student Dashboard</a></li>
-                {% endif %}
-                <li><a class="dropdown-item" href="{% url 'accounts:profile' %}"><i class="bi bi-person-gear me-2"></i> Account Profile</a></li>
-                <li><a class="dropdown-item" href="{% url 'certificates:verify' %}"><i class="bi bi-patch-check me-2 text-warning"></i> Verify Certificate</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                  <form method="post" action="{% url 'accounts:logout' %}" class="d-inline w-100">
-                    {% csrf_token %}
-                    <button type="submit" class="dropdown-item text-danger d-flex align-items-center">
-                      <i class="bi bi-box-arrow-right me-2"></i> Log Out
-                    </button>
-                  </form>
-                </li>
-              </ul>
-            </div>
+          <!-- User Profile Dropdown -->
+          <div class="dropdown">
+            <button class="btn btn-sm btn-nav-user dropdown-toggle d-flex align-items-center gap-2" type="button"
+              data-bs-toggle="dropdown">
+              {% if user.avatar %}
+              <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="rounded-circle"
+                style="width: 26px; height: 26px; object-fit: cover;">
+              {% else %}
+              <div class="user-avatar-mini">{{ user.first_name|first|default:user.username|first|upper }}</div>
+              {% endif %}
+              <span class="fw-semibold text-white small">{{ user.first_name|default:user.username }}</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2">
+              <li class="dropdown-header">
+                <strong>{{ user.get_full_name|default:user.username }}</strong>
+                <div class="text-muted small">{{ user.get_role_display }}</div>
+              </li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              {% if user.is_instructor or user.is_staff %}
+              <li><a class="dropdown-item" href="{% url 'accounts:instructor_dashboard' %}"><i
+                    class="bi bi-speedometer2 me-2 text-success"></i> Instructor Dashboard</a></li>
+              <li><a class="dropdown-item" href="{% url 'courses:create_course' %}"><i
+                    class="bi bi-plus-circle me-2 text-primary"></i> Create Course</a></li>
+              <li><a class="dropdown-item" href="{% url 'live_classes:schedule_live_class' %}"><i
+                    class="bi bi-broadcast me-2 text-danger"></i> Schedule Live Class</a></li>
+              {% else %}
+              <li><a class="dropdown-item" href="{% url 'accounts:student_dashboard' %}"><i
+                    class="bi bi-speedometer2 me-2 text-success"></i> Student Dashboard</a></li>
+              {% endif %}
+              <li><a class="dropdown-item" href="{% url 'accounts:profile' %}"><i class="bi bi-person-gear me-2"></i>
+                  Account Profile</a></li>
+              <li><a class="dropdown-item" href="{% url 'certificates:verify' %}"><i
+                    class="bi bi-patch-check me-2 text-warning"></i> Verify Certificate</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li>
+                <form method="post" action="{% url 'accounts:logout' %}" class="d-inline w-100">
+                  {% csrf_token %}
+                  <button type="submit" class="dropdown-item text-danger d-flex align-items-center">
+                    <i class="bi bi-box-arrow-right me-2"></i> Log Out
+                  </button>
+                </form>
+              </li>
+            </ul>
+          </div>
           {% else %}
-            <!-- Demo Role Switcher Dropdown -->
-            <div class="dropdown me-1">
-              <button class="btn btn-sm btn-nav-ghost dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                <i class="bi bi-magic me-1"></i> Demo
-              </button>
-              <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                <li><a class="dropdown-item" href="{% url 'core:demo_login' role='student' %}">🎓 Demo Student</a></li>
-                <li><a class="dropdown-item" href="{% url 'core:demo_login' role='instructor' %}">👨‍🏫 Demo Instructor</a></li>
-                <li><a class="dropdown-item" href="{% url 'core:demo_login' role='admin' %}">⚡ Demo Admin</a></li>
-              </ul>
-            </div>
-            <!-- Login & Sign Up buttons -->
-            <a href="{% url 'accounts:login' %}" class="btn-nav-login">Login</a>
-            <a href="{% url 'accounts:register' %}" class="btn-nav-signup">Sign Up</a>
+          <!-- Login & Sign Up buttons -->
+          <a href="{% url 'accounts:login' %}" class="btn-nav-login">Login</a>
+          <a href="{% url 'accounts:register' %}" class="btn-nav-signup">Sign Up</a>
           {% endif %}
         </div>
       </div>

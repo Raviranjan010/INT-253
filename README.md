@@ -140,20 +140,6 @@ python manage.py test
 
 ---
 
-## 👥 Localhost Evaluation Accounts
-
-Pre-seeded demonstration accounts for local evaluation:
-
-| Role | Username | Password | Purpose |
-| :--- | :--- | :--- | :--- |
-| **Admin** | `admin` | `admin123` | Full Django admin & instructor role approval |
-| **Instructor** | `teacher_demo` | `teacher123` | Approved educator: author courses, host live classes |
-| **Student** | `student_demo` | `student123` | Enrolled learner with active streak and certificates |
-
-> *Note: In production environments (`DEBUG=False`), demo login shortcuts are completely disabled.*
-
----
-
 ## 💻 Local Setup & Execution
 
 ### 1. Environment Preparation
@@ -177,16 +163,15 @@ pip install -r requirements.txt
 Copy `.env.example` to `.env`:
 ```env
 DEBUG=True
-DJANGO_DEBUG=True
 SECRET_KEY=django-insecure-dev-key-liveschool-int253-local-development-only
 ALLOWED_HOSTS=127.0.0.1,localhost,testserver
 JITSI_DOMAIN=meet.jit.si
 ```
 
-### 4. Database Initialization & Seeding
+### 4. Database Initialization
 ```bash
 python manage.py migrate
-python manage.py seed_data
+python manage.py createsuperuser
 ```
 
 ### 5. Run Verification & Tests
@@ -206,21 +191,19 @@ Admin Panel: **[http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)**
 
 ## 🐳 Production Deployment
 
-### Docker Deployment
+### Local Docker preview
 ```bash
-docker-compose up --build
+docker compose up --build -d
+docker compose exec web python manage.py createsuperuser
 ```
-The Docker setup includes:
-- Multi-worker containerized environment.
-- Persistent volume for uploaded user media (`liveschool_media`).
-- Automatic startup migrations and static asset compression.
+Copy `.env.example` to `.env` before starting Compose. The preview listens on loopback and uses separate volumes for its SQLite database and uploads.
 
-### Cloud / PaaS Deployment (Heroku, Railway, Render, Cloud Run)
-1. Set `DEBUG=False` in environment settings.
-2. Generate and supply a strong random `SECRET_KEY`:
-   ```bash
-   python -c "import secrets; print(secrets.token_urlsafe(50))"
-   ```
-3. Specify `ALLOWED_HOSTS` to your production domain(s).
-4. Static assets are automatically compressed and served using Whitenoise (`CompressedStaticFilesStorage`).
-5. WSGI application is powered by Gunicorn as defined in `Procfile`.
+### Public deployment
+
+1. Provision a fresh PostgreSQL database and a Docker-capable host with an HTTPS domain. Do not import the workspace SQLite database or local uploads for a clean launch. If you already have production records, back them up and review existing accounts and content before migrating.
+2. Set `DEBUG=False`, `DATABASE_URL`, `ALLOWED_HOSTS` (hostnames), and `CSRF_TRUSTED_ORIGINS` (HTTPS origins). Generate a persistent `SECRET_KEY` with `python -c "import secrets; print(secrets.token_urlsafe(50))"` and store it in the hosting platform's secrets. The HTTPS proxy must overwrite `X-Forwarded-Proto` and prevent direct public access to Gunicorn.
+3. Build from `Dockerfile`. Run `python manage.py migrate --noinput` as a release command with the production environment before routing traffic to the new version. Use the image's default Gunicorn command. The image collects static files at build time.
+4. Mount persistent storage at `/app/media` and serve `/media/` through a web server without executing uploaded files. Django only serves uploads in development. Configure database and upload backups.
+5. Run `python manage.py createsuperuser` in the production environment. In Django admin, add real categories and approve instructor accounts. Create courses, modules, lessons, and quizzes using real course material.
+6. Configure `JITSI_DOMAIN` for your conferencing service. For restricted classes, enforce participant access on the conferencing service itself. Test hosting and joining from two accounts with camera and microphone permissions.
+7. Run `python manage.py check --deploy`. On the deployed HTTPS site, verify `/health/`, sign-in, static assets, uploads, course enrollment, quiz submission, and video. Contact and newsletter submissions are stored in Django admin. Set up a separate sender if you want outbound newsletter delivery.

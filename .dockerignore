@@ -1,0 +1,12 @@
+.git
+.gitignore
+.env
+.venv
+__pycache__
+*.py[cod]
+*.sqlite3
+staticfiles
+media
+.pytest_cache
+.mypy_cache
+PROJECT_REPORT_INT253.md

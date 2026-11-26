@@ -82,6 +82,15 @@ class LiveClassesFunctionalityAndSecurityTests(TestCase):
         self.assertEqual(post_res.status_code, 200)
         self.assertTrue(LiveClassDoubt.objects.filter(session=self.session, student=self.enrolled_student).exists())
 
+    def test_unenrolled_student_cannot_post_doubt(self):
+        self.client.login(username='unenrolled_stud', password='Password123!')
+        response = self.client.post(
+            reverse('live_classes:post_doubt', kwargs={'session_id': self.session.id}),
+            {'question': 'Unauthorized question'},
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(LiveClassDoubt.objects.filter(student=self.unenrolled_student).exists())
+
     def test_instructor_answering_doubt(self):
         doubt = LiveClassDoubt.objects.create(session=self.session, student=self.enrolled_student, question='Question test?')
         answer_url = reverse('live_classes:answer_doubt', kwargs={'doubt_id': doubt.id})

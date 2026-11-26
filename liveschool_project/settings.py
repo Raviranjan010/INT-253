@@ -9,8 +9,8 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load local environment variables (overriding ambient OS build variables if present in .env)
-load_dotenv(BASE_DIR / '.env', override=True)
+# Explicit runtime configuration takes precedence over local defaults.
+load_dotenv(BASE_DIR / '.env', override=False)
 
 # DEBUG Configuration (defaults to True in local development, override with DEBUG=False in production)
 DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 't', 'yes')
@@ -22,6 +22,9 @@ if not SECRET_KEY:
         SECRET_KEY = 'django-insecure-dev-key-liveschool-int253-local-development-only'
     else:
         raise ValueError("Critical Security Error: The SECRET_KEY environment variable must be set when DEBUG is False!")
+
+if not DEBUG and (len(SECRET_KEY) < 50 or SECRET_KEY.startswith('django-insecure-')):
+    raise ValueError("Production SECRET_KEY must be a strong, randomly generated secret.")
 
 # ALLOWED_HOSTS: Environment-driven host list (no wildcards by default)
 allowed_hosts_env = os.getenv('ALLOWED_HOSTS')
@@ -83,9 +86,21 @@ WSGI_APPLICATION = 'liveschool_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.getenv('SQLITE_PATH') or BASE_DIR / 'db.sqlite3',
     }
 }
+
+# Use a managed PostgreSQL service in production when DATABASE_URL is set.
+# SQLite remains the zero-configuration local development default.
+DATABASE_URL = os.getenv('DATABASE_URL')
+if DATABASE_URL:
+    import dj_database_url
+    DATABASES['default'] = dj_database_url.parse(
+        DATABASE_URL,
+        conn_max_age=600,
+        conn_health_checks=True,
+        ssl_require=not DEBUG,
+    )
 
 # Custom User Model
 AUTH_USER_MODEL = 'accounts.CustomUser'
@@ -140,6 +155,14 @@ LOGIN_URL = 'accounts:login'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
+    if origin.strip()
+]
+
+SECURE_REFERRER_POLICY = 'same-origin'
+
 # Jitsi Meet Domain for WebRTC Live Classroom
 JITSI_DOMAIN = os.getenv('JITSI_DOMAIN', 'meet.jit.si')
 
@@ -151,3 +174,17 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'True').lower() in ('true', '1', 't', 'yes')
+    hsts_seconds = os.getenv('SECURE_HSTS_SECONDS', '31536000')
+    if hsts_seconds:
+        SECURE_HSTS_SECONDS = int(hsts_seconds)
+        SECURE_HSTS_INCLUDE_SUBDOMAINS = os.getenv(
+            'SECURE_HSTS_INCLUDE_SUBDOMAINS', 'False'
+        ).lower() in ('true', '1', 't', 'yes')
+        SECURE_HSTS_PRELOAD = os.getenv(
+            'SECURE_HSTS_PRELOAD', 'False'
+        ).lower() in ('true', '1', 't', 'yes')
+else:
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False

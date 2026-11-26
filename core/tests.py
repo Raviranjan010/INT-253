@@ -1,10 +1,25 @@
-from django.test import TestCase, Client, override_settings
+from django.test import TestCase, Client
 from django.urls import reverse
 from accounts.models import CustomUser
 from courses.models import Course, Category
 from core.models import ContactMessage, NewsletterSubscriber
 
 class CorePlatformSecurityAndMetricsTests(TestCase):
+    def test_health_check(self):
+        response = self.client.get(reverse('core:health_check'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {'status': 'ok'})
+
+    def test_newsletter_requires_post_and_rejects_external_referer(self):
+        url = reverse('core:subscribe')
+        self.assertEqual(self.client.get(url).status_code, 405)
+        response = self.client.post(
+            url,
+            {'email': 'safe@example.com'},
+            HTTP_REFERER='https://evil.example/phish',
+        )
+        self.assertRedirects(response, reverse('core:home'))
+
     def setUp(self):
         self.client = Client()
         self.category = Category.objects.create(name='Science', slug='science')
@@ -44,18 +59,8 @@ class CorePlatformSecurityAndMetricsTests(TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertContains(res, 'About Live School')
 
-    @override_settings(DEBUG=False)
-    def test_demo_login_disabled_when_debug_false(self):
-        res = self.client.get(reverse('core:demo_login', kwargs={'role': 'student'}), follow=True)
-        # Must redirect to login with error message when DEBUG is False
-        self.assertContains(res, 'Security Violation')
-
-    @override_settings(DEBUG=True)
-    def test_demo_login_allowed_in_debug_mode(self):
-        CustomUser.objects.create_user(username='student_demo', email='demo@test.com', password='Password123!', role='student')
-        res = self.client.get(reverse('core:demo_login', kwargs={'role': 'student'}), follow=True)
-        self.assertEqual(res.status_code, 200)
-        self.assertContains(res, 'Logged in as Demo Student')
+    def test_demo_login_is_unavailable(self):
+        self.assertEqual(self.client.get('/demo-login/admin/').status_code, 404)
 
     def test_contact_form_submission(self):
         res = self.client.post(reverse('core:contact'), {

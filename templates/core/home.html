@@ -509,14 +509,11 @@
     </p>
 
     <form method="get" action="{% url 'certificates:verify' %}" class="d-flex gap-2 max-w-md mx-auto mb-3" style="max-width: 500px;">
-      <input type="text" name="id" required class="form-control rounded-pill px-4" placeholder="Enter Certificate ID (e.g. LS-2026-DEMO8942)">
+      <input type="text" name="id" required class="form-control rounded-pill px-4" aria-label="Certificate ID" placeholder="Enter certificate ID">
       <button type="submit" class="btn btn-mint-action rounded-pill px-4 text-nowrap">
         <i class="bi bi-search me-1"></i> Verify
       </button>
     </form>
-    <div class="small text-muted">
-      Try demo certificate: <a href="{% url 'certificates:verify' %}?id=LS-2026-DEMO8942" class="text-mint fw-semibold">LS-2026-DEMO8942</a>
-    </div>
   </div>
 </section>
 

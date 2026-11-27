@@ -263,9 +263,10 @@ def create_course(request):
         if form.is_valid():
             course = form.save(commit=False)
             course.instructor = request.user
+            course.is_published = False
             course.save()
             messages.success(request, f"Course '{course.title}' created successfully! Now add modules and lessons.")
-            return redirect('accounts:instructor_dashboard')
+            return redirect('courses:studio', slug=course.slug)
     else:
         form = CourseCreateForm()
 
@@ -275,7 +276,7 @@ def create_course(request):
 @login_required
 def edit_course(request, slug):
     course = get_object_or_404(Course, slug=slug)
-    if not (request.user == course.instructor or request.user.is_staff):
+    if not (request.user.is_staff or (request.user.is_instructor and request.user == course.instructor)):
         messages.error(request, "You are not authorized to edit this course.")
         return redirect('courses:course_detail', slug=course.slug)
 
@@ -297,11 +298,14 @@ def delete_course(request, slug):
         return HttpResponseNotAllowed(['POST'])
 
     course = get_object_or_404(Course, slug=slug)
-    if not (request.user == course.instructor or request.user.is_staff):
+    if not (request.user.is_staff or (request.user.is_instructor and request.user == course.instructor)):
         messages.error(request, "You are not authorized to delete this course.")
         return redirect('courses:course_detail', slug=course.slug)
 
     course_title = course.title
+    if course.enrollments.exists() or course.issued_certificates.exists():
+        messages.error(request, 'This course has learning records. Unpublish it in the course studio instead.')
+        return redirect('courses:studio', slug=slug)
     course.delete()
     messages.success(request, f"Course '{course_title}' has been deleted.")
     return redirect('accounts:instructor_dashboard')

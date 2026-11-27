@@ -1,5 +1,12 @@
 from django import forms
 from .models import Course, Module, Lesson, CourseReview
+from .video import embed_url
+
+
+class ModuleForm(forms.ModelForm):
+    class Meta:
+        model = Module
+        fields = ('title', 'order', 'description')
 
 class CourseReviewForm(forms.ModelForm):
     class Meta:
@@ -28,9 +35,15 @@ class CourseCreateForm(forms.ModelForm):
 
 
 class LessonForm(forms.ModelForm):
+    def clean_video_url(self):
+        value = self.cleaned_data['video_url']
+        if value and not embed_url(value):
+            raise forms.ValidationError('Enter a supported HTTPS YouTube or Vimeo video URL.')
+        return value
+
     class Meta:
         model = Lesson
-        fields = ('title', 'order', 'video_url', 'duration_minutes', 'content')
+        fields = ('title', 'order', 'video_url', 'duration_minutes', 'content', 'resource_file')
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'order': forms.NumberInput(attrs={'class': 'form-control'}),

@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
 from django.utils import timezone
+from .video import embed_url
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -117,17 +118,7 @@ class Lesson(models.Model):
 
     @property
     def embed_video_url(self):
-        """Converts standard YouTube watch URLs to embed URLs"""
-        url = self.video_url
-        if not url:
-            return ""
-        if 'youtube.com/watch?v=' in url:
-            video_id = url.split('watch?v=')[1].split('&')[0]
-            return f"https://www.youtube.com/embed/{video_id}"
-        elif 'youtu.be/' in url:
-            video_id = url.split('youtu.be/')[1].split('?')[0]
-            return f"https://www.youtube.com/embed/{video_id}"
-        return url
+        return embed_url(self.video_url)
 
 
 class Enrollment(models.Model):

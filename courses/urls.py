@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views, studio
+from quizzes.studio import add_quiz_content
 
 app_name = 'courses'
 
@@ -7,6 +8,8 @@ urlpatterns = [
     path('', views.course_list, name='course_list'),
     path('new/', views.create_course, name='create_course'),
     path('<slug:slug>/studio/', studio.studio, name='studio'),
+    path('<slug:slug>/studio/quizzes/new/', add_quiz_content, name='studio_quiz_new'),
+    path('<slug:slug>/studio/quizzes/<int:quiz_id>/questions/new/', add_quiz_content, name='studio_question_new'),
     path('<slug:slug>/studio/publication/', studio.change_content, {'action': 'publication'}, name='studio_publication'),
     path('<slug:slug>/studio/modules/new/', studio.edit_content, {'kind': 'module'}, name='studio_module_new'),
     path('<slug:slug>/studio/modules/<int:module_id>/edit/', studio.edit_content, {'kind': 'module'}, name='studio_module_edit'),

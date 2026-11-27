@@ -8,6 +8,7 @@
   <div class="ls-actions mb-4">
     <a class="btn ls-secondary" href="{% url 'courses:edit_course' course.slug %}">Edit course details</a>
     <a class="btn ls-secondary" href="{% url 'courses:studio_module_new' course.slug %}">Add module</a>
+    <a class="btn ls-secondary" href="{% url 'courses:studio_quiz_new' course.slug %}">Add quiz</a>
     <form method="post" action="{% url 'courses:studio_publication' course.slug %}">{% csrf_token %}
       <button class="btn ls-primary" type="submit">{% if course.is_published %}Unpublish{% else %}Publish{% endif %}</button>
     </form>
@@ -30,5 +31,11 @@
     </ul>
   </article>
   {% empty %}<p>No modules yet. Add a module to start building your course.</p>{% endfor %}
+  <h2>Quizzes</h2>
+  <ul>
+    {% for quiz in course.quizzes.all %}
+    <li>{{ quiz.title }} · <a href="{% url 'courses:studio_question_new' course.slug quiz.pk %}">Add question</a></li>
+    {% empty %}<li>No quizzes yet.</li>{% endfor %}
+  </ul>
 </section>
 {% endblock %}

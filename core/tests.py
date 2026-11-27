@@ -1,5 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
+from django.db import OperationalError
+from unittest.mock import patch
 from accounts.models import CustomUser
 from courses.models import Course, Category
 from core.models import ContactMessage, NewsletterSubscriber
@@ -9,6 +11,11 @@ class CorePlatformSecurityAndMetricsTests(TestCase):
         response = self.client.get(reverse('core:health_check'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {'status': 'ok'})
+
+    def test_health_check_reports_database_outage(self):
+        with patch('core.views.connection.cursor', side_effect=OperationalError):
+            response = self.client.get(reverse('core:health_check'))
+        self.assertEqual(response.status_code, 503)
 
     def test_newsletter_requires_post_and_rejects_external_referer(self):
         url = reverse('core:subscribe')

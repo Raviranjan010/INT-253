@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /app/
 
-RUN DEBUG=True python manage.py collectstatic --noinput
+RUN DEBUG=True STATIC_MANIFEST=1 python manage.py collectstatic --noinput
 
 RUN mkdir -p /app/media /app/data
 

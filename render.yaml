@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: liveschool-int253-ravi
+    runtime: docker
+    plan: free
+    healthCheckPath: /health/
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: RUN_MIGRATIONS
+        value: "1"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: ALLOWED_HOSTS
+        sync: false
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false
+      - key: MEDIA_BUCKET
+        sync: false
+      - key: MEDIA_ACCESS_KEY_ID
+        sync: false
+      - key: MEDIA_SECRET_ACCESS_KEY
+        sync: false
+      - key: MEDIA_ENDPOINT_URL
+        sync: false
+      - key: MEDIA_REGION
+        sync: false

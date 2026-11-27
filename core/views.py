@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponseNotAllowed
+from django.db import DatabaseError, connection
 from django.utils.http import url_has_allowed_host_and_scheme
 from courses.models import Course, Category
 from live_classes.models import LiveSession
@@ -69,5 +70,10 @@ def newsletter_subscribe(request):
 
 
 def health_check(request):
-    """Lightweight endpoint for container and load-balancer health probes."""
+    """Check that both Django and its configured database can respond."""
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT 1')
+    except DatabaseError:
+        return JsonResponse({'status': 'unavailable'}, status=503)
     return JsonResponse({'status': 'ok'})

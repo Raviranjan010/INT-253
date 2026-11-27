@@ -27,6 +27,11 @@ services:
       CSRF_TRUSTED_ORIGINS: https://${SITE_DOMAIN}
       DATABASE_URL: postgresql://liveschool:${POSTGRES_PASSWORD}@db:5432/liveschool
       DATABASE_SSL_REQUIRE: "False"
+      MEDIA_BUCKET: ${MEDIA_BUCKET:?Set the private media bucket}
+      MEDIA_ACCESS_KEY_ID: ${MEDIA_ACCESS_KEY_ID:?Set the object storage access key}
+      MEDIA_SECRET_ACCESS_KEY: ${MEDIA_SECRET_ACCESS_KEY:?Set the object storage secret key}
+      MEDIA_ENDPOINT_URL: ${MEDIA_ENDPOINT_URL:-}
+      MEDIA_REGION: ${MEDIA_REGION:-us-east-1}
       JITSI_DOMAIN: ${JITSI_DOMAIN:-meet.jit.si}
     command: ["sh", "-c", "python manage.py migrate --noinput && exec gunicorn --bind 0.0.0.0:8000 --access-logfile - liveschool_project.wsgi:application"]
     volumes:

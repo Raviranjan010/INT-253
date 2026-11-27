@@ -5,15 +5,13 @@ Live School for World-Class Free Education (INT-253)
 
 import os
 from pathlib import Path
+from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load local environment variables (.env file takes precedence locally; cloud deployments inject environment variables)
-if (BASE_DIR / '.env').exists():
-    load_dotenv(BASE_DIR / '.env', override=True)
-else:
-    load_dotenv()
+load_dotenv(BASE_DIR / '.env', override=False)
 
 # DEBUG Configuration (defaults to True in local development, override with DEBUG=False in production)
 DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 't', 'yes')
@@ -25,6 +23,9 @@ if not SECRET_KEY:
         SECRET_KEY = 'django-insecure-dev-key-liveschool-int253-local-development-only'
     else:
         raise ValueError("Critical Security Error: The SECRET_KEY environment variable must be set when DEBUG is False!")
+
+if not DEBUG and (len(SECRET_KEY) < 50 or len(set(SECRET_KEY)) < 5 or SECRET_KEY.startswith('django-insecure-')):
+    raise ImproperlyConfigured('Set SECRET_KEY to a generated secret of at least 50 characters.')
 
 # ALLOWED_HOSTS: Environment-driven host list (no wildcards by default)
 allowed_hosts_env = os.getenv('ALLOWED_HOSTS')
@@ -93,6 +94,8 @@ DATABASES = {
 # Use a managed PostgreSQL service in production when DATABASE_URL is set.
 # SQLite remains the zero-configuration local development default.
 DATABASE_URL = os.getenv('DATABASE_URL')
+if not DEBUG and not DATABASE_URL:
+    raise ImproperlyConfigured('Production requires a PostgreSQL DATABASE_URL.')
 if DATABASE_URL:
     import dj_database_url
     DATABASES['default'] = dj_database_url.parse(
@@ -103,6 +106,8 @@ if DATABASE_URL:
             'DATABASE_SSL_REQUIRE', 'False' if DEBUG else 'True'
         ).lower() in ('true', '1', 't', 'yes'),
     )
+    if not DEBUG and DATABASES['default']['ENGINE'] != 'django.db.backends.postgresql':
+        raise ImproperlyConfigured('Production DATABASE_URL must point to PostgreSQL.')
 
 # Custom User Model
 AUTH_USER_MODEL = 'accounts.CustomUser'
@@ -141,9 +146,37 @@ STORAGES = {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+        "BACKEND": (
+            "whitenoise.storage.CompressedStaticFilesStorage" if DEBUG
+            else "whitenoise.storage.CompressedManifestStaticFilesStorage"
+        ),
     },
 }
+
+if not DEBUG or os.getenv('MEDIA_BUCKET'):
+    storage_fields = {
+        'bucket_name': 'MEDIA_BUCKET',
+        'access_key': 'MEDIA_ACCESS_KEY_ID',
+        'secret_key': 'MEDIA_SECRET_ACCESS_KEY',
+    }
+    storage_options = {option: os.getenv(variable) for option, variable in storage_fields.items()}
+    missing = [variable for option, variable in storage_fields.items() if not storage_options[option]]
+    if missing:
+        raise ImproperlyConfigured('Object storage requires ' + ', '.join(missing))
+    STORAGES['default'] = {
+        'BACKEND': 'storages.backends.s3.S3Storage',
+        'OPTIONS': {
+            **storage_options,
+            'endpoint_url': os.getenv('MEDIA_ENDPOINT_URL') or None,
+            'region_name': os.getenv('MEDIA_REGION', 'us-east-1'),
+            'file_overwrite': False,
+            'querystring_auth': True,
+            'addressing_style': 'path',
+        },
+    }
+    STORAGES['staticfiles']['BACKEND'] = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+elif os.getenv('STATIC_MANIFEST') == '1':
+    STORAGES['staticfiles']['BACKEND'] = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files
 MEDIA_URL = '/media/'

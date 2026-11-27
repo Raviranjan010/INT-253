@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Reset password | LiveSchool{% endblock %}
+{% block content %}
+<section class="ls-wrap ls-section">
+  <h1>Reset your password</h1>
+  {% if form %}
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn ls-primary">{% if validlink %}Save new password{% else %}Send reset link{% endif %}</button>
+  </form>
+  {% else %}
+  <p>This link is invalid or has expired. <a href="{% url 'accounts:password_reset' %}">Request another link</a>.</p>
+  {% endif %}
+</section>
+{% endblock %}

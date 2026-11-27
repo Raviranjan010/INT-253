@@ -25,17 +25,18 @@
           <form method="post">
             {% csrf_token %}
             <div class="mb-3">
-              <label class="form-label fw-semibold small text-dark">Username or Student ID</label>
+              <label class="form-label fw-semibold small text-dark" for="{{ form.username.id_for_label }}">Username or email</label>
               {{ form.username }}
             </div>
             <div class="mb-3">
-              <label class="form-label fw-semibold small text-dark">Password</label>
+              <label class="form-label fw-semibold small text-dark" for="{{ form.password.id_for_label }}">Password</label>
               {{ form.password }}
             </div>
             <button type="submit" class="btn btn-mint-action w-100 py-2 fw-bold mb-3 rounded-pill">
               <i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Classroom
             </button>
           </form>
+          <p><a href="{% url 'accounts:password_reset' %}">Forgot your password?</a></p>
 
           <div class="border-top pt-3 text-center small text-muted">
             Don't have an account yet? 

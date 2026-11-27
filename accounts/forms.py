@@ -2,7 +2,15 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import CustomUser
 
-class StudentRegistrationForm(UserCreationForm):
+
+class UniqueEmailMixin:
+    def clean_email(self):
+        email = self.cleaned_data['email'].strip()
+        if email and CustomUser.objects.filter(email__iexact=email).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError('An account already uses this email address.')
+        return email
+
+class StudentRegistrationForm(UniqueEmailMixin, UserCreationForm):
     email = forms.EmailField(required=True)
     first_name = forms.CharField(max_length=30, required=True)
     last_name = forms.CharField(max_length=30, required=True)
@@ -24,7 +32,7 @@ class StudentRegistrationForm(UserCreationForm):
         return user
 
 
-class InstructorRegistrationForm(UserCreationForm):
+class InstructorRegistrationForm(UniqueEmailMixin, UserCreationForm):
     email = forms.EmailField(required=True)
     first_name = forms.CharField(max_length=30, required=True)
     last_name = forms.CharField(max_length=30, required=True)
@@ -47,7 +55,7 @@ class InstructorRegistrationForm(UserCreationForm):
         return user
 
 
-class UserProfileForm(forms.ModelForm):
+class UserProfileForm(UniqueEmailMixin, forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ('first_name', 'last_name', 'email', 'country', 'preferred_language', 'demographic_group', 'bio', 'avatar')
@@ -64,6 +72,7 @@ class UserProfileForm(forms.ModelForm):
 class CustomLoginForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['username'].label = 'Username or email'
         self.fields['username'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Username or Email'})
         self.fields['password'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Password'})
 

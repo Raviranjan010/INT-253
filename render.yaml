@@ -27,3 +27,7 @@ services:
         sync: false
       - key: MEDIA_REGION
         sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: DEFAULT_FROM_EMAIL
+        sync: false

@@ -111,6 +111,15 @@ if DATABASE_URL:
 
 # Custom User Model
 AUTH_USER_MODEL = 'accounts.CustomUser'
+AUTHENTICATION_BACKENDS = ['accounts.backends.EmailOrUsernameBackend']
+
+RESEND_API_KEY = os.getenv('RESEND_API_KEY')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'webmaster@localhost')
+EMAIL_BACKEND = (
+    'django.core.mail.backends.console.EmailBackend' if DEBUG else
+    'core.email.ResendBackend' if RESEND_API_KEY else
+    'django.core.mail.backends.dummy.EmailBackend'
+)
 
 AUTH_PASSWORD_VALIDATORS = [
     {

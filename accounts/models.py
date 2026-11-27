@@ -4,6 +4,14 @@ from django.utils import timezone
 from django.conf import settings
 
 class CustomUser(AbstractUser):
+    class Meta(AbstractUser.Meta):
+        constraints = [
+            models.UniqueConstraint(
+                models.functions.Lower('email'), condition=~models.Q(email=''),
+                name='accounts_email_ci_unique',
+            ),
+        ]
+
     ROLE_CHOICES = (
         ('student', 'Student / Learner'),
         ('instructor', 'Teacher / Instructor'),

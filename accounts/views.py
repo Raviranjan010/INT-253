@@ -5,6 +5,8 @@ from django.contrib import messages
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import HttpResponse
+from django.core.paginator import Paginator
+from django.db.models import Count, Q
 from .forms import StudentRegistrationForm, InstructorRegistrationForm, UserProfileForm, CustomLoginForm
 from .models import CustomUser
 from courses.models import Enrollment, Course
@@ -126,7 +128,8 @@ def student_dashboard(request):
     
     # Upcoming live classes relevant to enrolled courses or general
     upcoming_live = LiveSession.objects.filter(
-        status__in=['scheduled', 'live']
+        Q(course__isnull=True) | Q(course_id__in=enrollments.values('course_id')),
+        Q(status='live') | Q(status='scheduled', scheduled_start__gte=timezone.now()),
     ).order_by('scheduled_start')[:4]
 
     # Recent quiz attempts
@@ -153,15 +156,17 @@ def instructor_dashboard(request):
         return redirect('accounts:student_dashboard')
 
     user = request.user
-    courses = Course.objects.filter(instructor=user)
-    live_sessions = LiveSession.objects.filter(instructor=user).order_by('-scheduled_start')
+    courses = Course.objects.filter(instructor=user).annotate(
+        enrollment_total=Count('enrollments'),
+    ).order_by('-created_at', '-pk')
+    live_sessions = LiveSession.objects.filter(instructor=user).order_by('-scheduled_start', '-pk')
     
     # Compute totals
     total_students = Enrollment.objects.filter(course__instructor=user).values('student').distinct().count()
 
     context = {
-        'courses': courses,
-        'live_sessions': live_sessions,
+        'courses': Paginator(courses, 12).get_page(request.GET.get('courses_page')),
+        'live_sessions': Paginator(live_sessions, 12).get_page(request.GET.get('live_page')),
         'total_students': total_students,
     }
     return render(request, 'accounts/instructor_dashboard.html', context)

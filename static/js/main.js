@@ -409,32 +409,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  }
-
-  // Interactive Live Stream "Raise Hand" & Simulated Chat
-  const streamRaiseHandBtn = document.getElementById('stream-raise-hand-btn');
-  const streamChatBox = document.getElementById('stream-chat-box');
-
-  if (streamRaiseHandBtn) {
-    streamRaiseHandBtn.addEventListener('click', function () {
-      AudioEngine.playDoubtAlert();
-      Confetti.burst();
-      this.classList.replace('btn-outline-warning', 'btn-warning');
-      this.innerHTML = '<i class="bi bi-check2-circle me-1"></i> Hand Raised! Dr. Sharma Notified';
-      
-      // Award XP in navbar
-      incrementXP(15);
-
-      if (streamChatBox) {
-        const userMsg = document.createElement('div');
-        userMsg.className = 'chat-msg-item';
-        userMsg.style.background = 'rgba(16, 185, 129, 0.15)';
-        userMsg.innerHTML = '<span class="chat-user text-warning">You (Student):</span> <span class="chat-text">✋ Raised hand to clarify line 6. (+15 XP earned!)</span> <span class="chat-time">Just now</span>';
-        streamChatBox.appendChild(userMsg);
-        streamChatBox.scrollTop = streamChatBox.scrollHeight;
-      }
-    });
-  }
 
   // ========================================================================
   // 6. DYNAMIC CATEGORY FILTERING ON COURSES DOCK

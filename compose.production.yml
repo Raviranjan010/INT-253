@@ -35,8 +35,6 @@ services:
       MEDIA_REGION: ${MEDIA_REGION:-us-east-1}
       JITSI_DOMAIN: ${JITSI_DOMAIN:-meet.jit.si}
     command: ["sh", "-c", "python manage.py migrate --noinput && exec gunicorn --bind 0.0.0.0:8000 --access-logfile - liveschool_project.wsgi:application"]
-    volumes:
-      - media:/app/media
 
   proxy:
     image: caddy:2-alpine
@@ -50,10 +48,8 @@ services:
       - "443:443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - media:/srv/media:ro
       - certificates:/data
 
 volumes:
   database:
-  media:
   certificates:

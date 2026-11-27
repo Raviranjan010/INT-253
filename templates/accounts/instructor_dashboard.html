@@ -70,7 +70,7 @@
                       </a>
                     </td>
                     <td><span class="badge bg-secondary-subtle text-secondary">{{ course.get_level_display }}</span></td>
-                    <td><span class="badge bg-primary-subtle text-primary">{{ course.enrollment_count }}</span></td>
+                    <td><span class="badge bg-primary-subtle text-primary">{{ course.enrollment_total }}</span></td>
                     <td>
                       <a href="{% url 'courses:studio' course.slug %}" class="btn btn-xs btn-outline-primary btn-sm">Course studio</a>
                     </td>
@@ -79,6 +79,12 @@
               </tbody>
             </table>
           </div>
+          {% if courses.has_other_pages %}
+          <nav class="ls-actions" aria-label="Course pages">
+            {% if courses.has_previous %}<a href="{% querystring courses_page=courses.previous_page_number %}">Previous courses</a>{% endif %}
+            {% if courses.has_next %}<a href="{% querystring courses_page=courses.next_page_number %}">Next courses</a>{% endif %}
+          </nav>
+          {% endif %}
         {% else %}
           <div class="text-center py-4">
             <p class="text-muted small">You haven't authored any courses yet.</p>
@@ -100,7 +106,7 @@
                   <span class="badge {% if s.is_live_now %}bg-danger{% else %}bg-secondary{% endif %}">
                     {{ s.get_status_display }}
                   </span>
-                  <small class="text-muted">{{ s.scheduled_start|date:"M d, H:i" }}</small>
+                  <small class="text-muted">{{ s.scheduled_start|date:"M d, H:i" }} IST</small>
                 </div>
                 <h6 class="fw-bold mb-1">{{ s.title }}</h6>
                 <small class="text-muted d-block mb-2">{{ s.target_demographics }}</small>
@@ -110,6 +116,12 @@
               </div>
             {% endfor %}
           </div>
+          {% if live_sessions.has_other_pages %}
+          <nav class="ls-actions" aria-label="Live session pages">
+            {% if live_sessions.has_previous %}<a href="{% querystring live_page=live_sessions.previous_page_number %}">Previous sessions</a>{% endif %}
+            {% if live_sessions.has_next %}<a href="{% querystring live_page=live_sessions.next_page_number %}">Next sessions</a>{% endif %}
+          </nav>
+          {% endif %}
         {% else %}
           <div class="text-center py-4">
             <p class="text-muted small">No live sessions scheduled.</p>

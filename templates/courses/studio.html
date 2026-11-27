@@ -52,5 +52,31 @@
     </li>
     {% empty %}<li>No quizzes yet.</li>{% endfor %}
   </ul>
+  <section class="mt-4">
+    <h2>Learner progress</h2>
+    <p>{{ enrollment_stats.completed }} of {{ enrollment_stats.total }} enrollments completed.</p>
+    <p>{{ quiz_stats.passed }} of {{ quiz_stats.total }} quiz attempts passed.</p>
+    {% if average_rating is not None %}<p>Average rating: {{ average_rating|floatformat:1 }} out of 5.</p>{% endif %}
+    <ul>
+      {% for enrollment in page %}
+      <li>{{ enrollment.student.get_full_name|default:enrollment.student.username }} · {{ enrollment.progress_percentage }}%</li>
+      {% empty %}<li>No enrollments yet.</li>{% endfor %}
+    </ul>
+    {% include 'pagination.html' %}
+  </section>
+  <section class="mt-4">
+    <h2>Recent reviews</h2>
+    <ul>
+      {% for review in latest_reviews %}
+      <li>{{ review.student.username }} · {{ review.rating }} out of 5 · {{ review.review_text }}</li>
+      {% empty %}<li>No reviews yet.</li>{% endfor %}
+    </ul>
+    <h2>Unanswered classroom questions</h2>
+    <ul>
+      {% for doubt in unanswered_doubts %}
+      <li><a href="{% url 'live_classes:live_class_room' doubt.session_id %}">{{ doubt.question|truncatechars:100 }}</a></li>
+      {% empty %}<li>No unanswered questions.</li>{% endfor %}
+    </ul>
+  </section>
 </section>
 {% endblock %}

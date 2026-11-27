@@ -1,124 +1,18 @@
 {% extends 'base.html' %}
-{% load static %}
-
-{% block title %}Demographics Impact & Universal Inclusivity - Live School{% endblock %}
-
+{% block title %}Access and Inclusion | LiveSchool{% endblock %}
 {% block content %}
-<section class="py-5 bg-oxford-hero text-white position-relative overflow-hidden border-bottom border-dark" style="background-color: var(--bg-oxford-dark);">
-  <div class="hero-ledger-grid" aria-hidden="true"></div>
-  <div class="container py-3 position-relative z-2 text-center">
-    <div class="hero-seal-badge mb-3">
-      <span class="seal-icon-box"><i class="bi bi-shield-check text-mint"></i></span>
-      <span class="seal-text">UN SDG 4 Framework &bull; Global Demographic Inclusivity</span>
-    </div>
-    <h1 class="section-title-editorial display-5 text-white mb-3">Education for Every Demographic</h1>
-    <p class="hero-subtitle-text mx-auto mb-0" style="max-width: 800px;">
-      How Live School dismantles financial, infrastructural, and linguistic divides to deliver dignified, barrier-free higher learning to underserved communities worldwide.
-    </p>
+<section class="ls-band">
+  <div class="ls-wrap ls-section ls-editorial">
+    <div><p class="ls-kicker">Demographic Inclusivity</p><h1>More ways to learn.</h1></div>
+    <p class="lead">Learning looks different for everyone. LiveSchool offers self-paced lessons, scheduled classes, and reading tools so you can choose how to take part.</p>
   </div>
 </section>
-
-<section class="py-5 bg-natural-canvas">
-  <div class="container py-3">
-    <div class="row g-4">
-      
-      <!-- 1. Rural & Remote -->
-      <div class="col-md-6 col-lg-4">
-        <div class="interactive-sandbox-card h-100 p-4 rounded-4 bg-white shadow-sm d-flex flex-column">
-          <div class="sandbox-icon-circle bg-amber-soft text-amber mb-3"><i class="bi bi-geo-alt-fill"></i></div>
-          <h4 class="fw-bold mb-2">🌾 Rural & Remote Learners</h4>
-          <p class="text-secondary small flex-grow-1">
-            Engineered to function reliably on 2G/3G connections. Lecture notes and reading modules are lightweight text and downloadable files, ensuring learning never stops even with intermittent electricity or unstable network connections.
-          </p>
-          <ul class="small text-muted ps-3 mb-0">
-            <li>Low-bandwidth adaptive stream</li>
-            <li>Lightweight downloadable Markdown resources</li>
-            <li>Asynchronous discussion forums</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- 2. Economically Disadvantaged -->
-      <div class="col-md-6 col-lg-4">
-        <div class="interactive-sandbox-card h-100 p-4 rounded-4 bg-white shadow-sm d-flex flex-column">
-          <div class="sandbox-icon-circle bg-emerald-soft text-emerald mb-3"><i class="bi bi-cash-stack"></i></div>
-          <h4 class="fw-bold mb-2">💰 Economically Disadvantaged</h4>
-          <p class="text-secondary small flex-grow-1">
-            Eliminates all tuition, subscription paywalls, and pay-to-receive certificate schemes. Every learner receives world-class instruction, assessments, and verified credentials completely gratis.
-          </p>
-          <ul class="small text-muted ps-3 mb-0">
-            <li>Zero registration or hidden fees</li>
-            <li>Free tamper-evident digital certificates with SHA-256</li>
-            <li>No commercial advertising friction</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- 3. Women in STEM -->
-      <div class="col-md-6 col-lg-4">
-        <div class="interactive-sandbox-card h-100 p-4 rounded-4 bg-white shadow-sm d-flex flex-column">
-          <div class="sandbox-icon-circle bg-sky-soft text-sky mb-3"><i class="bi bi-laptop-fill"></i></div>
-          <h4 class="fw-bold mb-2">👩‍💻 Women & Girls in STEM</h4>
-          <p class="text-secondary small flex-grow-1">
-            Provides a safe, respectful, and inclusive online environment with female instructors and peer mentorship groups encouraging active participation in Computer Science, Data, and Mathematics.
-          </p>
-          <ul class="small text-muted ps-3 mb-0">
-            <li>Curated STEM courses with inclusive mentorship</li>
-            <li>Safe moderated live classrooms and doubt boards</li>
-            <li>Community support circles</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- 4. First-Gen & Working Adults -->
-      <div class="col-md-6 col-lg-4">
-        <div class="interactive-sandbox-card h-100 p-4 rounded-4 bg-white shadow-sm d-flex flex-column">
-          <div class="sandbox-icon-circle bg-purple-soft text-purple mb-3"><i class="bi bi-briefcase-fill"></i></div>
-          <h4 class="fw-bold mb-2">💼 First-Gen & Working Adults</h4>
-          <p class="text-secondary small flex-grow-1">
-            Adults balancing family and wage labor require extreme flexibility. Courses are structured into bite-sized 10-15 minute modular lessons with evening and weekend live classes.
-          </p>
-          <ul class="small text-muted ps-3 mb-0">
-            <li>Self-paced modular curriculum</li>
-            <li>Evening live masterclasses and recordings</li>
-            <li>Gamified daily streak and XP tracking</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- 5. Differently-Abled -->
-      <div class="col-md-6 col-lg-4">
-        <div class="interactive-sandbox-card h-100 p-4 rounded-4 bg-white shadow-sm d-flex flex-column">
-          <div class="sandbox-icon-circle bg-emerald-soft text-emerald mb-3"><i class="bi bi-universal-access"></i></div>
-          <h4 class="fw-bold mb-2">♿ Differently-Abled Learners</h4>
-          <p class="text-secondary small flex-grow-1">
-            Features an instant accessibility toolbar allowing students to switch between High-Contrast vision modes, adjust font sizes on the fly, use dyslexia-friendly fonts, and hear text-to-speech narration.
-          </p>
-          <ul class="small text-muted ps-3 mb-0">
-            <li>High-contrast visual accessibility switch</li>
-            <li>Real-time browser speech synthesis audio reader</li>
-            <li>Keyboard-navigable semantic HTML</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- 6. Global South -->
-      <div class="col-md-6 col-lg-4">
-        <div class="interactive-sandbox-card h-100 p-4 rounded-4 bg-white shadow-sm d-flex flex-column">
-          <div class="sandbox-icon-circle bg-sky-soft text-sky mb-3"><i class="bi bi-globe-americas"></i></div>
-          <h4 class="fw-bold mb-2">🌐 Global South Students</h4>
-          <p class="text-secondary small flex-grow-1">
-            Open worldwide to students across Africa, Asia, Latin America, and beyond. Cross-border peer forums facilitate knowledge exchange between diverse cultural perspectives.
-          </p>
-          <ul class="small text-muted ps-3 mb-0">
-            <li>Universal web standards compatibility</li>
-            <li>Global peer Q&A discussion exchange</li>
-            <li>Demographic-based impact measurement</li>
-          </ul>
-        </div>
-      </div>
-
-    </div>
-  </div>
+<section class="ls-wrap ls-section ls-editorial">
+  <div><h2>Make the page work for you.</h2><p>Open Accessibility above the main menu to adjust text size, switch themes, or turn on a reading ruler.</p></div>
+  <ul class="ls-steps">
+    <li><h3>Read comfortably</h3><p>Try the dyslexia-friendly font setting or high-contrast mode.</p></li>
+    <li><h3>Listen to lesson notes</h3><p>Use the audio control on a lesson page if your browser supports speech synthesis.</p></li>
+    <li><h3>Learn on your schedule</h3><p>Resume a course from your dashboard or look for lessons with downloadable resources.</p></li>
+  </ul>
 </section>
 {% endblock %}

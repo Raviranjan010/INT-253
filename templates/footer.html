@@ -1,87 +1,23 @@
-<footer class="site-editorial-footer mt-auto py-5">
-  <div class="container">
-    <div class="row g-4 justify-content-between">
-      <!-- Col 1: Mission & Academic Crest -->
-      <div class="col-lg-4 col-md-6">
-        <div class="d-flex align-items-center gap-2 mb-3">
-          <div class="brand-icon-box">
-            <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M20 11C15.8 7.5 7.5 7.5 3.5 8.8V29.5C8 28.2 15.5 28.2 20 31.8V11Z" fill="#10B981"/>
-              <path d="M20 11C24.2 7.5 32.5 7.5 36.5 8.8V29.5C32 28.2 24.5 28.2 20 31.8V11Z" fill="#059669"/>
-              <path d="M20 11V31.8" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-              <path d="M3.5 8.8C7.5 7.5 15.8 7.5 20 11C24.2 7.5 32.5 7.5 36.5 8.8" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round"/>
-              <path d="M3.5 29.5C8 28.2 15.5 28.2 20 31.8C24.5 28.2 32 28.2 36.5 29.5" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round"/>
-              <circle cx="20" cy="6" r="2" fill="#F59E0B"/>
-            </svg>
-          </div>
-          <span class="fs-4 fw-bold text-white">Live<span class="text-white-50">School</span></span>
-          <span class="badge-sdg-tag ms-2">UN SDG 4</span>
-        </div>
-        <p class="small text-footer-muted mb-3 lh-base">
-          <strong>Live School for World-Class Free Education</strong> is a public-benefit, open-access academic initiative. Designed to dismantle financial, linguistic, and geographical barriers, delivering verified synchronous higher education to underserved demographics everywhere.
-        </p>
-        <div class="demographic-pills-row d-flex flex-wrap gap-1 mb-3">
-          <span class="footer-micro-pill">🌾 Rural 2G Optimized</span>
-          <span class="footer-micro-pill">👩‍💻 Women in STEM</span>
-          <span class="footer-micro-pill">♿ WCAG AAA Accessible</span>
-          <span class="footer-micro-pill">📜 Cryptographic Certs</span>
-        </div>
-      </div>
-
-      <!-- Col 2: Curricula & Programs -->
-      <div class="col-lg-2 col-md-3 col-6">
-        <h6 class="footer-section-title mb-3">Curricula</h6>
-        <ul class="list-unstyled small d-flex flex-column gap-2 mb-0 footer-nav-list">
-          <li><a href="{% url 'courses:course_list' %}?category=cs-coding">Computer Science</a></li>
-          <li><a href="{% url 'courses:course_list' %}?category=data-ai">Data Science & AI</a></li>
-          <li><a href="{% url 'courses:course_list' %}?category=maths-stats">Calculus & Mathematics</a></li>
-          <li><a href="{% url 'courses:course_list' %}?category=web-cloud">Full-Stack Web Systems</a></li>
-          <li><a href="{% url 'courses:course_list' %}?category=languages">Global Communication</a></li>
-          <li><a href="{% url 'courses:course_list' %}?category=career-skills">Career Acceleration</a></li>
-        </ul>
-      </div>
-
-      <!-- Col 3: Academic Inclusivity -->
-      <div class="col-lg-2 col-md-3 col-6">
-        <h6 class="footer-section-title mb-3">Inclusivity</h6>
-        <ul class="list-unstyled small d-flex flex-column gap-2 mb-0 footer-nav-list">
-          <li><a href="{% url 'core:demographics_impact' %}">Demographics Blueprint</a></li>
-          <li><a href="{% url 'live_classes:live_class_list' %}">Live Classrooms</a></li>
-          <li><a href="{% url 'community:forum_list' %}">Peer Study Circles</a></li>
-          <li><a href="{% url 'certificates:verify' %}">Verify Certificate</a></li>
-          <li><a href="{% url 'core:about' %}">Project Manifesto</a></li>
-          <li><a href="{% url 'core:contact' %}">Volunteer as Educator</a></li>
-        </ul>
-      </div>
-
-      <!-- Col 4: Newsletter & Real-Time Alerts -->
-      <div class="col-lg-3 col-md-6 col-12">
-        <h6 class="footer-section-title mb-3">Live Class Dispatch</h6>
-        <p class="small text-footer-muted mb-3">
-          Receive synchronous class schedules, new open textbook drops, and academic updates. Zero commercial spam.
-        </p>
-        <form method="post" action="{% url 'core:subscribe' %}" class="footer-subscribe-form d-flex gap-2">
-          {% csrf_token %}
-          <input type="email" name="email" required placeholder="Enter student email..." class="form-control form-control-sm footer-input rounded-pill px-3">
-          <button type="submit" class="btn btn-sm btn-mint-action px-3 text-nowrap rounded-pill">Subscribe</button>
-        </form>
-        <div class="mt-3 text-footer-muted small" style="font-size: 0.72rem;">
-          <i class="bi bi-shield-lock me-1"></i> Data privacy guaranteed. No third-party tracking.
-        </div>
-      </div>
-    </div>
-
-    <hr class="my-4 border-footer opacity-20">
-
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center small text-footer-muted gap-2">
-      <div>
-        &copy; 2026 <strong>Live School</strong> &bull; INT-253 Academic Project &bull; Dedicated to open knowledge for all humanity.
-      </div>
-      <div class="d-flex gap-3">
-        <a href="{% url 'core:about' %}" class="text-footer-link">About Project</a>
-        <a href="{% url 'core:demographics_impact' %}" class="text-footer-link">Demographics & Equity</a>
-        <a href="{% url 'certificates:verify' %}" class="text-footer-link">Public Credential Verification</a>
-      </div>
-    </div>
+<footer class="ls-footer">
+  <div class="ls-wrap ls-footer-grid">
+    <div><a class="ls-footer-brand" href="{% url 'core:home' %}">LiveSchool</a><p>Free Education for Everyone</p></div>
+    <nav aria-label="Learning links">
+      <h2>Learn</h2>
+      <a href="{% url 'courses:course_list' %}">Explore courses</a>
+      <a href="{% url 'live_classes:live_class_list' %}">Live classes</a>
+      <a href="{% url 'community:forum_list' %}">Community resources</a>
+      <a href="{% url 'certificates:verify' %}">Verify a certificate</a>
+    </nav>
+    <nav aria-label="About LiveSchool">
+      <h2>LiveSchool</h2>
+      <a href="{% url 'core:about' %}">About</a>
+      <a href="{% url 'core:demographics_impact' %}">Access and inclusion</a>
+      <a href="{% url 'core:contact' %}">Contact</a>
+    </nav>
+    <form method="post" action="{% url 'core:subscribe' %}">
+      {% csrf_token %}
+      <label for="footer-email">Learning updates</label>
+      <div class="ls-newsletter"><input id="footer-email" type="email" name="email" autocomplete="email" required placeholder="Email address" class="form-control"><button class="btn ls-secondary" type="submit">Subscribe</button></div>
+    </form>
   </div>
 </footer>

@@ -1,14 +1,6 @@
-<!-- Accessibility & Demographics Utility Bar -->
-<div class="accessibility-bar-dark">
-  <div class="container d-flex justify-content-between align-items-center">
-    <div class="d-flex align-items-center gap-2">
-      <span class="badge-mini-mint">INT-253 CAPSTONE</span>
-      <span class="text-mini-muted d-none d-md-inline">
-        <i class="bi bi-shield-check text-mint me-1"></i> 100% Free Public Academic Platform &bull; UN SDG 4 Aligned
-      </span>
-    </div>
-    <div class="d-flex align-items-center gap-2">
-      <span class="text-mini-muted me-1 d-none d-lg-inline">Accessibility:</span>
+<details class="ls-access ls-wrap">
+  <summary>Accessibility</summary>
+    <div class="ls-access-tools" aria-label="Accessibility settings">
       <button id="font-decrease-btn" title="Decrease Font Size" class="mini-btn">A-</button>
       <button id="font-reset-btn" title="Reset Font Size" class="mini-btn">A</button>
       <button id="font-increase-btn" title="Increase Font Size" class="mini-btn">A+</button>
@@ -33,12 +25,11 @@
         <i class="bi bi-moon-stars-fill"></i>
       </button>
     </div>
-  </div>
-</div>
+</details>
 
 <!-- Main LiveSchool Navbar -->
 <header class="liveschool-navbar sticky-top">
-  <nav class="navbar navbar-expand-lg navbar-dark py-2">
+  <nav class="navbar navbar-expand-xl py-2" aria-label="Main navigation">
     <div class="container">
       <!-- LiveSchool Brand with Authentic Open Book & Academic Laurel Crest -->
       <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none" href="{% url 'core:home' %}">
@@ -75,24 +66,19 @@
         <!-- Navigation Links -->
         <ul class="navbar-nav mx-auto mb-2 mb-lg-0 align-items-lg-center gap-1 gap-lg-3">
           <li class="nav-item">
-            <a class="nav-link nav-link-custom" href="{% url 'core:home' %}">Home</a>
+            <a class="nav-link nav-link-custom" {% if request.resolver_match.view_name == 'core:home' %}aria-current="page"{% endif %} href="{% url 'core:home' %}">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link nav-link-custom" href="{% url 'courses:course_list' %}">Courses</a>
+            <a class="nav-link nav-link-custom" {% if request.resolver_match.namespace == 'courses' %}aria-current="true"{% endif %} href="{% url 'courses:course_list' %}">Explore Courses</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link nav-link-custom position-relative" href="{% url 'live_classes:live_class_list' %}">
-              Live Classes
-              {% if UPCOMING_LIVE_COUNT > 0 %}
-              <span class="nav-live-dot" title="Live sessions scheduled"></span>
-              {% endif %}
-            </a>
+            <a class="nav-link nav-link-custom" {% if request.resolver_match.namespace == 'live_classes' %}aria-current="true"{% endif %} href="{% url 'live_classes:live_class_list' %}">Live Classes</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link nav-link-custom" href="{% url 'community:forum_list' %}">Resources</a>
+            <a class="nav-link nav-link-custom" href="{% url 'core:home' %}#learning-resources">Resources</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link nav-link-custom" href="{% url 'core:about' %}">About</a>
+            <a class="nav-link nav-link-custom" {% if request.resolver_match.view_name == 'core:about' %}aria-current="page"{% endif %} href="{% url 'core:about' %}">About</a>
           </li>
         </ul>
 
@@ -102,8 +88,8 @@
           <form class="nav-search-form" method="get" action="{% url 'courses:course_list' %}">
             <div class="nav-search-wrapper">
               <i class="bi bi-search nav-search-icon"></i>
-              <input type="search" name="q" class="nav-search-input" placeholder="Search courses, topics..."
-                aria-label="Search">
+              <input type="search" name="q" class="nav-search-input" placeholder="Search courses"
+                aria-label="Search courses">
             </div>
           </form>
 
@@ -167,10 +153,9 @@
             </ul>
           </div>
           {% else %}
-          <!-- Demo Role Switcher Dropdown -->
           <!-- Login & Sign Up buttons -->
           <a href="{% url 'accounts:login' %}" class="btn-nav-login">Login</a>
-          <a href="{% url 'accounts:register' %}" class="btn-nav-signup">Sign Up</a>
+          <a href="{% url 'accounts:register' %}" class="btn ls-primary">Get Started</a>
           {% endif %}
         </div>
       </div>

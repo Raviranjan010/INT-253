@@ -1,88 +1,18 @@
 {% extends 'base.html' %}
-{% load static %}
-
-{% block title %}About the Project - Live School for World-Class Free Education{% endblock %}
-
+{% block title %}About LiveSchool{% endblock %}
 {% block content %}
-<section class="py-5 bg-oxford-hero text-white position-relative overflow-hidden border-bottom border-dark" style="background-color: var(--bg-oxford-dark);">
-  <div class="hero-ledger-grid" aria-hidden="true"></div>
-  <div class="container py-3 position-relative z-2 text-center">
-    <div class="hero-seal-badge mb-3">
-      <span class="seal-icon-box"><i class="bi bi-mortarboard-fill"></i></span>
-      <span class="seal-text">INT-253 Capstone Academic Project &bull; Architectural Blueprint</span>
-    </div>
-    <h1 class="section-title-editorial display-5 text-white mb-2">About Live School</h1>
-    <p class="hero-subtitle-text mx-auto mb-0" style="max-width: 750px;">
-      Empowering humanity through democratized access to world-class learning, synchronous live teaching, and verified credentials.
-    </p>
+<section class="ls-band">
+  <div class="ls-wrap ls-section ls-editorial">
+    <div><p class="ls-kicker">About Live School</p><h1>Free education for everyone.</h1></div>
+    <p class="lead">LiveSchool brings free courses, structured lessons, and live learning into one place. Start with a subject you’re curious about and learn at a pace that works for you.</p>
   </div>
 </section>
-
-<section class="py-5 bg-natural-canvas">
-  <div class="container" style="max-width: 900px;">
-    <div class="card p-4 p-md-5 border-0 shadow-sm rounded-4 bg-white mb-5">
-      <span class="badge-academic-pill mb-3" style="width: fit-content;"><i class="bi bi-bullseye me-1"></i> ACADEMIC PROBLEM STATEMENT</span>
-      <div class="p-3 bg-light rounded-3 border-start border-4 border-success mb-4">
-        <p class="lead mb-0 fst-italic text-dark">
-          "Live School for World-Class Free Education: Creation of an online platform providing free access to world-class education for students across various demographics."
-        </p>
-      </div>
-
-      <h4 class="fw-bold mb-3 text-dark">1. Background & Motivation</h4>
-      <p class="text-secondary">
-        Across the globe, billions of ambitious minds are restrained from realizing their full human potential due to exorbitant university tuitions, prohibitive paywalls on learning resources, geographical isolation, and social divides. Traditional Massive Open Online Courses (MOOCs) often monetize certificates or lack the dynamic mentorship and real-time interaction that students in developing or underserved demographics desperately need.
-      </p>
-
-      <h4 class="fw-bold mb-3 text-dark">2. The Solution: Live School</h4>
-      <p class="text-secondary">
-        <strong>Live School</strong> bridges the gap between static self-paced tutorials and expensive private tutoring. Built as an open, accessible Django-powered web ecosystem, Live School combines:
-      </p>
-      <ul class="text-secondary mb-4">
-        <li><strong>Open-Access Curriculum:</strong> Structured courses spanning Computer Science, Mathematics, STEM, Languages, and Essential Life Skills.</li>
-        <li><strong>Live Interactive Video Rooms:</strong> Real-time zero-cost live classes with screen sharing, teacher-student dialogue, and doubt-clearing sessions using WebRTC.</li>
-        <li><strong>Demographics-Centric Accessibility:</strong> Built-in text resizing, high-contrast modes, dyslexia-friendly fonts, low-bandwidth video integration, and demographic tracking.</li>
-        <li><strong>Verifiable Digital Credentials:</strong> Instant cryptographically verifiable completion certificates with SHA-256 validation for students to showcase on resumes and professional profiles.</li>
-      </ul>
-
-      <h4 class="fw-bold mb-3 text-dark">3. Technology Architecture</h4>
-      <div class="row g-3 text-center mb-4">
-        <div class="col-sm-3 col-6">
-          <div class="p-3 border rounded-3 bg-light">
-            <i class="bi bi-filetype-py fs-2 text-primary"></i>
-            <div class="fw-bold mt-1 text-dark">Python 3.12</div>
-            <small class="text-muted">Core Language</small>
-          </div>
-        </div>
-        <div class="col-sm-3 col-6">
-          <div class="p-3 border rounded-3 bg-light">
-            <i class="bi bi-layers fs-2 text-success"></i>
-            <div class="fw-bold mt-1 text-dark">Django 6.1</div>
-            <small class="text-muted">Backend MVT</small>
-          </div>
-        </div>
-        <div class="col-sm-3 col-6">
-          <div class="p-3 border rounded-3 bg-light">
-            <i class="bi bi-camera-video fs-2 text-danger"></i>
-            <div class="fw-bold mt-1 text-dark">WebRTC Mesh</div>
-            <small class="text-muted">Real-Time Video</small>
-          </div>
-        </div>
-        <div class="col-sm-3 col-6">
-          <div class="p-3 border rounded-3 bg-light">
-            <i class="bi bi-shield-check fs-2 text-warning"></i>
-            <div class="fw-bold mt-1 text-dark">SHA-256</div>
-            <small class="text-muted">Tamper-Proof Certs</small>
-          </div>
-        </div>
-      </div>
-
-      <div class="pt-3 border-top d-flex justify-content-between align-items-center">
-        <span class="text-muted small">Course Code: <strong>INT-253</strong> &bull; Academic Project</span>
-        <a href="{% url 'courses:course_list' %}" class="btn btn-sm btn-mint-action px-3 rounded-pill">
-          Explore Free Catalog &rarr;
-        </a>
-      </div>
-    </div>
+<section class="ls-wrap ls-section ls-editorial">
+  <div><h2>Room to learn, together.</h2><p>Use your dashboard to keep track of lessons, join scheduled classes, and ask questions in course discussions.</p></div>
+  <div class="ls-link-list">
+    <a href="{% url 'courses:course_list' %}">Explore courses <span aria-hidden="true">↗</span></a>
+    <a href="{% url 'core:demographics_impact' %}">Access and inclusion <span aria-hidden="true">↗</span></a>
+    <a href="{% url 'core:contact' %}">Get in touch <span aria-hidden="true">↗</span></a>
   </div>
 </section>
 {% endblock %}

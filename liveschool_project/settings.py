@@ -39,6 +39,8 @@ if allowed_hosts_env:
     ALLOWED_HOSTS = [h.strip() for h in allowed_hosts_env.split(',') if h.strip()]
 else:
     ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver']
+if not DEBUG and (not allowed_hosts_env or not ALLOWED_HOSTS or '*' in ALLOWED_HOSTS):
+    raise ImproperlyConfigured('Set ALLOWED_HOSTS to the explicit production hostnames.')
 
 # Application definition
 INSTALLED_APPS = [
@@ -94,7 +96,7 @@ WSGI_APPLICATION = 'liveschool_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.getenv('SQLITE_PATH') or BASE_DIR / 'db.sqlite3',
     }
 }
 

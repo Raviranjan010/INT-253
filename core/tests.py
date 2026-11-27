@@ -95,6 +95,12 @@ class CorePlatformSecurityAndMetricsTests(TestCase):
         self.assertEqual(stats['courses'], 1)
         self.assertEqual(stats['countries'], 1)
 
+    def test_anonymous_catalog_and_home_query_budgets(self):
+        with self.assertNumQueries(3):
+            self.assertEqual(self.client.get(reverse('core:home')).status_code, 200)
+        with self.assertNumQueries(3):
+            self.assertEqual(self.client.get(reverse('courses:course_list')).status_code, 200)
+
     def test_demographics_impact_page(self):
         res = self.client.get(reverse('core:demographics_impact'))
         self.assertEqual(res.status_code, 200)

@@ -23,5 +23,5 @@ RUN mkdir -p /app/media /app/data
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "exec gunicorn --bind 0.0.0.0:${PORT:-8000} --access-logfile - liveschool_project.wsgi:application"]
+CMD ["sh", "-c", "if [ \"${RUN_MIGRATIONS:-0}\" = 1 ]; then python manage.py migrate --noinput || exit $?; fi; exec gunicorn --bind 0.0.0.0:${PORT:-8000} --access-logfile - liveschool_project.wsgi:application"]
 

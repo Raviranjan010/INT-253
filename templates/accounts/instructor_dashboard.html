@@ -72,7 +72,7 @@
                     <td><span class="badge bg-secondary-subtle text-secondary">{{ course.get_level_display }}</span></td>
                     <td><span class="badge bg-primary-subtle text-primary">{{ course.enrollment_count }}</span></td>
                     <td>
-                      <a href="{% url 'courses:course_detail' course.slug %}" class="btn btn-xs btn-outline-primary btn-sm">View</a>
+                      <a href="{% url 'courses:studio' course.slug %}" class="btn btn-xs btn-outline-primary btn-sm">Course studio</a>
                     </td>
                   </tr>
                 {% endfor %}

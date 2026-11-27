@@ -1,4 +1,7 @@
 from django import forms
+from django.core.files.uploadedfile import UploadedFile
+from pathlib import PurePath
+from zipfile import BadZipFile, ZipFile
 from .models import Course, Module, Lesson, CourseReview
 from .video import embed_url
 
@@ -35,6 +38,36 @@ class CourseCreateForm(forms.ModelForm):
 
 
 class LessonForm(forms.ModelForm):
+    def clean_resource_file(self):
+        resource = self.cleaned_data['resource_file']
+        if not isinstance(resource, UploadedFile):
+            return resource
+        if resource.size > 10 * 1024 * 1024:
+            raise forms.ValidationError('Use a resource smaller than 10 MB.')
+        suffix = PurePath(resource.name).suffix.lower()
+        header = resource.read(8)
+        resource.seek(0)
+        valid = (
+            (suffix == '.pdf' and header.startswith(b'%PDF-'))
+            or (suffix in {'.jpg', '.jpeg'} and header.startswith(bytes.fromhex('ffd8ff')))
+            or (suffix == '.png' and header == bytes.fromhex('89504e470d0a1a0a'))
+        )
+        if suffix in {'.zip', '.pptx', '.docx'}:
+            try:
+                with ZipFile(resource) as archive:
+                    entries = set(archive.namelist())
+                    expected = {'.pptx': 'ppt/presentation.xml', '.docx': 'word/document.xml'}
+                    valid = suffix == '.zip' or (
+                        '[Content_Types].xml' in entries and expected[suffix] in entries
+                    )
+            except BadZipFile:
+                valid = False
+            finally:
+                resource.seek(0)
+        if not valid:
+            raise forms.ValidationError('Upload a PDF, PowerPoint, Word, ZIP, PNG, or JPEG file.')
+        return resource
+
     def clean_video_url(self):
         value = self.cleaned_data['video_url']
         if value and not embed_url(value):

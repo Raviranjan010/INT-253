@@ -21,8 +21,9 @@
       </div>
       <div class="row g-3 mb-3">
         <div class="col-md-6">
-          <label class="form-label fw-semibold">Scheduled Date & Time</label>
+          <label class="form-label fw-semibold" for="{{ form.scheduled_start.id_for_label }}">Scheduled date and time (IST)</label>
           {{ form.scheduled_start }}
+          {{ form.scheduled_start.errors }}
         </div>
         <div class="col-md-6">
           <label class="form-label fw-semibold">Duration (Minutes)</label>
@@ -36,6 +37,11 @@
       <div class="mb-4">
         <label class="form-label fw-semibold">Class Description & Key Learning Objectives</label>
         {{ form.description }}
+      </div>
+      <div class="mb-4">
+        {{ form.meeting_url.label_tag }}
+        {{ form.meeting_url }}
+        {{ form.meeting_url.errors }}
       </div>
 
       <div class="d-flex justify-content-between pt-3 border-top">

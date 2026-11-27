@@ -138,7 +138,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
 
@@ -208,7 +208,7 @@ CSRF_TRUSTED_ORIGINS = [
 SECURE_REFERRER_POLICY = 'same-origin'
 
 # Jitsi Meet Domain for WebRTC Live Classroom
-JITSI_DOMAIN = os.getenv('JITSI_DOMAIN', 'meet.jit.si')
+JITSI_DOMAIN = os.getenv('JITSI_DOMAIN', '')
 
 # Production Security Hardening
 if not DEBUG:

@@ -28,6 +28,7 @@ class LiveSession(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='scheduled')
     target_demographics = models.CharField(max_length=150, default='All Demographics & Remote Students')
     recording_url = models.URLField(blank=True, null=True, help_text='Link to session recording for offline/rural students')
+    meeting_url = models.URLField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -35,7 +36,7 @@ class LiveSession(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.room_name:
-            self.room_name = f"liveschool-{str(self.id)[:8]}"
+            self.room_name = f"liveschool-{self.id.hex}"
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -43,11 +44,7 @@ class LiveSession(models.Model):
 
     @property
     def is_live_now(self):
-        if self.status == 'live':
-            return True
-        now = timezone.now()
-        end_time = self.scheduled_start + timezone.timedelta(minutes=self.duration_minutes)
-        return self.scheduled_start <= now <= end_time and self.status != 'completed'
+        return self.status == 'live'
 
     @property
     def attendee_count(self):

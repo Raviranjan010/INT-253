@@ -1,8 +1,22 @@
 from django import forms
+from django.utils import timezone
+from urllib.parse import urlsplit
 from .models import LiveSession, LiveClassDoubt
 from courses.models import Course
 
 class LiveSessionScheduleForm(forms.ModelForm):
+    def clean_scheduled_start(self):
+        start = self.cleaned_data['scheduled_start']
+        if start <= timezone.now():
+            raise forms.ValidationError('Choose a future date and time (IST).')
+        return start
+
+    def clean_meeting_url(self):
+        value = self.cleaned_data['meeting_url']
+        if value and urlsplit(value).scheme != 'https':
+            raise forms.ValidationError('Enter an HTTPS meeting link.')
+        return value
+
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
         if user is not None and not user.is_staff:
@@ -10,7 +24,7 @@ class LiveSessionScheduleForm(forms.ModelForm):
 
     class Meta:
         model = LiveSession
-        fields = ('title', 'course', 'scheduled_start', 'duration_minutes', 'description', 'target_demographics')
+        fields = ('title', 'course', 'scheduled_start', 'duration_minutes', 'description', 'target_demographics', 'meeting_url')
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. Masterclass: Python OOP from Scratch'}),
             'course': forms.Select(attrs={'class': 'form-select'}),

@@ -1,9 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django import forms
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponseNotAllowed
 from django.utils import timezone
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
+from django.db import transaction
+from django.views.decorators.http import require_POST
 
 from .models import LiveSession, SessionAttendee, LiveClassDoubt
 from .forms import LiveSessionScheduleForm, DoubtForm
@@ -30,7 +34,7 @@ def live_class_list(request):
 @login_required
 def live_class_room(request, session_id):
     session = get_object_or_404(LiveSession.objects.select_related('course', 'instructor'), id=session_id)
-    is_session_host = (request.user == session.instructor or request.user.is_staff)
+    is_session_host = request.user.is_staff or (request.user.is_instructor and request.user == session.instructor)
 
     # 1. Enforce enrollment access restriction if session is tied to a specific course
     if session.course and not is_session_host:
@@ -47,8 +51,9 @@ def live_class_room(request, session_id):
         return redirect('live_classes:live_class_list')
 
     # 3. Track attendance & prevent XP manipulation (award attendance XP exactly once per session)
-    SessionAttendee.objects.get_or_create(session=session, user=request.user)
-    request.user.award_xp('live_attendance', session.id, 10)
+    if not is_session_host and not request.user.is_instructor:
+        SessionAttendee.objects.get_or_create(session=session, user=request.user)
+        request.user.award_xp('live_attendance', session.id, 10)
 
     # Doubts in this session
     doubts = session.doubts.select_related('student').all()
@@ -58,11 +63,45 @@ def live_class_room(request, session_id):
         'session': session,
         'doubts': doubts,
         'doubt_form': doubt_form,
-        'jitsi_domain': getattr(settings, 'JITSI_DOMAIN', 'meet.jit.si'),
+        'jitsi_domain': settings.JITSI_DOMAIN if settings.JITSI_DOMAIN != 'meet.jit.si' else '',
         'user_display_name': request.user.get_full_name() or request.user.username,
         'is_instructor': is_session_host,
     }
     return render(request, 'live_classes/live_class_room.html', context)
+
+
+@login_required
+@require_POST
+@transaction.atomic
+def manage_session(request, session_id):
+    session = get_object_or_404(LiveSession.objects.select_for_update(), id=session_id)
+    if not (request.user.is_staff or (request.user.is_instructor and request.user == session.instructor)):
+        raise PermissionDenied
+    transitions = {
+        'scheduled': {'start': 'live', 'cancel': 'cancelled'},
+        'live': {'end': 'completed', 'cancel': 'cancelled'},
+    }
+    action = request.POST.get('action')
+    target = transitions.get(session.status, {}).get(action)
+    if target:
+        session.status = target
+        session.save(update_fields=['status'])
+    elif action == 'recording' and session.status == 'completed':
+        field = forms.URLField(assume_scheme='https')
+        try:
+            value = field.clean(request.POST.get('recording_url'))
+            if not value.startswith('https://'):
+                raise forms.ValidationError('Use an HTTPS link.')
+        except forms.ValidationError:
+            messages.error(request, 'Enter a valid HTTPS recording link.')
+        else:
+            session.recording_url = value
+            session.save(update_fields=['recording_url'])
+    else:
+        messages.error(request, 'This action is unavailable for the current class status.')
+    if session.status == 'cancelled':
+        return redirect('live_classes:live_class_list')
+    return redirect('live_classes:live_class_room', session_id=session.id)
 
 
 @login_required

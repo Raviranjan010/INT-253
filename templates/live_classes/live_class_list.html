@@ -41,7 +41,7 @@
                 <span class="live-pill-tag"><i class="bi bi-broadcast"></i> LIVE NOW</span>
               {% else %}
                 <span class="badge bg-light text-dark border">
-                  <i class="bi bi-calendar-event text-mint-dark me-1"></i> {{ session.scheduled_start|date:"M d, H:i" }}
+                  <i class="bi bi-calendar-event text-mint-dark me-1"></i> {{ session.scheduled_start|date:"M d, H:i" }} IST
                 </span>
               {% endif %}
               <small class="text-muted"><i class="bi bi-clock me-1"></i>{{ session.duration_minutes }} mins</small>

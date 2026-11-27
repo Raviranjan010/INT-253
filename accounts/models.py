@@ -98,10 +98,12 @@ class CustomUser(AbstractUser):
         self.refresh_from_db(fields=['xp_points'])
 
     def update_streak(self):
-        today = timezone.now().date()
+        today = timezone.localdate()
         if self.last_active_date:
             last_date = self.last_active_date.date() if hasattr(self.last_active_date, 'date') else self.last_active_date
             diff = (today - last_date).days
+            if diff <= 0:
+                return
             if diff == 1:
                 self.streak_count += 1
             elif diff > 1:

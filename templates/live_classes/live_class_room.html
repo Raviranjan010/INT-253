@@ -20,7 +20,7 @@
   <div class="card p-3 border custom-card mb-3 bg-body-tertiary">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
       <div class="d-flex align-items-center gap-2">
-        <span class="live-pulse"><span class="pulse-dot"></span> LIVE CLASSROOM</span>
+        <span class="badge text-bg-secondary">{{ session.get_status_display }}</span>
         <h4 class="fw-bold mb-0">{{ session.title }}</h4>
       </div>
 
@@ -33,12 +33,37 @@
       </div>
     </div>
   </div>
+  {% if is_instructor %}
+  <form class="ls-actions mb-3" method="post" action="{% url 'live_classes:manage_session' session.pk %}">
+    {% csrf_token %}
+    {% if session.status == 'scheduled' %}
+    <button class="btn ls-primary" name="action" value="start">Start class</button>
+    {% elif session.status == 'live' %}
+    <button class="btn ls-primary" name="action" value="end">End class</button>
+    {% elif session.status == 'completed' %}
+    <label for="recording-url">Recording link</label>
+    <input id="recording-url" type="url" name="recording_url" value="{{ session.recording_url|default_if_none:'' }}" required>
+    <button class="btn ls-primary" name="action" value="recording">Save recording</button>
+    {% endif %}
+    {% if session.status == 'scheduled' or session.status == 'live' %}
+    <button class="btn btn-outline-danger" name="action" value="cancel">Cancel class</button>
+    {% endif %}
+  </form>
+  {% endif %}
 
   <div class="row g-3">
     <!-- Jitsi WebRTC Live Video Area -->
     <div class="col-lg-8">
       <div class="card p-2 border custom-card shadow">
+        {% if session.is_live_now and session.meeting_url %}
+        <a class="btn ls-primary" href="{{ session.meeting_url }}" rel="noopener noreferrer" target="_blank">Join meeting</a>
+        {% elif session.is_live_now and jitsi_domain %}
         <div id="jitsi-meet-container"></div>
+        {% elif session.status == 'completed' and session.recording_url %}
+        <a class="btn ls-secondary" href="{{ session.recording_url }}" rel="noopener noreferrer" target="_blank">Watch recording</a>
+        {% else %}
+        <p class="p-3 mb-0">A video link is unavailable for this class right now.</p>
+        {% endif %}
       </div>
       <div class="d-flex justify-content-between align-items-center mt-2 px-1 text-muted small">
         <span><i class="bi bi-info-circle me-1"></i> Powered by open WebRTC. Use your camera, mic, or screen share.</span>
@@ -111,6 +136,7 @@
 {% endblock %}
 
 {% block extra_js %}
+{% if session.is_live_now and jitsi_domain and not session.meeting_url %}
 <!-- Jitsi Meet External API -->
 <script src="https://{{ jitsi_domain }}/external_api.js"></script>
 <script>
@@ -153,5 +179,6 @@
     }
   });
 </script>
+{% endif %}
 {% endblock %}
 

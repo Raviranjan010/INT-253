@@ -1,0 +1,11 @@
+{% if user.is_authenticated %}
+<details class="mt-2">
+  <summary>Report {{ label }}</summary>
+  <form class="ls-actions mt-2" method="post" action="{{ report_url }}">
+    {% csrf_token %}
+    <label for="reason-{{ label }}-{{ item_id }}">Reason</label>
+    <input id="reason-{{ label }}-{{ item_id }}" name="reason" required maxlength="500" class="form-control">
+    <button class="btn ls-secondary" type="submit">Submit report</button>
+  </form>
+</details>
+{% endif %}

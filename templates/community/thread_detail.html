@@ -28,6 +28,8 @@
 
     <div class="p-3 bg-body-tertiary rounded-3 border mb-3 text-secondary" style="line-height: 1.8; font-size: 1.05rem;">
       {{ thread.content|linebreaks }}
+      {% url 'community:report_thread' thread.pk as report_url %}
+      {% include 'community/report_form.html' with label='thread' item_id=thread.pk %}
     </div>
 
     <div class="d-flex justify-content-between align-items-center small text-muted border-top pt-3">
@@ -100,6 +102,8 @@
       <div class="card p-4 border custom-card text-center text-muted">
         No answers posted yet. Help out by replying below!
       </div>
+      {% url 'community:report_reply' thread.pk reply.pk as report_url %}
+      {% include 'community/report_form.html' with label='reply' item_id=reply.pk %}
     {% endfor %}
   </div>
 

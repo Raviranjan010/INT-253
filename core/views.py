@@ -22,7 +22,7 @@ def home(request):
     announcements = Announcement.objects.filter(is_active=True)[:2]
     
     from community.models import DiscussionThread
-    recent_threads = DiscussionThread.objects.select_related('author', 'course').prefetch_related('replies')[:3]
+    recent_threads = DiscussionThread.objects.filter(is_hidden=False).select_related('author', 'course')[:3]
 
     context = {
         'featured_courses': featured_courses,

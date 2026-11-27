@@ -53,9 +53,15 @@ class LiveClassesFunctionalityAndSecurityTests(TestCase):
         res_enrolled = self.client.get(reverse('live_classes:live_class_room', kwargs={'session_id': self.session.id}))
         self.assertEqual(res_enrolled.status_code, 200)
         self.assertContains(res_enrolled, 'WebRTC Live Masterclass')
+        self.assertFalse(SessionAttendee.objects.filter(session=self.session, user=self.enrolled_student).exists())
+        self.session.status = 'live'
+        self.session.save(update_fields=['status'])
+        self.client.get(reverse('live_classes:live_class_room', kwargs={'session_id': self.session.id}))
         self.assertTrue(SessionAttendee.objects.filter(session=self.session, user=self.enrolled_student).exists())
 
     def test_attendance_xp_not_farmable(self):
+        self.session.status = 'live'
+        self.session.save(update_fields=['status'])
         self.client.login(username='enrolled_stud', password='Password123!')
         initial_xp = self.enrolled_student.xp_points
 

@@ -55,8 +55,8 @@ The Compose files provide a local preview and an alternate Linux/Caddy setup. Us
 
 - In Django admin, approve an instructor application in **Users**. The bulk actions record approval changes in Django's admin history. Revoked instructors lose studio access.
 - As an approved instructor, create a draft and open **Course studio**. Add modules and lessons, set their order, optionally add supported media, and publish when at least one lesson exists.
-- Create a quiz and add questions with two to six choices and exactly one correct answer.
-- Schedule a class in IST. Open its room to start, end, cancel, or add a recording link after completing it.
+- Create a quiz and add questions with two to six choices and exactly one correct answer. Quizzes with recorded attempts are protected against studio edits and deletes.
+- Schedule a class in IST. Open its room to start, end, cancel, or add a recording link after completing it. If your host supports scheduled tasks, run `python manage.py close_expired_classes` periodically.
 - Run `python manage.py check_content_links` to check published lesson endpoints. An HTTP success is independent of playback availability or licensing. The bootstrap ships no externally sourced lessons.
 
 ## Checks and current limitations
@@ -70,4 +70,4 @@ coverage report --omit='*/migrations/*,*/tests.py,*/test_*.py'
 python manage.py check --deploy
 ```
 
-The production check uses the actual environment. Opting out of HSTS subdomain coverage or preload can produce framework warnings. CSP is report-only while provider compatibility is tested. Quiz authoring supports creation, and full quiz editing and previews are pending. Newsletter signup records addresses without sending campaigns or supporting double opt-in or unsubscribe. Shared rate limiting across workers requires a shared cache and verified proxy IP handling. Production accessibility and performance scores have not been measured. See [project report](PROJECT_REPORT_INT253.md) and [architecture and permissions](docs/architecture.md).
+The production check uses the actual environment. Opting out of HSTS subdomain coverage or preload can produce framework warnings. CSP is report-only while provider compatibility is tested. Quiz preview is pending. Newsletter email confirmation and unsubscribe work with a configured sender. Campaign delivery is separate. The room visit count measures learners opening an active classroom page. It does not measure attendance inside the video provider. Shared rate limiting across workers requires a shared cache and verified proxy IP handling. Production accessibility and performance scores have not been measured. See [project report](PROJECT_REPORT_INT253.md) and [architecture and permissions](docs/architecture.md).

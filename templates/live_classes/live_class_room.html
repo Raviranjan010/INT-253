@@ -26,7 +26,7 @@
 
       <div class="d-flex align-items-center gap-3 small">
         <span class="text-muted"><i class="bi bi-person-circle me-1"></i> Instructor: <strong>{{ session.instructor.get_full_name|default:session.instructor.username }}</strong></span>
-        <span class="badge bg-primary text-white"><i class="bi bi-people-fill me-1"></i> {{ session.attendee_count }} Attended</span>
+        <span class="badge bg-primary text-white"><i class="bi bi-people-fill me-1"></i> {{ session.attendee_count }} learner room visits</span>
         <a href="{% url 'live_classes:live_class_list' %}" class="btn btn-sm btn-outline-secondary">
           <i class="bi bi-box-arrow-left me-1"></i> Leave Room
         </a>

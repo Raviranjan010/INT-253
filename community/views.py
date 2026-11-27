@@ -2,17 +2,18 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponseNotAllowed
-from django.db.models import Count, F, Q
+from django.db.models import Count, F, Q, Prefetch
 from django.core.paginator import Paginator
-from .models import DiscussionThread, DiscussionReply
+from .models import DiscussionThread, DiscussionReply, Report
+from django.views.decorators.http import require_POST
 from .forms import ThreadForm, ReplyForm
 
 def forum_list(request):
     query = request.GET.get('q', '').strip()
     status_filter = request.GET.get('status', 'all')
     
-    threads = DiscussionThread.objects.select_related('author', 'course').annotate(
-        reply_total=Count('replies')
+    threads = DiscussionThread.objects.filter(is_hidden=False).select_related('author', 'course').annotate(
+        reply_total=Count('replies', filter=Q(replies__is_hidden=False))
     ).order_by('-created_at', '-pk')
 
     if query:
@@ -39,7 +40,9 @@ def forum_list(request):
 
 def thread_detail(request, thread_id):
     thread = get_object_or_404(
-        DiscussionThread.objects.select_related('author', 'course').prefetch_related('replies__author', 'replies__upvotes'),
+        DiscussionThread.objects.filter(is_hidden=False).select_related('author', 'course').prefetch_related(
+            Prefetch('replies', queryset=DiscussionReply.objects.filter(is_hidden=False).select_related('author').prefetch_related('upvotes')),
+        ),
         id=thread_id
     )
 
@@ -100,7 +103,7 @@ def upvote_reply(request, reply_id):
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST'])
 
-    reply = get_object_or_404(DiscussionReply, id=reply_id)
+    reply = get_object_or_404(DiscussionReply, id=reply_id, is_hidden=False, thread__is_hidden=False)
     if request.user in reply.upvotes.all():
         reply.upvotes.remove(request.user)
         messages.info(request, "Upvote removed.")
@@ -119,7 +122,7 @@ def toggle_solution(request, reply_id):
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST'])
 
-    reply = get_object_or_404(DiscussionReply, id=reply_id)
+    reply = get_object_or_404(DiscussionReply, id=reply_id, is_hidden=False, thread__is_hidden=False)
     thread = reply.thread
     if request.user != thread.author and not request.user.is_staff:
         messages.error(request, "Only the author of the question can mark the accepted solution.")
@@ -141,3 +144,17 @@ def toggle_solution(request, reply_id):
         messages.info(request, "Solution unmarked.")
 
     return redirect('community:thread_detail', thread_id=thread.id)
+
+
+@login_required
+@require_POST
+def report_content(request, thread_id, reply_id=None):
+    thread = get_object_or_404(DiscussionThread, pk=thread_id, is_hidden=False)
+    reply = get_object_or_404(thread.replies, pk=reply_id, is_hidden=False) if reply_id else None
+    reason = request.POST.get('reason', '').strip()
+    if not reason or len(reason) > 500:
+        messages.error(request, 'Enter a report reason between 1 and 500 characters.')
+    else:
+        Report.objects.get_or_create(thread=thread, reply=reply, reporter=request.user, defaults={'reason': reason})
+        messages.success(request, 'The report is available to moderators.')
+    return redirect('community:thread_detail', thread_id=thread.pk)

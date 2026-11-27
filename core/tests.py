@@ -124,3 +124,19 @@ class CorePlatformSecurityAndMetricsTests(TestCase):
         }, follow=True)
         self.assertEqual(res.status_code, 200)
         self.assertTrue(NewsletterSubscriber.objects.filter(email='subscriber@example.com').exists())
+
+    def test_newsletter_confirm_and_unsubscribe_require_post(self):
+        from django.core import mail
+        self.client.post(reverse('core:subscribe'), {'email': 'newsletter@example.test'})
+        subscriber = NewsletterSubscriber.objects.get(email='newsletter@example.test')
+        confirmation, unsubscribe = [line.split()[-1] for line in mail.outbox[-1].body.splitlines() if line]
+        self.assertEqual(self.client.get(confirmation).status_code, 200)
+        subscriber.refresh_from_db()
+        self.assertIsNone(subscriber.confirmed_at)
+        self.assertEqual(self.client.post(confirmation).status_code, 302)
+        subscriber.refresh_from_db()
+        self.assertIsNotNone(subscriber.confirmed_at)
+        self.assertEqual(self.client.get(unsubscribe).status_code, 200)
+        self.assertTrue(NewsletterSubscriber.objects.filter(pk=subscriber.pk).exists())
+        self.assertEqual(self.client.post(unsubscribe).status_code, 302)
+        self.assertFalse(NewsletterSubscriber.objects.filter(pk=subscriber.pk).exists())

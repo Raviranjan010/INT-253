@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponseNotAllowed
-from django.db.models import Q
+from django.db.models import Count, F, Q
+from django.core.paginator import Paginator
 from .models import DiscussionThread, DiscussionReply
 from .forms import ThreadForm, ReplyForm
 
@@ -10,7 +11,9 @@ def forum_list(request):
     query = request.GET.get('q', '').strip()
     status_filter = request.GET.get('status', 'all')
     
-    threads = DiscussionThread.objects.select_related('author', 'course').prefetch_related('replies').all()
+    threads = DiscussionThread.objects.select_related('author', 'course').annotate(
+        reply_total=Count('replies')
+    ).order_by('-created_at', '-pk')
 
     if query:
         threads = threads.filter(
@@ -24,8 +27,10 @@ def forum_list(request):
     elif status_filter == 'resolved':
         threads = threads.filter(is_resolved=True)
 
+    page = Paginator(threads, 15).get_page(request.GET.get('page'))
     context = {
-        'threads': threads,
+        'threads': page.object_list,
+        'page': page,
         'query': query,
         'status_filter': status_filter,
     }
@@ -38,9 +43,14 @@ def thread_detail(request, thread_id):
         id=thread_id
     )
 
-    # Increment view count
-    thread.views_count += 1
-    thread.save(update_fields=['views_count'])
+    viewed = request.session.get('viewed_threads', [])
+    agent = request.headers.get('User-Agent', '').lower()
+    if request.method == 'GET' and thread.pk not in viewed and agent and not any(
+        marker in agent for marker in ('bot', 'crawler', 'spider', 'preview')
+    ):
+        DiscussionThread.objects.filter(pk=thread.pk).update(views_count=F('views_count') + 1)
+        thread.views_count += 1
+        request.session['viewed_threads'] = [*viewed[-99:], thread.pk]
 
     replies = thread.replies.all()
     form = ReplyForm()

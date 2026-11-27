@@ -4,6 +4,7 @@ Live School for World-Class Free Education (INT-253)
 """
 
 import os
+import re
 from pathlib import Path
 from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
@@ -26,6 +27,11 @@ if not SECRET_KEY:
 
 if not DEBUG and (len(SECRET_KEY) < 50 or len(set(SECRET_KEY)) < 5 or SECRET_KEY.startswith('django-insecure-')):
     raise ImproperlyConfigured('Set SECRET_KEY to a generated secret of at least 50 characters.')
+
+CERTIFICATE_SIGNING_KEY = os.getenv('CERTIFICATE_SIGNING_KEY') or (SECRET_KEY if DEBUG else '')
+CERTIFICATE_LEGACY_SIGNING_KEY = os.getenv('CERTIFICATE_LEGACY_SIGNING_KEY') or (SECRET_KEY if DEBUG else '')
+if not DEBUG and (len(CERTIFICATE_SIGNING_KEY) < 50 or CERTIFICATE_SIGNING_KEY == SECRET_KEY):
+    raise ImproperlyConfigured('Set a separate CERTIFICATE_SIGNING_KEY of at least 50 characters.')
 
 # ALLOWED_HOSTS: Environment-driven host list (no wildcards by default)
 allowed_hosts_env = os.getenv('ALLOWED_HOSTS')
@@ -55,6 +61,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'django.middleware.csp.ContentSecurityPolicyMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -115,6 +122,7 @@ AUTHENTICATION_BACKENDS = ['accounts.backends.EmailOrUsernameBackend']
 
 RESEND_API_KEY = os.getenv('RESEND_API_KEY')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'webmaster@localhost')
+CONTACT_NOTIFICATION_EMAIL = os.getenv('CONTACT_NOTIFICATION_EMAIL', '')
 EMAIL_BACKEND = (
     'django.core.mail.backends.console.EmailBackend' if DEBUG else
     'core.email.ResendBackend' if RESEND_API_KEY else
@@ -206,12 +214,40 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 SECURE_REFERRER_POLICY = 'same-origin'
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'Lax'
 
 # Jitsi Meet Domain for WebRTC Live Classroom
 JITSI_DOMAIN = os.getenv('JITSI_DOMAIN', '')
+JAAS_APP_ID = os.getenv('JAAS_APP_ID', '')
+JAAS_KID = os.getenv('JAAS_KID', '')
+JAAS_PRIVATE_KEY = os.getenv('JAAS_PRIVATE_KEY', '').replace('\\n', '\n')
+if any((JAAS_APP_ID, JAAS_KID, JAAS_PRIVATE_KEY)) and not (
+    re.fullmatch(r'vpaas-magic-cookie-[a-zA-Z0-9_-]+', JAAS_APP_ID)
+    and JAAS_KID.startswith(JAAS_APP_ID + '/') and JAAS_PRIVATE_KEY
+):
+    raise ImproperlyConfigured('Set a matching JAAS_APP_ID, JAAS_KID, and JAAS_PRIVATE_KEY.')
+CACHE_GLOBAL_STATS = not DEBUG
+if JITSI_DOMAIN and not all(part and part.replace('-', '').isalnum() for part in JITSI_DOMAIN.split('.')):
+    raise ImproperlyConfigured('JITSI_DOMAIN must be a hostname.')
 
 # Production Security Hardening
 if not DEBUG:
+    conferencing = [f'https://{JITSI_DOMAIN}'] if JITSI_DOMAIN and JITSI_DOMAIN != 'meet.jit.si' else []
+    if JAAS_APP_ID:
+        conferencing.append('https://8x8.vc')
+    SECURE_CSP_REPORT_ONLY = {
+        'default-src': ["'self'"],
+        'base-uri': ["'self'"],
+        'object-src': ["'none'"],
+        'frame-ancestors': ["'none'"],
+        'script-src': ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net', *conferencing],
+        'style-src': ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net', 'https://fonts.googleapis.com'],
+        'font-src': ["'self'", 'https://fonts.gstatic.com', 'https://cdn.jsdelivr.net'],
+        'img-src': ["'self'", 'https:', 'data:'],
+        'frame-src': ['https://www.youtube-nocookie.com', 'https://player.vimeo.com', *conferencing],
+    }
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'

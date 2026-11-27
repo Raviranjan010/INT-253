@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.db import OperationalError
+from django.core.cache import cache
 from unittest.mock import patch
 from accounts.models import CustomUser
 from courses.models import Course, Category
@@ -16,6 +17,25 @@ class CorePlatformSecurityAndMetricsTests(TestCase):
         with patch('core.views.connection.cursor', side_effect=OperationalError):
             response = self.client.get(reverse('core:health_check'))
         self.assertEqual(response.status_code, 503)
+
+    def test_public_sitemap_excludes_drafts(self):
+        self.assertContains(self.client.get(reverse('core:robots')), '/sitemap.xml')
+        self.assertContains(self.client.get(reverse('core:sitemap')), self.course.slug)
+        self.course.is_published = False
+        self.course.save(update_fields=['is_published'])
+        self.assertNotContains(self.client.get(reverse('core:sitemap')), self.course.slug)
+        self.assertContains(self.client.get('/missing-page/'), 'Page not found', status_code=404)
+
+    def test_contact_honeypot_and_throttle(self):
+        cache.clear()
+        self.addCleanup(cache.clear)
+        url = reverse('core:contact')
+        payload = {'name': 'Reader', 'email': 'reader@example.test', 'subject': 'Question', 'message': 'Hello'}
+        self.client.post(url, {**payload, 'website': 'filled'})
+        self.assertFalse(ContactMessage.objects.exists())
+        for _ in range(4):
+            self.assertEqual(self.client.post(url, payload).status_code, 302)
+        self.assertEqual(self.client.post(url, payload).status_code, 429)
 
     def test_newsletter_requires_post_and_rejects_external_referer(self):
         url = reverse('core:subscribe')

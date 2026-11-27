@@ -2,10 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
+from django.db import transaction
 from .models import Quiz, Question, Choice, QuizAttempt
 from courses.models import Enrollment
 
 @login_required
+@transaction.atomic
 def take_quiz(request, quiz_id):
     quiz = get_object_or_404(Quiz.objects.select_related('course').prefetch_related('questions__choices'), id=quiz_id)
     course = quiz.course
@@ -16,7 +18,10 @@ def take_quiz(request, quiz_id):
         return redirect('courses:course_list')
 
     # 2. Enforce course enrollment
-    if not Enrollment.objects.filter(student=request.user, course=course).exists():
+    enrollments = Enrollment.objects.filter(student=request.user, course=course)
+    if request.method == 'POST':
+        enrollments = enrollments.select_for_update()
+    if enrollments.only('id').first() is None:
         messages.error(request, "You must be enrolled in this free course before attempting its quizzes.")
         return redirect('courses:course_detail', slug=course.slug)
 
@@ -43,11 +48,12 @@ def take_quiz(request, quiz_id):
             # Grace period of 60 seconds for slow network latency on submit
             allowed_seconds = (quiz.time_limit_minutes * 60) + 60
             if elapsed_seconds > allowed_seconds:
+                QuizAttempt.objects.create(quiz=quiz, student=request.user, score_percentage=0, passed=False)
                 elapsed_mins = round(elapsed_seconds / 60, 1)
                 messages.error(
                     request, 
                     f"Time limit exceeded! You took {elapsed_mins} minutes (allowed: {quiz.time_limit_minutes} mins). "
-                    "Your attempt was not accepted."
+                    "This attempt was recorded as unsuccessful."
                 )
                 return redirect('courses:course_detail', slug=course.slug)
 
@@ -116,7 +122,9 @@ def take_quiz(request, quiz_id):
         return render(request, 'quizzes/quiz_result.html', context)
 
     # On GET, record session start timestamp for server-side time tracking
-    request.session[f'quiz_start_{quiz.id}'] = timezone.now().timestamp()
+    key = f'quiz_start_{quiz.id}'
+    if key not in request.session:
+        request.session[key] = timezone.now().timestamp()
 
     attempts_used = QuizAttempt.objects.filter(quiz=quiz, student=request.user).count()
 

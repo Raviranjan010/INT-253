@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponseNotAllowed
-from django.db.models import Q, Avg
+from django.db.models import Q, Avg, Count, F
 from django.utils import timezone
+from django.core.paginator import Paginator
 
 from .models import Course, Category, Module, Lesson, Enrollment, LessonProgress, CourseReview
 from .forms import CourseReviewForm, CourseCreateForm, LessonForm
@@ -31,16 +32,18 @@ def course_list(request):
     if level and level != 'all':
         courses = courses.filter(level=level)
 
+    courses = courses.annotate(avg_rating=Avg('reviews__rating'), lesson_total=Count('modules__lessons', distinct=True))
     if sort == 'rating':
-        # Accurate sorting by actual average review rating
-        courses = courses.annotate(avg_rating=Avg('reviews__rating')).order_by('-avg_rating', '-created_at')
+        courses = courses.order_by(F('avg_rating').desc(nulls_last=True), '-created_at', '-pk')
     else:
-        courses = courses.order_by('-created_at')
+        courses = courses.order_by('-created_at', '-pk')
 
     categories = Category.objects.all()
+    page = Paginator(courses, 12).get_page(request.GET.get('page'))
 
     context = {
-        'courses': courses,
+        'courses': page.object_list,
+        'page': page,
         'categories': categories,
         'selected_category': category_slug,
         'selected_level': level,

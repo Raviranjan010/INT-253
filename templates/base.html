@@ -6,6 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="LiveSchool offers free courses, practical learning resources, and live classes.">
   <meta name="author" content="LiveSchool">
+  <meta property="og:site_name" content="LiveSchool">
+  <meta property="og:title" content="LiveSchool | Free Education for Everyone">
+  <meta property="og:description" content="Explore free courses, learning resources, and live classes.">
+  <link rel="icon" href="{% static 'images/favicon.svg' %}" type="image/svg+xml">
   <title>{% block title %}Live School - World-Class Free Education{% endblock %}</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,7 +33,7 @@
 
   <!-- Flash Messages -->
   {% if messages %}
-    <div class="container mt-3">
+    <div class="container mt-3" aria-live="polite">
       {% for message in messages %}
         <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show shadow-sm d-flex align-items-center rounded-3" role="alert">
           <i class="bi bi-info-circle-fill me-2 fs-5"></i>

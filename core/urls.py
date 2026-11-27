@@ -10,5 +10,7 @@ urlpatterns = [
     path('contact/', views.contact, name='contact'),
     path('subscribe/', views.newsletter_subscribe, name='subscribe'),
     path('health/', views.health_check, name='health_check'),
+    path('robots.txt', views.robots, name='robots'),
+    path('sitemap.xml', views.sitemap, name='sitemap'),
 ]
 

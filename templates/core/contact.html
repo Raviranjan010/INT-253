@@ -18,6 +18,7 @@
     <div class="card p-4 p-md-5 border custom-card">
       <form method="post">
         {% csrf_token %}
+        {{ form.website }}
         <div class="mb-3">
           <label class="form-label fw-semibold">Your Full Name</label>
           {{ form.name }}

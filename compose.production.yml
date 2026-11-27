@@ -23,6 +23,7 @@ services:
     environment:
       DEBUG: "False"
       SECRET_KEY: ${SECRET_KEY:?Generate a Django secret}
+      CERTIFICATE_SIGNING_KEY: ${CERTIFICATE_SIGNING_KEY:?Generate a separate certificate signing key}
       ALLOWED_HOSTS: ${SITE_DOMAIN:?Set your public hostname}
       CSRF_TRUSTED_ORIGINS: https://${SITE_DOMAIN}
       DATABASE_URL: postgresql://liveschool:${POSTGRES_PASSWORD}@db:5432/liveschool

@@ -1,0 +1,32 @@
+name: Django checks
+on: [push, pull_request]
+
+jobs:
+  django:
+    runs-on: ubuntu-latest
+    env:
+      DEBUG: "True"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r requirements.txt coverage==7.17.5
+      - run: python manage.py check
+      - run: python manage.py makemigrations --check --dry-run
+      - run: coverage run --source=accounts,certificates,community,core,courses,live_classes,quizzes manage.py test
+      - run: coverage report
+      - name: Production settings check
+        env:
+          DEBUG: "False"
+          ALLOWED_HOSTS: ci.example.test
+          DATABASE_URL: postgresql://ci@localhost:5432/ci
+          MEDIA_BUCKET: ci-check
+          MEDIA_ACCESS_KEY_ID: unused-ci-value
+          MEDIA_SECRET_ACCESS_KEY: unused-ci-value
+          SECURE_HSTS_INCLUDE_SUBDOMAINS: "True"
+          SECURE_HSTS_PRELOAD: "True"
+        run: |
+          export SECRET_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(50))')"
+          export CERTIFICATE_SIGNING_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(50))')"
+          python manage.py check --deploy --fail-level WARNING

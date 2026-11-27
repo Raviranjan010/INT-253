@@ -52,6 +52,16 @@ class CertificateCryptographicTests(TestCase):
         self.cert.digital_signature = '0' * 64
         self.assertFalse(self.cert.verify_signature())
 
+    def test_grade_edit_does_not_resign_certificate(self):
+        signature = self.cert.digital_signature
+        self.cert.grade = 'Changed after issuance'
+        self.cert.save()
+        self.cert.refresh_from_db()
+        self.assertEqual(self.cert.digital_signature, signature)
+        self.assertFalse(self.cert.verify_signature())
+        response = self.client.get(reverse('certificates:verify'), {'id': self.cert.certificate_id})
+        self.assertFalse(response.context['is_valid'])
+
     def test_certificate_view_page(self):
         """view_certificate renders properly and indicates valid cryptographic signature."""
         response = self.client.get(reverse('certificates:view_certificate', kwargs={'certificate_id': self.cert.certificate_id}))

@@ -30,8 +30,8 @@ def verify_certificate(request, certificate_id=None):
             cert = Certificate.objects.filter(verification_code__iexact=cert_code).select_related('student', 'course').first()
         
         if cert:
-            is_valid = True
             is_signature_valid = cert.verify_signature()
+            is_valid = is_signature_valid
 
     context = {
         'certificate': cert,

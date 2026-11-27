@@ -2,6 +2,7 @@ from django import forms
 from .models import ContactMessage, NewsletterSubscriber
 
 class ContactForm(forms.ModelForm):
+    website = forms.CharField(required=False, widget=forms.HiddenInput)
     class Meta:
         model = ContactMessage
         fields = ('name', 'email', 'subject', 'message')
@@ -14,6 +15,7 @@ class ContactForm(forms.ModelForm):
 
 
 class NewsletterForm(forms.ModelForm):
+    website = forms.CharField(required=False, widget=forms.HiddenInput)
     class Meta:
         model = NewsletterSubscriber
         fields = ('email',)

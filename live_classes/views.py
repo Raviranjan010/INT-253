@@ -8,9 +8,11 @@ from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.views.decorators.http import require_POST
+from django.views.decorators.cache import never_cache
 
 from .models import LiveSession, SessionAttendee, LiveClassDoubt
 from .forms import LiveSessionScheduleForm, DoubtForm
+from .providers import get_conference
 from courses.models import Enrollment
 
 def live_class_list(request):
@@ -32,6 +34,7 @@ def live_class_list(request):
 
 
 @login_required
+@never_cache
 def live_class_room(request, session_id):
     session = get_object_or_404(LiveSession.objects.select_related('course', 'instructor'), id=session_id)
     is_session_host = request.user.is_staff or (request.user.is_instructor and request.user == session.instructor)
@@ -63,7 +66,7 @@ def live_class_room(request, session_id):
         'session': session,
         'doubts': doubts,
         'doubt_form': doubt_form,
-        'jitsi_domain': settings.JITSI_DOMAIN if settings.JITSI_DOMAIN != 'meet.jit.si' else '',
+        'conference': get_conference(session, request.user),
         'user_display_name': request.user.get_full_name() or request.user.username,
         'is_instructor': is_session_host,
     }

@@ -60,7 +60,7 @@
                   <span class="badge bg-primary-subtle text-primary">{{ thread.course.title }}</span>
                 {% endif %}
               </div>
-              <small class="text-muted"><i class="bi bi-chat me-1"></i>{{ thread.replies_count }} replies</small>
+              <small class="text-muted"><i class="bi bi-chat me-1"></i>{{ thread.reply_total }} replies</small>
             </div>
 
             <h5 class="fw-bold mb-2">
@@ -95,6 +95,7 @@
             <a href="{% url 'community:create_thread' %}" class="btn btn-primary btn-sm">Ask Question</a>
           </div>
         {% endfor %}
+        {% include 'pagination.html' %}
       </div>
     </div>
 
@@ -114,7 +115,7 @@
       <div class="card p-4 border custom-card text-center bg-body-tertiary">
         <i class="bi bi-award fs-1 text-warning mb-2"></i>
         <h6 class="fw-bold mb-1">Earn Helper Badges</h6>
-        <p class="small text-muted mb-0">Help fellow learners by answering questions. Get upvoted to climb the global leaderboard!</p>
+        <p class="small text-muted mb-0">Help fellow learners by answering questions and sharing what you know.</p>
       </div>
     </div>
   </div>

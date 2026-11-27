@@ -128,7 +128,7 @@ class QuizSecurityAndValidationTests(TestCase):
         self.assertEqual(self.student.xp, initial_xp + 50)
 
     def test_quiz_time_limit_enforced(self):
-        """Submitting past the allowed time limit rejects the attempt."""
+        """An expired submission consumes an attempt without crediting its answer."""
         Enrollment.objects.create(student=self.student, course=self.course)
         self.client.login(username='quiz_student', password='Password123!')
 
@@ -142,7 +142,9 @@ class QuizSecurityAndValidationTests(TestCase):
         }
         response = self.client.post(reverse('quizzes:take_quiz', kwargs={'quiz_id': self.quiz.id}), post_data)
         self.assertRedirects(response, reverse('courses:course_detail', kwargs={'slug': self.course.slug}))
-        self.assertEqual(QuizAttempt.objects.filter(student=self.student).count(), 0)
+        attempt = QuizAttempt.objects.get(student=self.student, quiz=self.quiz)
+        self.assertFalse(attempt.passed)
+        self.assertEqual(attempt.score_percentage, 0)
 
     def test_quiz_direct_post_without_start_is_rejected(self):
         Enrollment.objects.create(student=self.student, course=self.course)

@@ -2,6 +2,7 @@ from django import forms
 from django.core.files.uploadedfile import UploadedFile
 from pathlib import PurePath
 from zipfile import BadZipFile, ZipFile
+from uuid import uuid4
 from .models import Course, Module, Lesson, CourseReview
 from .video import embed_url
 
@@ -66,6 +67,7 @@ class LessonForm(forms.ModelForm):
                 resource.seek(0)
         if not valid:
             raise forms.ValidationError('Upload a PDF, PowerPoint, Word, ZIP, PNG, or JPEG file.')
+        resource.name = f'{uuid4().hex}{suffix}'
         return resource
 
     def clean_video_url(self):

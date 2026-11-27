@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.core.files.uploadedfile import UploadedFile
+from uuid import uuid4
 from .models import CustomUser
 
 
@@ -56,6 +58,17 @@ class InstructorRegistrationForm(UniqueEmailMixin, UserCreationForm):
 
 
 class UserProfileForm(UniqueEmailMixin, forms.ModelForm):
+    def clean_avatar(self):
+        avatar = self.cleaned_data['avatar']
+        if isinstance(avatar, UploadedFile):
+            if avatar.size > 2 * 1024 * 1024:
+                raise forms.ValidationError('Use an avatar smaller than 2 MB.')
+            suffix = {'JPEG': '.jpg', 'PNG': '.png', 'WEBP': '.webp'}.get(avatar.image.format)
+            if not suffix:
+                raise forms.ValidationError('Choose a JPEG, PNG, or WebP image.')
+            avatar.name = f'{uuid4().hex}{suffix}'
+        return avatar
+
     class Meta:
         model = CustomUser
         fields = ('first_name', 'last_name', 'email', 'country', 'preferred_language', 'demographic_group', 'bio', 'avatar')

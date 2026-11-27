@@ -16,6 +16,7 @@
     </nav>
     <form method="post" action="{% url 'core:subscribe' %}">
       {% csrf_token %}
+      <input type="hidden" name="website" value="">
       <label for="footer-email">Learning updates</label>
       <div class="ls-newsletter"><input id="footer-email" type="email" name="email" autocomplete="email" required placeholder="Email address" class="form-control"><button class="btn ls-secondary" type="submit">Subscribe</button></div>
     </form>

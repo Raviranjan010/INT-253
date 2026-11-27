@@ -9,7 +9,11 @@ services:
         value: "False"
       - key: RUN_MIGRATIONS
         value: "1"
+      - key: RUN_BOOTSTRAP
+        value: "1"
       - key: SECRET_KEY
+        generateValue: true
+      - key: CERTIFICATE_SIGNING_KEY
         generateValue: true
       - key: DATABASE_URL
         sync: false

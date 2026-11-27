@@ -75,7 +75,7 @@
             <a class="nav-link nav-link-custom" {% if request.resolver_match.namespace == 'live_classes' %}aria-current="true"{% endif %} href="{% url 'live_classes:live_class_list' %}">Live Classes</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link nav-link-custom" href="{% url 'core:home' %}#learning-resources">Resources</a>
+            <a class="nav-link nav-link-custom" href="{% url 'community:forum_list' %}">Community</a>
           </li>
           <li class="nav-item">
             <a class="nav-link nav-link-custom" {% if request.resolver_match.view_name == 'core:about' %}aria-current="page"{% endif %} href="{% url 'core:about' %}">About</a>

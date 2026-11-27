@@ -92,7 +92,7 @@
     <!-- Video Player if video exists -->
     {% if lesson.embed_video_url %}
       <div class="video-responsive mb-4">
-        <iframe src="{{ lesson.embed_video_url }}" title="{{ lesson.title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe src="{{ lesson.embed_video_url }}" title="{{ lesson.title }}" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
     {% endif %}
 

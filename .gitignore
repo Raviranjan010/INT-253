@@ -9,5 +9,6 @@ media/course_thumbnails/*
 media/lesson_resources/*
 !media/.gitkeep
 .env
+.env.production
 .DS_Store
 

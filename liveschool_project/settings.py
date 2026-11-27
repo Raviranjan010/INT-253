@@ -99,7 +99,9 @@ if DATABASE_URL:
         DATABASE_URL,
         conn_max_age=600,
         conn_health_checks=True,
-        ssl_require=not DEBUG,
+        ssl_require=os.getenv(
+            'DATABASE_SSL_REQUIRE', 'False' if DEBUG else 'True'
+        ).lower() in ('true', '1', 't', 'yes'),
     )
 
 # Custom User Model

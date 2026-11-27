@@ -1,0 +1,16 @@
+{$SITE_DOMAIN} {
+	handle_path /media/* {
+		root * /srv/media
+		header {
+			X-Content-Type-Options nosniff
+			Content-Security-Policy "sandbox; default-src 'none'"
+		}
+		@resources path /lesson_resources/*
+		header @resources Content-Disposition attachment
+		file_server
+	}
+
+	handle {
+		reverse_proxy web:8000
+	}
+}

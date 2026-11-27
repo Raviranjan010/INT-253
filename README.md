@@ -200,6 +200,52 @@ Copy `.env.example` to `.env` before starting Compose. The preview listens on lo
 
 ### Public deployment
 
+#### Single Linux server with Docker Compose
+
+1. Install Docker Engine with the Compose plugin on your server and copy or clone this repository there. In your DNS provider's dashboard, point your chosen hostname to the server's public IP. Open inbound TCP ports 80 and 443. Publish an AAAA record only if IPv6 reaches this server.
+2. Run the following commands on a machine with Python 3 to generate two separate secrets.
+
+   ```bash
+   python3 -c "import secrets; print(secrets.token_urlsafe(50))"
+   python3 -c "import secrets; print(secrets.token_hex(32))"
+   ```
+
+3. In the repository root **on the server**, create `.env.production` with a text editor. Use the first output for `SECRET_KEY` and the second for `POSTGRES_PASSWORD`. Keep the PostgreSQL password in hexadecimal because Compose inserts it into a connection URL. Save both values in your password manager. The Compose database hostname, database name, and username are already configured. Keep these credentials stable across restarts. Changing the environment file alone does not rotate an existing PostgreSQL role's password.
+
+   ```dotenv
+   SITE_DOMAIN=school.example.com
+   SECRET_KEY=replace_with_first_generated_value
+   POSTGRES_PASSWORD=replace_with_second_generated_value
+   JITSI_DOMAIN=meet.jit.si
+   ```
+
+4. Validate the configuration, start the stack, and check the startup logs.
+
+   ```bash
+   chmod 600 .env.production
+   docker compose --env-file .env.production -f compose.production.yml config --quiet
+   docker compose --env-file .env.production -f compose.production.yml up -d --build
+   docker compose --env-file .env.production -f compose.production.yml ps
+   docker compose --env-file .env.production -f compose.production.yml logs --tail=100 db web proxy
+   ```
+
+5. Once the web service has applied migrations, create the first administrator and run the production check.
+
+   ```bash
+   docker compose --env-file .env.production -f compose.production.yml exec web python manage.py createsuperuser
+   docker compose --env-file .env.production -f compose.production.yml exec web python manage.py check --deploy
+   curl -fsS https://school.example.com/health/
+   ```
+
+   Replace the hostname in the curl command. The health endpoint checks Django HTTP availability. Applying migrations and saving records in admin verify the database connection. HSTS subdomain coverage and preload are optional and can produce deployment warnings.
+
+6. Sign in at `/admin/` using the credentials you just created. Create a real category, approve a registered instructor, and create a course with modules, lessons, and a quiz. Test as a separate learner. Verify a course certificate, post and answer a classroom question, submit a contact message, and confirm newsletter signup appears in admin. Join a scheduled video session from two devices. Test an upload, restart the stack, and confirm the file and records persist. Uploaded files served through `/media/` are public to anyone with their URL.
+7. Back up PostgreSQL and the media volume separately and test restoring them. Preserve the named volumes during upgrades. Use a backup of real production data when restoring a deployment.
+
+For startup failures, inspect the relevant service logs. For database authentication errors, verify the password matches the existing PostgreSQL role. For TLS errors, check public DNS and ports 80 and 443. For form CSRF errors, make sure the browser hostname matches `SITE_DOMAIN`. For video failures, confirm the conferencing host permits embedding and that the instructor can start meetings there. Public Jitsi rooms need provider-side controls for restricted attendance. Outbound newsletter delivery requires a mailing service.
+
+#### Managed hosting alternative
+
 1. Provision a fresh PostgreSQL database and a Docker-capable host with an HTTPS domain. Do not import the workspace SQLite database or local uploads for a clean launch. If you already have production records, back them up and review existing accounts and content before migrating.
 2. Set `DEBUG=False`, `DATABASE_URL`, `ALLOWED_HOSTS` (hostnames), and `CSRF_TRUSTED_ORIGINS` (HTTPS origins). Generate a persistent `SECRET_KEY` with `python -c "import secrets; print(secrets.token_urlsafe(50))"` and store it in the hosting platform's secrets. The HTTPS proxy must overwrite `X-Forwarded-Proto` and prevent direct public access to Gunicorn.
 3. Build from `Dockerfile`. Run `python manage.py migrate --noinput` as a release command with the production environment before routing traffic to the new version. Use the image's default Gunicorn command. The image collects static files at build time.

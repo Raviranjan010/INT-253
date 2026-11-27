@@ -85,7 +85,7 @@
           <div class="text-center py-5">
             <i class="bi bi-journal-x display-4 text-muted"></i>
             <h5 class="fw-bold mt-3">You haven't enrolled in any courses yet</h5>
-            <p class="text-muted small">All courses are 100% free with certificates included.</p>
+            <p class="text-muted small">Browse courses with free enrollment.</p>
             <a href="{% url 'courses:course_list' %}" class="btn btn-primary btn-sm">Explore Free Courses</a>
           </div>
         {% endif %}
@@ -100,7 +100,6 @@
               <div class="col-md-6">
                 <div class="p-3 rounded-3 border border-warning bg-warning-subtle text-dark">
                   <div class="d-flex justify-content-between align-items-center mb-1">
-                    <span class="badge bg-warning text-dark fw-bold">VERIFIED</span>
                     <small class="fw-mono">{{ cert.certificate_id }}</small>
                   </div>
                   <h6 class="fw-bold mb-1">{{ cert.course.title }}</h6>

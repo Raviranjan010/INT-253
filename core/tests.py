@@ -2,6 +2,8 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.db import OperationalError
 from django.core.cache import cache
+from django.core.management import call_command
+from io import StringIO
 from unittest.mock import patch
 from accounts.models import CustomUser
 from courses.models import Course, Category
@@ -36,6 +38,23 @@ class CorePlatformSecurityAndMetricsTests(TestCase):
         for _ in range(4):
             self.assertEqual(self.client.post(url, payload).status_code, 302)
         self.assertEqual(self.client.post(url, payload).status_code, 429)
+
+    def test_bootstrap_is_idempotent_and_does_not_create_courses_or_users(self):
+        from unittest.mock import patch
+        output = StringIO()
+        with patch.dict('os.environ', {'ADMIN_USERNAME': '', 'ADMIN_EMAIL': '', 'ADMIN_PASSWORD': ''}):
+            call_command('bootstrap_content', dry_run=True, stdout=output)
+            self.assertEqual(Category.objects.count(), 1)
+            call_command('bootstrap_content', stdout=output)
+            total = Category.objects.count()
+            call_command('bootstrap_content', stdout=output)
+        self.assertEqual(Category.objects.count(), total)
+        self.assertEqual(Course.objects.count(), 1)
+        self.assertEqual(CustomUser.objects.count(), 2)
+        self.course.is_published = False
+        self.course.save(update_fields=['is_published'])
+        call_command('check_content_links', stdout=output)
+        self.assertIn('0 endpoint(s) checked, 0 failed', output.getvalue())
 
     def test_newsletter_requires_post_and_rejects_external_referer(self):
         url = reverse('core:subscribe')

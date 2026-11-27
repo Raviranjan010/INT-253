@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponseNotAllowed
 from django.utils import timezone
-from django.conf import settings
+from django.core.paginator import Paginator
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.views.decorators.http import require_POST
@@ -22,13 +22,13 @@ def live_class_list(request):
         scheduled_start__gte=now - timezone.timedelta(hours=2)
     ).select_related('course', 'instructor').order_by('scheduled_start')
 
-    past_sessions = LiveSession.objects.filter(
-        status='completed'
-    ).select_related('course', 'instructor').order_by('-scheduled_start')[:6]
+    past = LiveSession.objects.filter(status='completed').select_related('course', 'instructor')
+    page = Paginator(past.order_by('-scheduled_start', '-pk'), 12).get_page(request.GET.get('page'))
 
     context = {
         'upcoming_sessions': upcoming_sessions,
-        'past_sessions': past_sessions,
+        'past_sessions': page.object_list,
+        'page': page,
     }
     return render(request, 'live_classes/live_class_list.html', context)
 

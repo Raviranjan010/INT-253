@@ -1,14 +1,34 @@
 from datetime import datetime, timedelta, timezone as utc
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
 from .forms import LiveSessionScheduleForm
 from .models import LiveSession
+from .providers import JaaSProvider
 
 
 class LiveLifecycleTests(TestCase):
+    def test_jaas_signs_room_bound_tokens_and_only_host_is_moderator(self):
+        import jwt
+        from cryptography.hazmat.primitives.asymmetric import rsa
+
+        key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+        users = get_user_model().objects
+        host = users.create_user(username='issuer', role='instructor', is_instructor_approved=True)
+        staff = users.create_user(username='staff', is_staff=True)
+        session = LiveSession.objects.create(title='Office hours', instructor=host, scheduled_start=timezone.now())
+        with override_settings(JAAS_PRIVATE_KEY=key, JAAS_APP_ID='vpaas-magic-cookie-test',
+                               JAAS_KID='vpaas-magic-cookie-test/key'):
+            provider = JaaSProvider()
+            host_token = provider.conference(session, host).token
+            staff_token = provider.conference(session, staff).token
+        claims = [jwt.decode(token, key.public_key(), algorithms=['RS256'], audience='jitsi')
+                  for token in (host_token, staff_token)]
+        self.assertEqual(claims[0]['room'], f'liveschool-{session.pk.hex}')
+        self.assertTrue(claims[0]['context']['user']['moderator'])
+        self.assertFalse(claims[1]['context']['user']['moderator'])
     def test_host_controls_status_and_join_link(self):
         users = get_user_model().objects
         host = users.create_user(username='host', role='instructor', is_instructor_approved=True)

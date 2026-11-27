@@ -12,7 +12,7 @@
     </div>
     <h1 class="section-title-editorial display-5 text-white mb-2">Live Interactive Classrooms</h1>
     <p class="hero-subtitle-text mx-auto mb-4" style="max-width: 700px;">
-      Direct interaction with expert volunteer teachers. Ask questions in real time, collaborate on digital blackboards, and solve tough problems together—completely free.
+      Browse upcoming classes, meet your instructor when a session starts, and review recordings when available.
     </p>
 
     {% if user.is_instructor or user.is_staff %}
@@ -77,11 +77,19 @@
         <div class="col-12 text-center py-5">
           <i class="bi bi-camera-video-off display-3 text-muted"></i>
           <h4 class="fw-bold mt-3 text-dark">No live sessions scheduled right now</h4>
-          <p class="text-muted small">New live classes are scheduled weekly. Explore self-paced courses in the meantime!</p>
+          <p class="text-muted small">Explore self-paced courses while you wait for the next class.</p>
+          {% if user.is_instructor or user.is_staff %}<a class="btn ls-secondary" href="{% url 'live_classes:schedule_live_class' %}">Schedule a class</a>{% endif %}
           <a href="{% url 'courses:course_list' %}" class="btn btn-mint-action btn-sm rounded-pill px-4">Explore Free Courses</a>
         </div>
       {% endfor %}
     </div>
+    <h2>Past classes</h2>
+    <ul class="ls-link-list list-unstyled">
+      {% for session in past_sessions %}
+      <li><a href="{% url 'live_classes:live_class_room' session.pk %}">{{ session.title }} · {{ session.scheduled_start|date:"M d, H:i" }} IST{% if session.recording_url %} · Recording available{% endif %}</a></li>
+      {% empty %}<li>No completed classes yet.</li>{% endfor %}
+    </ul>
+    {% include 'pagination.html' %}
   </div>
 </section>
 {% endblock %}

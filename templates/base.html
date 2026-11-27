@@ -1,20 +1,21 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
+<html lang="en" data-bs-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="LiveSchool offers free courses, practical learning resources, and live classes.">
-  <meta name="author" content="LiveSchool">
-  <meta property="og:site_name" content="LiveSchool">
-  <meta property="og:title" content="LiveSchool | Free Education for Everyone">
-  <meta property="og:description" content="Explore free courses, learning resources, and live classes.">
+  <meta name="description" content="SKuL offers world-class free courses, live interactive classrooms, peer community, and verified digital certificates.">
+  <meta name="author" content="SKuL Open Academy">
+  <meta property="og:site_name" content="SKuL">
+  <meta property="og:title" content="SKuL | Open Academy & Free World-Class Learning">
+  <meta property="og:description" content="Explore free courses, live interactive classes, and practical learning resources without paywalls.">
   <link rel="icon" href="{% static 'images/favicon.svg' %}" type="image/svg+xml">
-  <title>{% block title %}Live School - World-Class Free Education{% endblock %}</title>
+  <title>{% block title %}SKuL &bull; Next-Gen Open Academy{% endblock %}</title>
 
+  <!-- Google Fonts: Space Grotesk, Plus Jakarta Sans, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -22,7 +23,7 @@
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-  <!-- Custom Stylesheet -->
+  <!-- Custom Stylesheets -->
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <link rel="stylesheet" href="{% static 'css/editorial.css' %}">
   {% block extra_css %}{% endblock %}
@@ -35,9 +36,9 @@
   {% if messages %}
     <div class="container mt-3" aria-live="polite">
       {% for message in messages %}
-        <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show shadow-sm d-flex align-items-center rounded-3" role="alert">
-          <i class="bi bi-info-circle-fill me-2 fs-5"></i>
-          <div>{{ message }}</div>
+        <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show shadow-sm d-flex align-items-center rounded-3 border-0" role="alert" style="background: var(--skul-surface-card); border-left: 4px solid var(--skul-indigo) !important; color: var(--skul-text-primary);">
+          <i class="bi bi-info-circle-fill me-2 fs-5" style="color: var(--skul-cyan);"></i>
+          <div class="flex-grow-1">{{ message }}</div>
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       {% endfor %}

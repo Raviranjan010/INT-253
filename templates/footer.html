@@ -1,24 +1,70 @@
 <footer class="ls-footer">
-  <div class="ls-wrap ls-footer-grid">
-    <div><a class="ls-footer-brand" href="{% url 'core:home' %}">LiveSchool</a><p>Free Education for Everyone</p></div>
-    <nav aria-label="Learning links">
-      <h2>Learn</h2>
-      <a href="{% url 'courses:course_list' %}">Explore courses</a>
-      <a href="{% url 'live_classes:live_class_list' %}">Live classes</a>
-      <a href="{% url 'community:forum_list' %}">Community resources</a>
-      <a href="{% url 'certificates:verify' %}">Verify a certificate</a>
-    </nav>
-    <nav aria-label="About LiveSchool">
-      <h2>LiveSchool</h2>
-      <a href="{% url 'core:about' %}">About</a>
-      <a href="{% url 'core:demographics_impact' %}">Access and inclusion</a>
-      <a href="{% url 'core:contact' %}">Contact</a>
-    </nav>
-    <form method="post" action="{% url 'core:subscribe' %}">
-      {% csrf_token %}
-      <input type="hidden" name="website" value="">
-      <label for="footer-email">Learning updates</label>
-      <div class="ls-newsletter"><input id="footer-email" type="email" name="email" autocomplete="email" required placeholder="Email address" class="form-control"><button class="btn ls-secondary" type="submit">Subscribe</button></div>
-    </form>
+  <div class="ls-wrap">
+    <div class="row g-4 pb-4 border-bottom" style="border-color: var(--skul-border-hairline) !important;">
+      <!-- Brand & Mission Column -->
+      <div class="col-lg-4">
+        <a class="ls-footer-brand d-flex align-items-center gap-2 mb-2 text-decoration-none" href="{% url 'core:home' %}">
+          <div class="brand-icon-box" style="width: 34px; height: 34px;">
+            <svg width="22" height="22" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M42 16H24C19.58 16 16 19.58 16 24C16 28.42 19.58 32 24 32H40C44.42 32 48 35.58 48 40C48 44.42 44.42 48 40 48H22" stroke="#6366f1" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M42 16L34 24" stroke="#06b6d4" stroke-width="6" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span class="brand-title fs-3 text-white">SK<span class="brand-title-accent">uL</span></span>
+        </a>
+        <p class="text-secondary small mb-3" style="max-width: 320px; line-height: 1.7;">
+          SKuL is a borderless, open-access academy delivering high-demand engineering, science, and digital skills. Free forever, no paywalls.
+        </p>
+        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill small" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981;">
+          <span class="skul-pulse-dot" style="background: #10b981; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);"></span>
+          <span class="fw-semibold" style="font-size: 0.78rem;">All Systems Operational &bull; 99.9%</span>
+        </div>
+      </div>
+
+      <!-- Navigation Columns -->
+      <div class="col-6 col-lg-2">
+        <h2>Learn</h2>
+        <nav class="d-flex flex-column gap-2" aria-label="Learning links">
+          <a href="{% url 'courses:course_list' %}">Explore Courses</a>
+          <a href="{% url 'live_classes:live_class_list' %}">Live Classrooms</a>
+          <a href="{% url 'community:forum_list' %}">Peer Discussions</a>
+          <a href="{% url 'certificates:verify' %}">Verify Certificate</a>
+        </nav>
+      </div>
+
+      <div class="col-6 col-lg-2">
+        <h2>Platform</h2>
+        <nav class="d-flex flex-column gap-2" aria-label="About SKuL">
+          <a href="{% url 'core:about' %}">About SKuL</a>
+          <a href="{% url 'core:demographics_impact' %}">Access & Inclusion</a>
+          <a href="{% url 'core:contact' %}">Contact Mentors</a>
+        </nav>
+      </div>
+
+      <!-- Newsletter Column -->
+      <div class="col-lg-4">
+        <h2>Stay Ahead</h2>
+        <p class="text-secondary small mb-2">Receive new course announcements and scheduled masterclasses.</p>
+        <form method="post" action="{% url 'core:subscribe' %}">
+          {% csrf_token %}
+          <input type="hidden" name="website" value="">
+          <label for="footer-email" class="visually-hidden">Learning updates</label>
+          <div class="d-flex gap-2">
+            <input id="footer-email" type="email" name="email" autocomplete="email" required placeholder="Enter your email" class="form-control" style="background: var(--skul-surface-card); border-color: var(--skul-border-subtle); color: white;">
+            <button class="btn btn-skul-primary px-3" type="submit">Subscribe</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Bottom Copyright -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center pt-3 small text-secondary">
+      <div>&copy; 2026 <strong>SKuL Open Academy</strong>. Zero Tuition &bull; Global Education for Everyone.</div>
+      <div class="d-flex gap-3 mt-2 mt-md-0">
+        <a href="{% url 'core:about' %}" class="text-secondary text-decoration-none">About</a>
+        <a href="{% url 'core:demographics_impact' %}" class="text-secondary text-decoration-none">Inclusion</a>
+        <a href="{% url 'core:contact' %}" class="text-secondary text-decoration-none">Support</a>
+      </div>
+    </div>
   </div>
 </footer>

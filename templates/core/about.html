@@ -1,18 +1,79 @@
 {% extends 'base.html' %}
-{% block title %}About LiveSchool{% endblock %}
+{% block title %}About SKuL &bull; Next-Gen Open Academy{% endblock %}
 {% block content %}
-<section class="ls-band">
-  <div class="ls-wrap ls-section ls-editorial">
-    <div><p class="ls-kicker">About Live School</p><h1>Free education for everyone.</h1></div>
-    <p class="lead">LiveSchool brings free courses, structured lessons, and live learning into one place. Start with a subject you’re curious about and learn at a pace that works for you.</p>
+
+<!-- Header Banner -->
+<section class="py-5 ls-band">
+  <div class="container py-3">
+    <div class="skul-badge-pill mb-2">
+      <span class="skul-pulse-dot"></span> The SKuL Mission &bull; About Live School
+    </div>
+    <h1 class="display-4 fw-bold mb-3">Education Built For <em>Everyone.</em></h1>
+    <p class="text-secondary lead mb-0" style="max-width: 720px; line-height: 1.8;">
+      SKuL (originally LiveSchool) is a next-generation open academy built on the firm conviction that high-level education in computing, science, engineering, and digital craft should belong to humanity freely &mdash; without paywalls, fees, or geographical barriers.
+    </p>
   </div>
 </section>
-<section class="ls-wrap ls-section ls-editorial">
-  <div><h2>Room to learn, together.</h2><p>Use your dashboard to keep track of lessons, join scheduled classes, and ask questions in course discussions.</p></div>
-  <div class="ls-link-list">
-    <a href="{% url 'courses:course_list' %}">Explore courses <span aria-hidden="true">↗</span></a>
-    <a href="{% url 'core:demographics_impact' %}">Access and inclusion <span aria-hidden="true">↗</span></a>
-    <a href="{% url 'core:contact' %}">Get in touch <span aria-hidden="true">↗</span></a>
+
+<!-- Values & Architecture Bento -->
+<section class="py-5">
+  <div class="container py-3">
+    <div class="row g-4 mb-5">
+      <div class="col-md-4">
+        <div class="p-4 rounded-4 h-100" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-hairline);">
+          <div class="p-3 rounded-3 d-inline-block mb-3" style="background: rgba(99, 102, 241, 0.15); color: #818cf8;">
+            <i class="bi bi-unlock-fill fs-3"></i>
+          </div>
+          <h4 class="fw-bold mb-2">Zero Tuition Gatekeeping</h4>
+          <p class="text-secondary small mb-0">Every course, syllabus, quiz, and study resource is fully accessible to any student worldwide with no credit card required.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="p-4 rounded-4 h-100" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-hairline);">
+          <div class="p-3 rounded-3 d-inline-block mb-3" style="background: rgba(6, 182, 212, 0.15); color: #06b6d4;">
+            <i class="bi bi-people-fill fs-3"></i>
+          </div>
+          <h4 class="fw-bold mb-2">Cross-Demographic Inclusion</h4>
+          <p class="text-secondary small mb-0">Designed to bridge educational inequalities with sensory accessibility, dyslexia toggles, lightweight notes, and offline printability.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="p-4 rounded-4 h-100" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-hairline);">
+          <div class="p-3 rounded-3 d-inline-block mb-3" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+            <i class="bi bi-patch-check-fill fs-3"></i>
+          </div>
+          <h4 class="fw-bold mb-2">Cryptographic Distinction</h4>
+          <p class="text-secondary small mb-0">Rigorous course evaluations that culminate in verifiable, digitally signed completion certificates with tamper-evident serials.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Links Grid -->
+    <div class="p-4 p-md-5 rounded-4" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-hairline);">
+      <h3 class="fw-bold mb-3">Explore the Platform</h3>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <a href="{% url 'courses:course_list' %}" class="p-3 rounded-3 d-flex justify-content-between align-items-center text-decoration-none" style="background: var(--skul-surface-elevated); border: 1px solid var(--skul-border-hairline); color: var(--skul-text-primary);">
+            <span class="fw-semibold"><i class="bi bi-grid me-2 text-primary"></i> Explore Courses</span>
+            <i class="bi bi-arrow-right text-muted"></i>
+          </a>
+        </div>
+        <div class="col-md-4">
+          <a href="{% url 'core:demographics_impact' %}" class="p-3 rounded-3 d-flex justify-content-between align-items-center text-decoration-none" style="background: var(--skul-surface-elevated); border: 1px solid var(--skul-border-hairline); color: var(--skul-text-primary);">
+            <span class="fw-semibold"><i class="bi bi-universal-access me-2 text-info"></i> Access & Inclusion</span>
+            <i class="bi bi-arrow-right text-muted"></i>
+          </a>
+        </div>
+        <div class="col-md-4">
+          <a href="{% url 'core:contact' %}" class="p-3 rounded-3 d-flex justify-content-between align-items-center text-decoration-none" style="background: var(--skul-surface-elevated); border: 1px solid var(--skul-border-hairline); color: var(--skul-text-primary);">
+            <span class="fw-semibold"><i class="bi bi-envelope me-2 text-success"></i> Contact & Mentorship</span>
+            <i class="bi bi-arrow-right text-muted"></i>
+          </a>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 {% endblock %}

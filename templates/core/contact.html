@@ -1,46 +1,45 @@
 {% extends 'base.html' %}
 
-{% block title %}Contact & Support - Live School{% endblock %}
+{% block title %}Contact & Mentorship Support &bull; SKuL{% endblock %}
 
 {% block content %}
-<section class="py-5 bg-body-tertiary border-bottom">
-  <div class="container text-center">
-    <span class="badge bg-primary-subtle text-primary mb-2">Get in Touch</span>
-    <h1 class="fw-bold mb-3">Contact Live School</h1>
-    <p class="lead text-muted mx-auto" style="max-width: 650px;">
-      Have a question, feedback, or want to volunteer as a volunteer teacher for underserved students? Reach out!
+<section class="py-5 ls-band">
+  <div class="container text-center py-2">
+    <div class="skul-badge-pill mb-2"><i class="bi bi-chat-heart-fill me-1"></i> Get In Touch</div>
+    <h1 class="display-5 fw-bold mb-2">Contact SKuL Mentors</h1>
+    <p class="text-secondary lead mx-auto mb-0" style="max-width: 650px;">
+      Have a question, syllabus suggestion, or want to volunteer as a verified instructor for global students? Reach out directly!
     </p>
   </div>
 </section>
 
 <section class="py-5">
-  <div class="container" style="max-width: 750px;">
-    <div class="card p-4 p-md-5 border custom-card">
+  <div class="container" style="max-width: 720px;">
+    <div class="card p-4 p-md-5 border-0 shadow-lg">
       <form method="post">
         {% csrf_token %}
         {{ form.website }}
         <div class="mb-3">
-          <label class="form-label fw-semibold">Your Full Name</label>
+          <label class="form-label fw-semibold small text-secondary">Your Full Name</label>
           {{ form.name }}
         </div>
         <div class="mb-3">
-          <label class="form-label fw-semibold">Your Email Address</label>
+          <label class="form-label fw-semibold small text-secondary">Your Email Address</label>
           {{ form.email }}
         </div>
         <div class="mb-3">
-          <label class="form-label fw-semibold">Subject</label>
+          <label class="form-label fw-semibold small text-secondary">Subject</label>
           {{ form.subject }}
         </div>
         <div class="mb-4">
-          <label class="form-label fw-semibold">Your Message or Inquiry</label>
+          <label class="form-label fw-semibold small text-secondary">Your Message or Inquiry</label>
           {{ form.message }}
         </div>
-        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
-          <i class="bi bi-send me-1"></i> Send Message
+        <button type="submit" class="btn btn-skul-primary w-100 py-3 fw-bold shadow-md">
+          <i class="bi bi-send-fill me-2"></i> Send Message to SKuL Team
         </button>
       </form>
     </div>
   </div>
 </section>
 {% endblock %}
-

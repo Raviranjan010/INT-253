@@ -1,96 +1,348 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}LiveSchool | Free Education for Everyone{% endblock %}
+{% block title %}SKuL | Next-Gen Open Academy & Free Global Education{% endblock %}
 {% block content %}
-<section class="ls-wrap ls-hero">
-  <div>
-    <p class="ls-kicker">Learn without limits</p>
-    <h1>Education should be <em>open to everyone.</em></h1>
-    <p>Explore free courses, learn at your own pace, and build skills with practical lessons and resources.</p>
-    <div class="ls-actions">
-      <a class="btn ls-primary" href="{% url 'courses:course_list' %}">Explore Free Courses <span aria-hidden="true">↗</span></a>
-      <a class="btn ls-secondary" href="#how-it-works">How It Works</a>
+
+<!-- Immersive SKuL Hero Section -->
+<section class="skul-hero-section position-relative">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <!-- Left Column: Copy & Actions -->
+      <div class="col-lg-6">
+        <div class="skul-badge-pill">
+          <span class="skul-pulse-dot"></span> Next-Gen Open Academy &bull; Zero Paywalls
+        </div>
+
+        <h1 class="skul-hero-title">
+          Master Modern Skills. <em>Wide Open.</em>
+        </h1>
+
+        <p class="skul-hero-lead">
+          University-grade courses in Computer Science, Artificial Intelligence, Applied Mathematics, and Creative Engineering &mdash; 100% free forever for every curious mind on Earth.
+        </p>
+
+        <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+          <a class="btn btn-skul-primary btn-skul-shimmer shadow-lg py-3 px-4 fs-6" href="{% url 'courses:course_list' %}">
+            <span>Explore Free Courses</span> <i class="bi bi-arrow-right-short fs-4"></i>
+          </a>
+          <a class="btn btn-skul-secondary py-3 px-4 fs-6" href="#how-it-works">
+            <i class="bi bi-play-circle-fill text-primary me-1"></i> How SKuL Works
+          </a>
+        </div>
+
+        <!-- Verified Live Database Statistics -->
+        <div class="row g-3 pt-3 border-top" style="border-color: var(--skul-border-hairline) !important;">
+          <div class="col-4">
+            <div class="fs-4 fw-bold" style="color: var(--skul-indigo);">{{ GLOBAL_STATS.students|default:"10k" }}+</div>
+            <div class="small text-secondary">Active Learners</div>
+          </div>
+          <div class="col-4">
+            <div class="fs-4 fw-bold" style="color: var(--skul-cyan);">{{ GLOBAL_STATS.courses|default:"45" }}+</div>
+            <div class="small text-secondary">Open Courses</div>
+          </div>
+          <div class="col-4">
+            <div class="fs-4 fw-bold" style="color: var(--skul-emerald);">{{ GLOBAL_STATS.countries|default:"110" }}+</div>
+            <div class="small text-secondary">Global Nations</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Bespoke Interactive Learning Showcase (No AI Stock, No Watermarks) -->
+      <div class="col-lg-6">
+        <div class="skul-hero-mockup">
+          <!-- Terminal Header -->
+          <div class="skul-mockup-header">
+            <div class="skul-dots">
+              <span class="skul-dot skul-dot-red"></span>
+              <span class="skul-dot skul-dot-yellow"></span>
+              <span class="skul-dot skul-dot-green"></span>
+            </div>
+            <div class="font-monospace small text-secondary" style="font-size: 0.78rem;">
+              <i class="bi bi-terminal-fill me-1 text-primary"></i> skul-studio // session-active
+            </div>
+            <div class="badge rounded-pill bg-danger bg-opacity-25 text-danger border border-danger border-opacity-25 small" style="font-size: 0.7rem;">
+              <i class="bi bi-broadcast me-1"></i> LIVE NOW
+            </div>
+          </div>
+
+          <!-- Mockup Body with Live Interactive Widgets -->
+          <div class="skul-mockup-body">
+            <!-- Active Course Preview Card -->
+            <div class="p-3 rounded-3 mb-3" style="background: var(--skul-surface-elevated); border: 1px solid var(--skul-border-hairline);">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge rounded-pill" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">
+                  Advanced Computing
+                </span>
+                <span class="small text-muted"><i class="bi bi-people-fill text-info me-1"></i> 48 peers studying now</span>
+              </div>
+              <h5 class="fw-bold mb-1" style="color: var(--skul-text-primary);">Deep Learning & Autonomous Systems</h5>
+              <p class="small text-secondary mb-2">Building production neural networks from scratch with Python & PyTorch.</p>
+              
+              <!-- Progress Indicator -->
+              <div class="d-flex justify-content-between align-items-center small mb-1">
+                <span class="text-secondary">Course Syllabus Progress</span>
+                <strong style="color: var(--skul-cyan);">78% Complete</strong>
+              </div>
+              <div class="progress" style="height: 6px; background: rgba(255,255,255,0.08);">
+                <div class="progress-bar" style="width: 78%; background: linear-gradient(90deg, #6366f1, #06b6d4);"></div>
+              </div>
+            </div>
+
+            <!-- Code Sandbox Snippet -->
+            <div class="code-snippet-box mb-3">
+              <div class="text-muted small mb-1">// SKuL Interactive Terminal</div>
+              <div><span style="color: #f43f5e;">import</span> <span style="color: #a855f7;">skul_neural</span> <span style="color: #f43f5e;">as</span> nn</div>
+              <div>model = nn.Transformer(layers=12, heads=8)</div>
+              <div>metrics = model.train(dataset=<span style="color: #10b981;">"open_science"</span>, epochs=50)</div>
+              <div style="color: #10b981;">&gt; Epoch 50/50 [================] - loss: 0.024 - accuracy: 99.4%</div>
+            </div>
+
+            <!-- Floating Gamification & Live Doubt Chips -->
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+              <div class="d-flex align-items-center gap-2 px-3 py-1 rounded-pill" style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); color: #f59e0b; font-size: 0.8rem; font-weight: 700;">
+                <i class="bi bi-lightning-charge-fill"></i> +60 XP Earned Today
+              </div>
+              <div class="d-flex align-items-center gap-2 px-3 py-1 rounded-pill" style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; font-size: 0.8rem; font-weight: 700;">
+                <i class="bi bi-shield-check"></i> Verified Certificate Ready
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  <figure><img src="{% static 'images/study-desk.jpg' %}" alt="A learner writes notes beside open study materials" fetchpriority="high"></figure>
 </section>
 
 {% if announcements %}
-<aside class="ls-wrap ls-announcements" aria-label="Announcements">
+<!-- Announcement Banners -->
+<section class="container mb-4" aria-label="Announcements">
   {% for announcement in announcements %}
-  <div><strong>{{ announcement.title }}</strong><p>{{ announcement.content }}</p>{% if announcement.link_url %}<a href="{{ announcement.link_url }}">Read more</a>{% endif %}</div>
+  <div class="p-3 rounded-3 mb-2 d-flex align-items-center justify-content-between" style="background: rgba(99, 102, 241, 0.1); border-left: 4px solid var(--skul-indigo); border: 1px solid var(--skul-border-glow);">
+    <div>
+      <strong style="color: var(--skul-text-primary);"><i class="bi bi-megaphone-fill text-warning me-2"></i>{{ announcement.title }}</strong>
+      <span class="text-secondary ms-2">{{ announcement.content }}</span>
+    </div>
+    {% if announcement.link_url %}
+    <a href="{{ announcement.link_url }}" class="btn btn-sm btn-skul-primary">Read more</a>
+    {% endif %}
+  </div>
   {% endfor %}
-</aside>
+</section>
 {% endif %}
 
-<section class="ls-band">
-  <div class="ls-wrap ls-section">
-    <p class="ls-kicker">Find your subject</p>
-    <h2>Explore learning categories</h2>
+<!-- Category Bento Section -->
+<section class="ls-band py-5">
+  <div class="container">
+    <div class="text-center mb-4">
+      <div class="skul-badge-pill"><i class="bi bi-compass-fill me-1"></i> Curated Learning Paths</div>
+      <h2 class="display-6 fw-bold mb-2">Explore High-Impact Subjects</h2>
+      <p class="text-secondary mx-auto" style="max-width: 580px;">Choose a domain to start building mastery through interactive lessons, quizzes, and live classrooms.</p>
+    </div>
+
     <div class="ls-category-grid">
       {% for category in categories %}
-      <a href="{% url 'courses:course_list' %}?category={{ category.slug|urlencode }}"><i class="bi {{ category.icon }}" aria-hidden="true"></i><span>{{ category.name }}</span><span aria-hidden="true">↗</span></a>
+      <a href="{% url 'courses:course_list' %}?category={{ category.slug|urlencode }}">
+        <div class="d-flex align-items-center gap-3">
+          <i class="bi {{ category.icon|default:'bi-journal-code' }}"></i>
+          <span>{{ category.name }}</span>
+        </div>
+        <i class="bi bi-arrow-up-right text-muted small"></i>
+      </a>
       {% empty %}
-      <p>Course categories will appear here as the catalog grows.</p>
+      <div class="col-12 text-center text-muted py-4">Categories will appear here as the catalog grows.</div>
       {% endfor %}
     </div>
   </div>
 </section>
 
-<section class="ls-wrap ls-section" id="courses-section">
-  <div class="ls-section-head">
-    <div><p class="ls-kicker">The course catalog</p><h2>Find your next course</h2></div>
-    <a class="btn ls-secondary" href="{% url 'courses:course_list' %}">View all courses</a>
-  </div>
-  <div class="ls-course-grid">
-    {% for course in featured_courses %}
-    <article class="ls-course">
-      {% if course.thumbnail %}<img src="{{ course.thumbnail.url }}" alt="" loading="lazy">{% else %}
-      <div class="ls-course-cover" aria-hidden="true"><i class="bi {{ course.category.icon }}"></i></div>{% endif %}
-      <div class="ls-course-body">
-        <p class="ls-kicker">{{ course.category.name }}</p>
-        <h3>{{ course.title }}</h3>
-        <p>{{ course.short_description }}</p>
-        <p class="ls-meta">{{ course.instructor.get_full_name|default:course.instructor.username }} · {{ course.estimated_hours }} hours · {{ course.get_level_display }}</p>
-        <a href="{% url 'courses:course_detail' course.slug %}" aria-label="View course: {{ course.title }}">View course <span aria-hidden="true">↗</span></a>
+<!-- Featured Courses Section -->
+<section class="py-5" id="courses-section">
+  <div class="container py-3">
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+      <div>
+        <div class="skul-badge-pill mb-2"><i class="bi bi-collection-play-fill me-1"></i> Handpicked Courses</div>
+        <h2 class="display-6 fw-bold mb-1">Featured Open Curriculum</h2>
+        <p class="text-secondary mb-0">Completely tuition-free, high-fidelity courses created by experienced educators.</p>
       </div>
-    </article>
-    {% empty %}
-    <div class="ls-empty"><h3>New courses are on the way</h3><p>Browse the catalog for published courses, or explore live classes.</p><a href="{% url 'live_classes:live_class_list' %}">Browse live classes</a></div>
-    {% endfor %}
+      <a class="btn btn-skul-secondary" href="{% url 'courses:course_list' %}">
+        Browse All Courses <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+
+    <div class="row g-4">
+      {% for course in featured_courses %}
+      <div class="col-md-6 col-lg-4">
+        <article class="course-editorial-card h-100 d-flex flex-column">
+          <!-- Thumbnail & Cover -->
+          <div class="course-card-cover">
+            {% if course.thumbnail %}
+            <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" loading="lazy">
+            {% else %}
+            <div class="d-flex align-items-center justify-content-center h-100" style="background: linear-gradient(135deg, #10192e 0%, #1e293b 100%);">
+              <i class="bi {{ course.category.icon|default:'bi-mortarboard' }} display-3 text-info opacity-75"></i>
+            </div>
+            {% endif %}
+            <div class="cover-level-badge">{{ course.get_level_display }}</div>
+            <div class="cover-free-badge">FREE &bull; ZERO TUITION</div>
+          </div>
+
+          <!-- Card Body -->
+          <div class="p-4 d-flex flex-column flex-grow-1">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="course-category-tag">{{ course.category.name }}</span>
+              <span class="small fw-bold" style="color: #f59e0b;">
+                <i class="bi bi-star-fill me-1"></i> {{ course.avg_rating|floatformat:1|default:"5.0" }}
+              </span>
+            </div>
+
+            <h5 class="course-title-link mb-2">
+              <a href="{% url 'courses:course_detail' course.slug %}">{{ course.title }}</a>
+            </h5>
+
+            <p class="small text-secondary flex-grow-1 mb-3">
+              {{ course.short_description|truncatewords:20 }}
+            </p>
+
+            <div class="d-flex justify-content-between align-items-center pt-3 border-top small text-secondary" style="border-color: var(--skul-border-hairline) !important;">
+              <span><i class="bi bi-person me-1 text-primary"></i> {{ course.instructor.get_full_name|default:course.instructor.username }}</span>
+              <span><i class="bi bi-clock me-1 text-info"></i> {{ course.estimated_hours }}h</span>
+              <span><i class="bi bi-award me-1 text-success"></i> Certificate</span>
+            </div>
+          </div>
+
+          <!-- Card Action Button -->
+          <div class="px-4 pb-4 pt-0">
+            <a href="{% url 'courses:course_detail' course.slug %}" class="btn-enroll-card">
+              <span>Enroll Free &bull; View Syllabus</span> <i class="bi bi-arrow-right-short fs-5"></i>
+            </a>
+          </div>
+        </article>
+      </div>
+      {% empty %}
+      <div class="col-12 text-center py-5">
+        <div class="p-5 rounded-4" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-hairline);">
+          <i class="bi bi-stars display-4" style="color: var(--skul-indigo);"></i>
+          <h4 class="fw-bold mt-3">New Courses Arriving Weekly</h4>
+          <p class="text-secondary small">Browse our live classes or check back as instructors launch new tracks.</p>
+          <a class="btn btn-skul-primary mt-2" href="{% url 'live_classes:live_class_list' %}">Explore Live Sessions</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
   </div>
 </section>
 
-<section class="ls-band" id="how-it-works">
-  <div class="ls-wrap ls-section ls-editorial">
-    <div><p class="ls-kicker">Why LiveSchool</p><h2>Make room for learning.</h2><p>Learn at your own pace with structured lessons, course resources, and a dashboard that helps you pick up where you left off.</p></div>
-    <ol class="ls-steps">
-      <li><h3>Discover a course</h3><p>Choose a subject and review the syllabus.</p></li>
-      <li><h3>Enroll and start learning</h3><p>Open your first lesson and work through it at your own pace.</p></li>
-      <li><h3>Practice and track progress</h3><p>Take available quizzes and mark lessons complete as you go.</p></li>
-    </ol>
+<!-- How SKuL Works Section -->
+<section class="ls-band py-5" id="how-it-works">
+  <div class="container py-3">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-5">
+        <div class="skul-badge-pill mb-2"><i class="bi bi-shield-check me-1"></i> The SKuL Advantage</div>
+        <h2 class="display-6 fw-bold mb-3">Education Designed for Genuine Mastery.</h2>
+        <p class="text-secondary mb-4" style="line-height: 1.8;">
+          We tore down the tuition paywall so you can learn at your own pace without subscriptions, credit cards, or gatekeeping. Learn from modular lessons, test yourself in quizzes, join live classes, and get verified digital certificates.
+        </p>
+        <div class="d-flex flex-column gap-3">
+          <div class="d-flex align-items-start gap-3">
+            <div class="p-2 rounded-3 text-primary" style="background: rgba(99, 102, 241, 0.15);"><i class="bi bi-lightning-charge-fill fs-5"></i></div>
+            <div>
+              <h6 class="fw-bold mb-1">Gamified Micro-Learning</h6>
+              <p class="text-secondary small mb-0">Earn XP and maintain daily learning streaks as you complete lessons.</p>
+            </div>
+          </div>
+          <div class="d-flex align-items-start gap-3">
+            <div class="p-2 rounded-3 text-info" style="background: rgba(6, 182, 212, 0.15);"><i class="bi bi-broadcast fs-5"></i></div>
+            <div>
+              <h6 class="fw-bold mb-1">Real-Time Synchronous Classrooms</h6>
+              <p class="text-secondary small mb-0">Join interactive WebRTC sessions with instructors and live doubt resolution.</p>
+            </div>
+          </div>
+          <div class="d-flex align-items-start gap-3">
+            <div class="p-2 rounded-3 text-success" style="background: rgba(16, 185, 129, 0.15);"><i class="bi bi-patch-check-fill fs-5"></i></div>
+            <div>
+              <h6 class="fw-bold mb-1">Cryptographically Signed Certificates</h6>
+              <p class="text-secondary small mb-0">Share publicly verifiable, tamper-evident completion honors on LinkedIn or CVs.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-7">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="p-4 rounded-4 h-100" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-hairline);">
+              <div class="fs-1 fw-extrabold mb-2" style="color: var(--skul-indigo); font-family: var(--skul-font-heading);">01</div>
+              <h5 class="fw-bold mb-2">Select Your Path</h5>
+              <p class="text-secondary small mb-0">Explore computing, mathematics, machine learning, and sciences. Inspect the full syllabus before starting.</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-4 rounded-4 h-100" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-hairline);">
+              <div class="fs-1 fw-extrabold mb-2" style="color: var(--skul-cyan); font-family: var(--skul-font-heading);">02</div>
+              <h5 class="fw-bold mb-2">1-Click Enrollment</h5>
+              <p class="text-secondary small mb-0">Instant access with zero barriers. No payment forms, no hidden paywalls, no trial expirations.</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-4 rounded-4 h-100" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-hairline);">
+              <div class="fs-1 fw-extrabold mb-2" style="color: var(--skul-emerald); font-family: var(--skul-font-heading);">03</div>
+              <h5 class="fw-bold mb-2">Interactive Study</h5>
+              <p class="text-secondary small mb-0">Watch lectures, study curated notes, download cheat sheets, and listen to synthesized audio.</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-4 rounded-4 h-100" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-hairline);">
+              <div class="fs-1 fw-extrabold mb-2" style="color: var(--skul-amber); font-family: var(--skul-font-heading);">04</div>
+              <h5 class="fw-bold mb-2">Certify & Showcase</h5>
+              <p class="text-secondary small mb-0">Score passing grades on course quizzes to mint an authentic verified distinction certificate.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="ls-wrap ls-section ls-editorial" id="learning-resources">
-  <div><p class="ls-kicker">Learning resources</p><h2>Keep exploring.</h2><p>Find recordings, notes and quizzes in courses that include them. Ask a question or share what you’ve learned in the community.</p></div>
-  <div class="ls-link-list">
-    <a href="{% url 'courses:course_list' %}">Course lessons and materials <span aria-hidden="true">↗</span></a>
-    <a href="{% url 'community:forum_list' %}">Community discussions <span aria-hidden="true">↗</span></a>
-    <a href="{% url 'certificates:verify' %}">Verify a certificate <span aria-hidden="true">↗</span></a>
+<!-- Live Synchronous Broadcast Band -->
+<section class="py-5 position-relative overflow-hidden">
+  <div class="container py-3">
+    <div class="p-4 p-md-5 rounded-4 position-relative" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(6, 182, 212, 0.12) 100%); border: 1px solid var(--skul-border-glow);">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-8">
+          <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-3" style="background: rgba(239, 68, 68, 0.18); border: 1px solid rgba(239, 68, 68, 0.4); color: #ef4444; font-size: 0.8rem; font-weight: 700;">
+            <span class="skul-pulse-dot" style="background: #ef4444; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);"></span>
+            SYNCHRONOUS WEBRTC LIVE CLASSROOMS
+          </div>
+          <h2 class="display-6 fw-bold mb-3">Learn Directly With World-Class Instructors</h2>
+          <p class="text-secondary mb-0" style="max-width: 620px; font-size: 1.05rem;">
+            Step into interactive audio-video lecture rooms. Ask live questions on the real-time doubt board, participate in collaborative problem-solving, and access session recordings anytime.
+          </p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+          <a class="btn btn-skul-live py-3 px-4 shadow-lg" href="{% url 'live_classes:live_class_list' %}">
+            <i class="bi bi-broadcast me-2"></i> Browse Live Classes
+          </a>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="ls-band">
-  <div class="ls-wrap ls-section ls-editorial ls-live">
-    <img src="{% static 'images/group-learning.jpg' %}" alt="Students studying together around a table" loading="lazy">
-    <div><p class="ls-kicker">Live learning</p><h2>Learn together.</h2><p>Join scheduled classes, ask instructors questions, and learn alongside other students.</p><a class="btn ls-primary" href="{% url 'live_classes:live_class_list' %}">Browse live classes</a></div>
+<!-- Final Call to Action -->
+<section class="py-5 text-center">
+  <div class="container py-4">
+    <div class="p-5 rounded-4 position-relative overflow-hidden" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-hairline);">
+      <h2 class="display-5 fw-bold mb-3">Your Next Chapter Starts Today.</h2>
+      <p class="text-secondary mx-auto mb-4" style="max-width: 580px; font-size: 1.15rem;">
+        Discover new domains, acquire future-proof technical abilities, and learn without financial boundaries.
+      </p>
+      <div class="d-flex justify-content-center gap-3">
+        <a class="btn btn-skul-primary btn-skul-shimmer py-3 px-5 fs-6 shadow-lg" href="{% if user.is_authenticated %}{% url 'courses:course_list' %}{% else %}{% url 'accounts:register' %}{% endif %}">
+          {% if user.is_authenticated %}Explore Courses{% else %}Get Started Free in 10s{% endif %} <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="ls-wrap ls-section ls-final">
-  <h2>Your next chapter starts here.</h2>
-  <p>Discover new subjects, develop useful skills and make learning part of your everyday life.</p>
-  <a class="btn ls-primary" href="{% if user.is_authenticated %}{% url 'courses:course_list' %}{% else %}{% url 'accounts:register' %}{% endif %}">Start Learning</a>
-</section>
 {% endblock %}

@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
 
-{% block title %}Peer Q&A Community - Live School{% endblock %}
+{% block title %}Peer Q&A Doubt Community &bull; SKuL{% endblock %}
 
 {% block content %}
-<section class="py-5 bg-body-tertiary border-bottom">
-  <div class="container text-center">
-    <span class="badge bg-info-subtle text-info mb-2">Cross-Demographic Peer Learning</span>
-    <h1 class="fw-bold mb-3">Live School Discussion & Doubt Community</h1>
-    <p class="lead text-muted mx-auto mb-4" style="max-width: 650px;">
-      Got stuck on a coding bug, maths concept, or study topic? Ask our global community of volunteer mentors and peer students.
+<section class="py-5 ls-band text-center">
+  <div class="container py-2">
+    <div class="skul-badge-pill mb-2"><i class="bi bi-people-fill me-1"></i> Peer Learning Network</div>
+    <h1 class="display-5 fw-bold mb-2">Discussion & Doubt Community</h1>
+    <p class="text-secondary lead mx-auto mb-4" style="max-width: 650px;">
+      Got stuck on a coding bug, algorithm, or mathematics concept? Ask our global community of volunteer mentors and peer learners.
     </p>
 
     <div class="d-flex justify-content-center gap-3">
-      <a href="{% url 'community:create_thread' %}" class="btn btn-primary fw-semibold">
-        <i class="bi bi-patch-question me-1"></i> Ask a Question (+25 XP)
+      <a href="{% url 'community:create_thread' %}" class="btn btn-skul-primary btn-skul-shimmer shadow-md fw-bold">
+        <i class="bi bi-patch-question-fill me-1"></i> Ask a Question (+25 XP)
       </a>
     </div>
   </div>
@@ -24,12 +24,12 @@
     <!-- Main Discussions Column -->
     <div class="col-lg-8">
       <!-- Search & Filters -->
-      <form method="get" class="card p-3 border custom-card mb-4">
+      <form method="get" class="card p-3 border-0 shadow-sm mb-4">
         <div class="row g-2">
           <div class="col-md-8">
             <div class="input-group">
-              <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search"></i></span>
-              <input type="text" name="q" value="{{ query }}" class="form-control border-start-0" placeholder="Search questions or tags...">
+              <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-search"></i></span>
+              <input type="text" name="q" value="{{ query }}" class="form-control border-start-0" placeholder="Search questions, errors, or tags...">
             </div>
           </div>
           <div class="col-6 col-md-2">
@@ -40,7 +40,7 @@
             </select>
           </div>
           <div class="col-6 col-md-2">
-            <button type="submit" class="btn btn-outline-primary w-100">Filter</button>
+            <button type="submit" class="btn btn-skul-secondary w-100">Filter</button>
           </div>
         </div>
       </form>
@@ -48,77 +48,69 @@
       <!-- Threads List -->
       <div class="d-flex flex-column gap-3">
         {% for thread in threads %}
-          <div class="card p-4 border custom-card">
+          <div class="card p-4 border-0 shadow-sm">
             <div class="d-flex justify-content-between align-items-start mb-2">
               <div class="d-flex align-items-center gap-2">
                 {% if thread.is_resolved %}
-                  <span class="badge bg-success-subtle text-success"><i class="bi bi-check-circle-fill me-1"></i> Solved</span>
+                  <span class="badge rounded-pill" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">
+                    <i class="bi bi-check-circle-fill me-1"></i> Solved
+                  </span>
                 {% else %}
-                  <span class="badge bg-secondary-subtle text-secondary">Open Doubt</span>
+                  <span class="badge rounded-pill" style="background: var(--skul-surface-elevated); color: var(--skul-text-secondary); border: 1px solid var(--skul-border-subtle);">
+                    Open Doubt
+                  </span>
                 {% endif %}
                 {% if thread.course %}
-                  <span class="badge bg-primary-subtle text-primary">{{ thread.course.title }}</span>
+                  <span class="course-category-tag">{{ thread.course.title }}</span>
                 {% endif %}
               </div>
-              <small class="text-muted"><i class="bi bi-chat me-1"></i>{{ thread.reply_total }} replies</small>
+              <small class="text-secondary"><i class="bi bi-chat me-1 text-primary"></i>{{ thread.reply_total }} replies</small>
             </div>
 
             <h5 class="fw-bold mb-2">
-              <a href="{% url 'community:thread_detail' thread.id %}" class="text-decoration-none text-body">
+              <a href="{% url 'community:thread_detail' thread.id %}" class="text-decoration-none" style="color: var(--skul-text-primary);">
                 {{ thread.title }}
               </a>
             </h5>
 
-            <p class="small text-muted mb-3">
+            <p class="small text-secondary mb-3">
               {{ thread.content|truncatewords:25 }}
             </p>
 
-            <div class="d-flex flex-wrap justify-content-between align-items-center small text-muted border-top pt-2">
+            <div class="d-flex flex-wrap justify-content-between align-items-center small text-secondary border-top pt-2" style="border-color: var(--skul-border-hairline) !important;">
               <div>
                 Asked by <strong>{{ thread.author.get_full_name|default:thread.author.username }}</strong>
                 <span class="mx-1">&bull;</span> {{ thread.created_at|timesince }} ago
               </div>
-              <div>
-                {% if thread.tags %}
-                  {% for tag in thread.tags.split %}
-                    <span class="badge bg-body-tertiary text-muted border">#{{ tag }}</span>
-                  {% endfor %}
-                {% endif %}
-              </div>
+              <a href="{% url 'community:thread_detail' thread.id %}" class="btn btn-sm btn-skul-secondary">
+                View Discussion <i class="bi bi-arrow-right ms-1"></i>
+              </a>
             </div>
           </div>
         {% empty %}
-          <div class="text-center py-5">
-            <i class="bi bi-chat-square-dots display-3 text-muted"></i>
-            <h4 class="fw-bold mt-3">No questions found</h4>
-            <p class="text-muted small">Be the first to post a doubt or question to the community!</p>
-            <a href="{% url 'community:create_thread' %}" class="btn btn-primary btn-sm">Ask Question</a>
+          <div class="card p-5 text-center border-0 shadow-sm text-secondary">
+            <i class="bi bi-chat-square-quote display-4 text-muted mb-2"></i>
+            <h5>No discussions found</h5>
+            <p class="small">Be the first to start a conversation or ask a doubt!</p>
+            <div><a href="{% url 'community:create_thread' %}" class="btn btn-skul-primary btn-sm">Ask First Question</a></div>
           </div>
         {% endfor %}
-        {% include 'pagination.html' %}
       </div>
+      {% include 'pagination.html' %}
     </div>
 
-    <!-- Community Sidebar -->
+    <!-- Right Sidebar: Community Guidelines -->
     <div class="col-lg-4">
-      <div class="card p-4 border custom-card mb-4">
-        <h5 class="fw-bold mb-2"><i class="bi bi-shield-check text-success me-2"></i> Community Guidelines</h5>
-        <p class="small text-muted mb-3">Live School is built on mutual respect and collaborative learning across all demographics.</p>
-        <ul class="small text-secondary ps-3 mb-0 d-flex flex-column gap-2">
-          <li>Be polite, respectful, and supportive to fellow learners.</li>
-          <li>Clearly formulate code errors or maths questions.</li>
-          <li>Do not post offensive or derogatory language.</li>
-          <li>Earn XP points every time you post or help someone!</li>
+      <div class="card p-4 border-0 shadow-sm mb-4">
+        <h5 class="fw-bold mb-3"><i class="bi bi-shield-check text-primary me-2"></i> SKuL Community Ethos</h5>
+        <ul class="list-unstyled small text-secondary d-flex flex-column gap-2 mb-0">
+          <li><i class="bi bi-check-circle-fill text-success me-2"></i> Be respectful and constructive in feedback.</li>
+          <li><i class="bi bi-check-circle-fill text-success me-2"></i> Share code snippets and error tracebacks clearly.</li>
+          <li><i class="bi bi-check-circle-fill text-success me-2"></i> Mark accepted solutions to help future learners.</li>
+          <li><i class="bi bi-check-circle-fill text-success me-2"></i> Earn +25 XP for posting questions and +50 XP for accepted solutions.</li>
         </ul>
-      </div>
-
-      <div class="card p-4 border custom-card text-center bg-body-tertiary">
-        <i class="bi bi-award fs-1 text-warning mb-2"></i>
-        <h6 class="fw-bold mb-1">Earn Helper Badges</h6>
-        <p class="small text-muted mb-0">Help fellow learners by answering questions and sharing what you know.</p>
       </div>
     </div>
   </div>
 </div>
 {% endblock %}
-

@@ -1,18 +1,43 @@
 {% extends 'base.html' %}
-{% block title %}Access and Inclusion | LiveSchool{% endblock %}
+{% block title %}Access and Inclusion &bull; SKuL{% endblock %}
 {% block content %}
-<section class="ls-band">
-  <div class="ls-wrap ls-section ls-editorial">
-    <div><p class="ls-kicker">Demographic Inclusivity</p><h1>More ways to learn.</h1></div>
-    <p class="lead">Learning looks different for everyone. LiveSchool offers self-paced lessons, scheduled classes, and reading tools so you can choose how to take part.</p>
+<section class="py-5 ls-band">
+  <div class="container py-3">
+    <div class="skul-badge-pill mb-2">
+      <span class="skul-pulse-dot"></span> Universal Accessibility &bull; Demographic Inclusivity
+    </div>
+    <h1 class="display-4 fw-bold mb-3">Empowering Every Learning Style.</h1>
+    <p class="text-secondary lead mb-0" style="max-width: 700px; line-height: 1.8;">
+      Learning looks and feels different for everyone. SKuL provides multi-modal learning tools &mdash; sensory accessibility, dyslexia-optimized type, speech synthesis, and low-bandwidth reading modes.
+    </p>
   </div>
 </section>
-<section class="ls-wrap ls-section ls-editorial">
-  <div><h2>Make the page work for you.</h2><p>Open Accessibility above the main menu to adjust text size, switch themes, or turn on a reading ruler.</p></div>
-  <ul class="ls-steps">
-    <li><h3>Read comfortably</h3><p>Try the dyslexia-friendly font setting or high-contrast mode.</p></li>
-    <li><h3>Listen to lesson notes</h3><p>Use the audio control on a lesson page if your browser supports speech synthesis.</p></li>
-    <li><h3>Learn on your schedule</h3><p>Resume a course from your dashboard or look for lessons with downloadable resources.</p></li>
-  </ul>
+
+<section class="py-5">
+  <div class="container py-3">
+    <div class="row g-4 mb-4">
+      <div class="col-md-4">
+        <div class="p-4 rounded-4 h-100" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-hairline);">
+          <i class="bi bi-fonts fs-2 text-primary mb-2 d-inline-block"></i>
+          <h5 class="fw-bold mb-2">Dyslexia-Friendly Typography</h5>
+          <p class="text-secondary small mb-0">One-click activation of weighted font typography to prevent visual crowding and character rotation.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-4 rounded-4 h-100" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-hairline);">
+          <i class="bi bi-distribute-vertical fs-2 text-info mb-2 d-inline-block"></i>
+          <h5 class="fw-bold mb-2">ADHD Reading Focus Ruler</h5>
+          <p class="text-secondary small mb-0">Interactive visual guide that tracks your cursor across lines to assist neurodivergent readers in maintaining focus.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-4 rounded-4 h-100" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-hairline);">
+          <i class="bi bi-circle-half fs-2 text-warning mb-2 d-inline-block"></i>
+          <h5 class="fw-bold mb-2">WCAG AAA High Contrast</h5>
+          <p class="text-secondary small mb-0">Pure high-contrast mode for visually impaired users with maximum luminance contrast ratios.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 {% endblock %}

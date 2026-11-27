@@ -1,82 +1,86 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ course.title }} - Free Online Course &bull; Live School{% endblock %}
+{% block title %}{{ course.title }} &bull; Free Online Course &bull; SKuL{% endblock %}
 
 {% block content %}
-<section class="py-5 bg-oxford-hero text-white position-relative overflow-hidden border-bottom border-dark" style="background-color: var(--bg-oxford-dark);">
-  <div class="hero-ledger-grid" aria-hidden="true"></div>
+<!-- Course Overview Hero -->
+<section class="py-5 ls-band position-relative overflow-hidden">
   <div class="container position-relative z-2">
     <div class="row align-items-center g-5">
       <div class="col-lg-8">
         <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-          <span class="course-category-tag cat-{{ course.category.slug }} px-3 py-1 rounded-pill bg-white text-dark small">{{ course.category.name }}</span>
-          <span class="badge bg-secondary-subtle text-white border border-secondary">{{ course.get_level_display }}</span>
-          <span class="badge bg-mint text-dark fw-bold"><i class="bi bi-patch-check-fill me-1"></i> Verified Certificate Included</span>
+          <span class="course-category-tag">{{ course.category.name }}</span>
+          <span class="badge rounded-pill" style="background: var(--skul-surface-elevated); border: 1px solid var(--skul-border-subtle); color: var(--skul-text-primary);">{{ course.get_level_display }}</span>
+          <span class="badge rounded-pill" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); color: #10b981; font-weight: 700;">
+            <i class="bi bi-patch-check-fill me-1"></i> Verified Certificate Included
+          </span>
         </div>
-        <h1 class="section-title-editorial display-5 text-white mb-3">{{ course.title }}</h1>
-        <p class="hero-subtitle-text mb-4">{{ course.short_description }}</p>
 
-        <div class="d-flex flex-wrap align-items-center gap-4 text-white-50 small">
-          <div><i class="bi bi-person-fill text-mint me-1"></i> Instructor: <strong class="text-white">{{ course.instructor.get_full_name|default:course.instructor.username }}</strong></div>
-          <div><i class="bi bi-clock text-mint me-1"></i> Duration: <strong class="text-white">{{ course.estimated_hours }} Hours</strong></div>
-          <div><i class="bi bi-play-circle text-mint me-1"></i> Lessons: <strong class="text-white">{{ course.total_lessons }} Units</strong></div>
-          <div><i class="bi bi-star-fill text-warning me-1"></i> Rating: <strong class="text-white">{% if course.average_rating %}{{ course.average_rating }} / 5.0{% else %}New (No ratings yet){% endif %}</strong> ({{ reviews.count }} reviews)</div>
+        <h1 class="display-5 fw-bold mb-3" style="color: var(--skul-text-primary);">{{ course.title }}</h1>
+        <p class="lead text-secondary mb-4">{{ course.short_description }}</p>
+
+        <div class="d-flex flex-wrap align-items-center gap-4 small text-secondary">
+          <div><i class="bi bi-person-fill text-primary me-1"></i> Instructor: <strong style="color: var(--skul-text-primary);">{{ course.instructor.get_full_name|default:course.instructor.username }}</strong></div>
+          <div><i class="bi bi-clock text-info me-1"></i> Duration: <strong style="color: var(--skul-text-primary);">{{ course.estimated_hours }} Hours</strong></div>
+          <div><i class="bi bi-play-circle text-primary me-1"></i> Lessons: <strong style="color: var(--skul-text-primary);">{{ course.total_lessons }} Units</strong></div>
+          <div><i class="bi bi-star-fill text-warning me-1"></i> Rating: <strong style="color: var(--skul-text-primary);">{% if course.average_rating %}{{ course.average_rating }} / 5.0{% else %}New (5.0){% endif %}</strong> ({{ reviews.count }} reviews)</div>
         </div>
       </div>
 
+      <!-- Right Column: Enrollment Card -->
       <div class="col-lg-4">
-        <div class="card p-4 border-0 shadow-2xl rounded-4 bg-white text-dark">
+        <div class="card p-4 border-0 shadow-lg" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-glow) !important;">
           <div class="text-center mb-3">
-            <span class="badge bg-mint text-dark font-monospace mb-2">PUBLIC ACCESS</span>
-            <div class="display-6 fw-extrabold text-success">Free enrollment</div>
-            <div class="small text-muted">No tuition or enrollment fee</div>
+            <span class="badge rounded-pill mb-2 font-monospace" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">PUBLIC ACCESS ACADEMY</span>
+            <div class="display-6 fw-extrabold" style="color: #10b981;">Free Enrollment</div>
+            <div class="small text-secondary">No tuition or hidden subscription</div>
           </div>
 
           {% if is_enrolled %}
-            <div class="alert alert-success py-2 text-center small mb-3 rounded-3">
+            <div class="alert py-2 text-center small mb-3 rounded-3" style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981;">
               <i class="bi bi-check-circle-fill me-1"></i> You are enrolled! Progress: <strong>{{ enrollment.progress_percentage }}%</strong>
             </div>
             {% with first_lesson=modules.first.lessons.first %}
               {% if first_lesson %}
-                <a href="{% url 'courses:lesson_player' course.slug first_lesson.id %}" class="btn btn-mint-action btn-lg w-100 fw-bold mb-2 shadow-sm rounded-pill text-center">
+                <a href="{% url 'courses:lesson_player' course.slug first_lesson.id %}" class="btn btn-skul-primary btn-skul-shimmer btn-lg w-100 fw-bold mb-2 shadow-sm text-center">
                   <i class="bi bi-play-fill me-1"></i> Continue Learning
                 </a>
               {% else %}
-                <button class="btn btn-secondary btn-lg w-100 fw-bold mb-2 rounded-pill" disabled>No Lessons Yet</button>
+                <button class="btn btn-secondary btn-lg w-100 fw-bold mb-2" disabled>No Lessons Yet</button>
               {% endif %}
             {% endwith %}
           {% else %}
             <form method="post" action="{% url 'courses:enroll_course' course.slug %}">
               {% csrf_token %}
-              <button type="submit" class="btn btn-mint-action btn-lg w-100 fw-bold mb-2 shadow-sm rounded-pill text-center">
+              <button type="submit" class="btn btn-skul-primary btn-skul-shimmer btn-lg w-100 fw-bold mb-2 shadow-lg text-center">
                 <i class="bi bi-mortarboard-fill me-1"></i> Enroll Free in 1-Click
               </button>
             </form>
-            <div class="small text-muted text-center" style="font-size: 0.75rem;">Instant Access &bull; No Credit Card Required</div>
+            <div class="small text-secondary text-center" style="font-size: 0.75rem;">Instant Access &bull; No Credit Card Required</div>
           {% endif %}
 
           {% if user.is_authenticated and user == course.instructor or user.is_staff %}
-            <div class="d-flex gap-2 mt-3 pt-3 border-top">
-              <a href="{% url 'courses:studio' course.slug %}" class="btn btn-sm btn-outline-primary w-50 rounded-pill">
+            <div class="d-flex gap-2 mt-3 pt-3 border-top" style="border-color: var(--skul-border-hairline) !important;">
+              <a href="{% url 'courses:studio' course.slug %}" class="btn btn-sm btn-skul-secondary w-50">
                 <i class="bi bi-pencil me-1"></i> Edit Course
               </a>
               <form method="post" action="{% url 'courses:delete_course' course.slug %}" class="w-50" onsubmit="return confirm('Are you sure you want to permanently delete this course?');">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-sm btn-outline-danger w-100 rounded-pill">
+                <button type="submit" class="btn btn-sm btn-skul-live w-100">
                   <i class="bi bi-trash me-1"></i> Delete
                 </button>
               </form>
             </div>
           {% endif %}
 
-          <hr class="my-3 border-secondary opacity-25">
+          <hr class="my-3" style="border-color: var(--skul-border-hairline);">
 
-          <ul class="list-unstyled small text-muted mb-0 d-flex flex-column gap-2">
+          <ul class="list-unstyled small text-secondary mb-0 d-flex flex-column gap-2">
             <li><i class="bi bi-check2-circle text-success me-2 fs-6"></i> Lifetime barrier-free access</li>
-            <li><i class="bi bi-check2-circle text-success me-2 fs-6"></i> Video lectures & lightweight notes</li>
-            <li><i class="bi bi-check2-circle text-success me-2 fs-6"></i> Interactive quizzes & doubt board</li>
-            <li><i class="bi bi-check2-circle text-success me-2 fs-6"></i> Tamper-evident verified certificate</li>
+            <li><i class="bi bi-check2-circle text-success me-2 fs-6"></i> Video lectures & downloadable cheat sheets</li>
+            <li><i class="bi bi-check2-circle text-success me-2 fs-6"></i> Interactive quizzes & community doubt board</li>
+            <li><i class="bi bi-check2-circle text-success me-2 fs-6"></i> Tamper-evident verified digital certificate</li>
           </ul>
         </div>
       </div>
@@ -84,30 +88,31 @@
   </div>
 </section>
 
-<section class="py-5 bg-natural-canvas">
+<!-- Syllabus & Curriculum Details -->
+<section class="py-5">
   <div class="container py-3">
     <div class="row g-5">
       <div class="col-lg-8">
         <!-- Course Description Card -->
-        <div class="card p-4 p-md-5 border-0 shadow-sm rounded-4 bg-white mb-4">
-          <h3 class="fw-bold mb-3 text-dark">Course Curriculum Overview</h3>
-          <div class="text-secondary" style="line-height: 1.8;">
+        <div class="p-4 p-md-5 rounded-4 mb-4" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-hairline);">
+          <h3 class="fw-bold mb-3">Course Curriculum Overview</h3>
+          <div class="text-secondary" style="line-height: 1.8; font-size: 1.05rem;">
             {{ course.description|linebreaks }}
           </div>
         </div>
 
-        <!-- Syllabus Breakdown -->
-        <div class="card p-4 p-md-5 border-0 shadow-sm rounded-4 bg-white mb-4">
+        <!-- Syllabus Breakdown Accordion -->
+        <div class="p-4 p-md-5 rounded-4 mb-4" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-hairline);">
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3 class="fw-bold mb-0 text-dark">Curricular Modules</h3>
-            <span class="text-muted small">{{ modules.count }} Modules &bull; {{ course.total_lessons }} Lessons</span>
+            <h3 class="fw-bold mb-0">Curricular Modules</h3>
+            <span class="text-secondary small">{{ modules.count }} Modules &bull; {{ course.total_lessons }} Lessons</span>
           </div>
 
           <div class="accordion" id="syllabusAccordion">
             {% for module in modules %}
-              <div class="accordion-item border mb-2 rounded-3 overflow-hidden">
+              <div class="accordion-item mb-2 rounded-3 overflow-hidden" style="background: var(--skul-surface-elevated); border: 1px solid var(--skul-border-hairline);">
                 <h2 class="accordion-header" id="heading{{ module.id }}">
-                  <button class="accordion-button {% if not forloop.first %}collapsed{% endif %} fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ module.id }}">
+                  <button class="accordion-button {% if not forloop.first %}collapsed{% endif %} fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ module.id }}" style="background: var(--skul-surface-elevated); color: var(--skul-text-primary);">
                     Module {{ module.order }}: {{ module.title }}
                   </button>
                 </h2>
@@ -115,15 +120,15 @@
                   <div class="accordion-body p-0">
                     <ul class="list-group list-group-flush">
                       {% for lesson in module.lessons.all %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center py-2 px-3">
+                        <li class="list-group-item d-flex justify-content-between align-items-center py-2 px-3" style="background: transparent; border-color: var(--skul-border-hairline); color: var(--skul-text-primary);">
                           <div class="d-flex align-items-center gap-2">
-                            <i class="bi bi-play-circle text-mint-dark"></i>
+                            <i class="bi bi-play-circle text-primary"></i>
                             <span>Lesson {{ lesson.order }}: {{ lesson.title }}</span>
                           </div>
-                          <span class="badge bg-light text-muted border">{{ lesson.duration_minutes }} min</span>
+                          <span class="badge rounded-pill" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-subtle); color: var(--skul-text-secondary);">{{ lesson.duration_minutes }} min</span>
                         </li>
                       {% empty %}
-                        <li class="list-group-item text-muted small">No lessons uploaded yet.</li>
+                        <li class="list-group-item text-secondary small" style="background: transparent;">No lessons uploaded yet.</li>
                       {% endfor %}
                     </ul>
                   </div>
@@ -134,58 +139,29 @@
         </div>
 
         <!-- Reviews Section -->
-        <div class="card p-4 p-md-5 border-0 shadow-sm rounded-4 bg-white mb-4">
+        <div class="p-4 p-md-5 rounded-4 mb-4" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-hairline);">
           <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 class="fw-bold mb-0 text-dark">Learner Feedback & Reviews</h3>
-            <span class="badge bg-warning text-dark"><i class="bi bi-star-fill me-1"></i> {{ course.average_rating }} / 5.0</span>
+            <h3 class="fw-bold mb-0">Learner Feedback & Reviews</h3>
+            <span class="badge rounded-pill" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); font-size: 0.9rem;">
+              <i class="bi bi-star-fill me-1"></i> {{ course.average_rating|default:"5.0" }} / 5.0
+            </span>
           </div>
 
           {% for rev in reviews %}
-            <div class="border-bottom pb-3 mb-3">
+            <div class="border-bottom pb-3 mb-3" style="border-color: var(--skul-border-hairline) !important;">
               <div class="d-flex justify-content-between align-items-center mb-1">
-                <strong class="text-dark">{{ rev.student.get_full_name|default:rev.student.username }}</strong>
+                <strong>{{ rev.student.get_full_name|default:rev.student.username }}</strong>
                 <div class="text-warning small">
                   {% for i in "12345" %}
                     <i class="bi bi-star-fill"></i>
                   {% endfor %}
                 </div>
               </div>
-              <p class="text-secondary small mb-1">{{ rev.review_text }}</p>
-              <small class="text-muted" style="font-size: 0.72rem;">{{ rev.created_at|date:"M d, Y" }}</small>
+              <p class="text-secondary small mb-0">{{ rev.review_text }}</p>
             </div>
           {% empty %}
-            <p class="text-muted small mb-0">No reviews yet. Be the first learner to leave feedback upon completing this course!</p>
+            <p class="text-secondary small mb-0">No learner reviews yet. Enroll to be the first to review this course!</p>
           {% endfor %}
-        </div>
-      </div>
-
-      <!-- Instructor Bio Column -->
-      <div class="col-lg-4">
-        <div class="card p-4 border-0 shadow-sm rounded-4 bg-white mb-4">
-          <h5 class="fw-bold mb-3 text-dark">Lead Volunteer Educator</h5>
-          <div class="d-flex align-items-center gap-3 mb-3">
-            <div class="instructor-mini-avatar fs-5">{{ course.instructor.first_name|first|default:"T" }}</div>
-            <div>
-              <div class="fw-bold text-dark">{{ course.instructor.get_full_name|default:course.instructor.username }}</div>
-              <small class="text-mint-dark fw-semibold">Faculty / Volunteer Educator</small>
-            </div>
-          </div>
-          <p class="text-muted small mb-3">
-            {{ course.instructor.bio|default:"Dedicated to providing high-quality, inclusive education to learners from all demographic backgrounds worldwide." }}
-          </p>
-          <div class="p-2 rounded-3 bg-light small text-muted">
-            <i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ course.instructor.country|default:"Global" }} &bull; Open Education Contributor
-          </div>
-        </div>
-
-        <div class="card p-4 border-0 shadow-sm rounded-4 bg-forest-card text-white">
-          <h6 class="fw-bold text-mint mb-2"><i class="bi bi-patch-check-fill me-1"></i> Free Verifiable Certificate</h6>
-          <p class="text-white-50 small mb-3">
-            Complete all lesson units and pass the assessment to unlock your permanent cryptographic completion certificate.
-          </p>
-          <a href="{% url 'certificates:verify' %}" class="btn btn-sm btn-outline-light rounded-pill">
-            Certificate Verification Portal &rarr;
-          </a>
         </div>
       </div>
     </div>

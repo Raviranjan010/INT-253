@@ -1,82 +1,171 @@
 {% extends 'base.html' %}
-{% block title %}Course Studio | LiveSchool{% endblock %}
+{% block title %}Course Studio &bull; {{ course.title }} &bull; SKuL{% endblock %}
 {% block content %}
-<section class="ls-wrap ls-section">
-  <p class="ls-kicker">Course studio</p>
-  <h1>{{ course.title }}</h1>
-  <p>{% if course.is_published %}Published{% else %}Draft{% endif %}</p>
-  <div class="ls-actions mb-4">
-    <a class="btn ls-secondary" href="{% url 'courses:edit_course' course.slug %}">Edit course details</a>
-    <a class="btn ls-secondary" href="{% url 'courses:studio_module_new' course.slug %}">Add module</a>
-    <a class="btn ls-secondary" href="{% url 'courses:studio_quiz_new' course.slug %}">Add quiz</a>
-    <form method="post" action="{% url 'courses:studio_publication' course.slug %}">{% csrf_token %}
-      <button class="btn ls-primary" type="submit">{% if course.is_published %}Unpublish{% else %}Publish{% endif %}</button>
-    </form>
-  </div>
-  {% for module in modules %}
-  <article class="card p-3 mb-3">
-    <h2>{{ module.title }}</h2>
-    <div class="ls-actions mb-3">
-      <a href="{% url 'courses:studio_module_edit' course.slug module.pk %}">Edit module</a>
-      <a href="{% url 'courses:studio_lesson_new' course.slug module.pk %}">Add lesson</a>
-      <form method="post" action="{% url 'courses:studio_module_delete' course.slug module.pk %}">{% csrf_token %}<button class="btn btn-outline-danger" type="submit">Delete module</button></form>
-    </div>
-    <ul>
-      {% for lesson in module.lessons.all %}
-      <li class="mb-2">
-        <a href="{% url 'courses:studio_lesson_edit' course.slug module.pk lesson.pk %}">{{ lesson.title }}</a>
-        <form class="d-inline" method="post" action="{% url 'courses:studio_lesson_delete' course.slug module.pk lesson.pk %}">{% csrf_token %}<button class="btn btn-sm btn-outline-danger" type="submit">Delete lesson</button></form>
-      </li>
-      {% empty %}<li>No lessons in this module.</li>{% endfor %}
-    </ul>
-  </article>
-  {% empty %}<p>No modules yet. Add a module to start building your course.</p>{% endfor %}
-  <h2>Quizzes</h2>
-  <ul>
-    {% for quiz in quizzes %}
-    <li class="mb-3">
-      <strong>{{ quiz.title }}</strong>
-      <div class="ls-actions">
-        <a href="{% url 'courses:studio_quiz_edit' course.slug quiz.pk %}">Edit quiz</a>
-        <a href="{% url 'courses:studio_question_new' course.slug quiz.pk %}">Add question</a>
-        <form method="post" action="{% url 'courses:studio_quiz_delete' course.slug quiz.pk %}">{% csrf_token %}<button class="btn btn-sm btn-outline-danger" type="submit">Delete quiz</button></form>
+<div class="container py-4">
+  <!-- Studio Header -->
+  <div class="card p-4 border-0 shadow-lg mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+      <div>
+        <div class="skul-badge-pill mb-2"><i class="bi bi-sliders me-1"></i> Instructor Studio</div>
+        <h1 class="display-6 fw-bold mb-1">{{ course.title }}</h1>
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge rounded-pill {% if course.is_published %}bg-success{% else %}bg-secondary{% endif %}">
+            {% if course.is_published %}Published{% else %}Draft{% endif %}
+          </span>
+          <span class="text-secondary small">{{ course.category.name }} &bull; {{ course.get_level_display }}</span>
+        </div>
       </div>
-      <ol>
-        {% for question in quiz.questions.all %}
-        <li>
-          <a href="{% url 'courses:studio_question_edit' course.slug quiz.pk question.pk %}">{{ question.text }}</a>
-          <form class="d-inline" method="post" action="{% url 'courses:studio_question_delete' course.slug quiz.pk question.pk %}">{% csrf_token %}<button class="btn btn-sm btn-outline-danger" type="submit">Delete question</button></form>
-        </li>
-        {% empty %}<li>No questions yet.</li>{% endfor %}
-      </ol>
-    </li>
-    {% empty %}<li>No quizzes yet.</li>{% endfor %}
-  </ul>
-  <section class="mt-4">
-    <h2>Learner progress</h2>
-    <p>{{ enrollment_stats.completed }} of {{ enrollment_stats.total }} enrollments completed.</p>
-    <p>{{ quiz_stats.passed }} of {{ quiz_stats.total }} quiz attempts passed.</p>
-    {% if average_rating is not None %}<p>Average rating: {{ average_rating|floatformat:1 }} out of 5.</p>{% endif %}
-    <ul>
-      {% for enrollment in page %}
-      <li>{{ enrollment.student.get_full_name|default:enrollment.student.username }} · {{ enrollment.progress_percentage }}%</li>
-      {% empty %}<li>No enrollments yet.</li>{% endfor %}
-    </ul>
-    {% include 'pagination.html' %}
-  </section>
-  <section class="mt-4">
-    <h2>Recent reviews</h2>
-    <ul>
-      {% for review in latest_reviews %}
-      <li>{{ review.student.username }} · {{ review.rating }} out of 5 · {{ review.review_text }}</li>
-      {% empty %}<li>No reviews yet.</li>{% endfor %}
-    </ul>
-    <h2>Unanswered classroom questions</h2>
-    <ul>
-      {% for doubt in unanswered_doubts %}
-      <li><a href="{% url 'live_classes:live_class_room' doubt.session_id %}">{{ doubt.question|truncatechars:100 }}</a></li>
-      {% empty %}<li>No unanswered questions.</li>{% endfor %}
-    </ul>
-  </section>
-</section>
+
+      <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-skul-secondary" href="{% url 'courses:edit_course' course.slug %}">
+          <i class="bi bi-pencil me-1"></i> Edit Details
+        </a>
+        <a class="btn btn-skul-secondary" href="{% url 'courses:studio_module_new' course.slug %}">
+          <i class="bi bi-folder-plus me-1"></i> Add Module
+        </a>
+        <a class="btn btn-skul-secondary" href="{% url 'courses:studio_quiz_new' course.slug %}">
+          <i class="bi bi-patch-question me-1"></i> Add Quiz
+        </a>
+        <form method="post" action="{% url 'courses:studio_publication' course.slug %}" class="d-inline">
+          {% csrf_token %}
+          <button class="btn btn-skul-primary" type="submit">
+            {% if course.is_published %}Unpublish{% else %}Publish{% endif %}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Left Column: Modules & Lessons -->
+    <div class="col-lg-7">
+      <h4 class="fw-bold mb-3"><i class="bi bi-journal-text text-primary me-2"></i> Course Modules & Lessons</h4>
+      {% for module in modules %}
+        <div class="card p-4 border-0 shadow-sm mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0">Module {{ module.order }}: {{ module.title }}</h5>
+            <div class="d-flex gap-2">
+              <a class="btn btn-sm btn-skul-secondary" href="{% url 'courses:studio_module_edit' course.slug module.pk %}">Edit</a>
+              <a class="btn btn-sm btn-skul-primary" href="{% url 'courses:studio_lesson_new' course.slug module.pk %}">Add Lesson</a>
+              <form method="post" action="{% url 'courses:studio_module_delete' course.slug module.pk %}" class="d-inline">
+                {% csrf_token %}
+                <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+              </form>
+            </div>
+          </div>
+          <ul class="list-group list-group-flush">
+            {% for lesson in module.lessons.all %}
+              <li class="list-group-item d-flex justify-content-between align-items-center py-2 px-0" style="background: transparent; border-color: var(--skul-border-hairline);">
+                <div>
+                  <i class="bi bi-play-circle text-primary me-2"></i>
+                  <a href="{% url 'courses:studio_lesson_edit' course.slug module.pk lesson.pk %}" class="text-decoration-none" style="color: var(--skul-text-primary);">
+                    {{ lesson.order }}. {{ lesson.title }}
+                  </a>
+                  <span class="text-secondary small ms-2">({{ lesson.duration_minutes }}m)</span>
+                </div>
+                <form class="d-inline" method="post" action="{% url 'courses:studio_lesson_delete' course.slug module.pk lesson.pk %}">
+                  {% csrf_token %}
+                  <button class="btn btn-sm text-danger border-0 p-0" type="submit" title="Delete lesson"><i class="bi bi-trash"></i></button>
+                </form>
+              </li>
+            {% empty %}
+              <li class="list-group-item text-secondary small px-0" style="background: transparent;">No lessons in this module yet.</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% empty %}
+        <div class="card p-4 text-center border-0 shadow-sm">
+          <p class="text-secondary mb-2">No modules created yet. Add a module to start building your course.</p>
+          <div><a href="{% url 'courses:studio_module_new' course.slug %}" class="btn btn-skul-primary btn-sm">Add First Module</a></div>
+        </div>
+      {% endfor %}
+
+      <!-- Quizzes Section -->
+      <h4 class="fw-bold mt-4 mb-3"><i class="bi bi-patch-question text-info me-2"></i> Quizzes</h4>
+      {% for quiz in quizzes %}
+        <div class="card p-3 border-0 shadow-sm mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <strong class="fs-6">{{ quiz.title }}</strong>
+            <div class="d-flex gap-2">
+              <a class="btn btn-sm btn-skul-secondary" href="{% url 'courses:studio_quiz_edit' course.slug quiz.pk %}">Edit</a>
+              <a class="btn btn-sm btn-skul-cyan" href="{% url 'courses:studio_question_new' course.slug quiz.pk %}">Add Question</a>
+              <form method="post" action="{% url 'courses:studio_quiz_delete' course.slug quiz.pk %}" class="d-inline">
+                {% csrf_token %}
+                <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+              </form>
+            </div>
+          </div>
+          <ol class="small text-secondary mb-0">
+            {% for question in quiz.questions.all %}
+              <li class="mb-1">
+                <a href="{% url 'courses:studio_question_edit' course.slug quiz.pk question.pk %}" class="text-decoration-none" style="color: var(--skul-text-primary);">
+                  {{ question.text }}
+                </a>
+                <form class="d-inline" method="post" action="{% url 'courses:studio_question_delete' course.slug quiz.pk question.pk %}">
+                  {% csrf_token %}
+                  <button class="btn btn-sm text-danger border-0 p-0 ms-2" type="submit"><i class="bi bi-trash"></i></button>
+                </form>
+              </li>
+            {% empty %}
+              <li>No questions yet.</li>
+            {% endfor %}
+          </ol>
+        </div>
+      {% empty %}
+        <div class="card p-3 text-center border-0 shadow-sm text-secondary small">No quizzes yet.</div>
+      {% endfor %}
+    </div>
+
+    <!-- Right Column: Analytics & Learner Stats -->
+    <div class="col-lg-5">
+      <!-- Learner Progress Card -->
+      <div class="card p-4 border-0 shadow-sm mb-4">
+        <h5 class="fw-bold mb-3"><i class="bi bi-graph-up text-success me-2"></i> Learner Performance</h5>
+        <div class="d-flex justify-content-between small text-secondary mb-2">
+          <span>Completed Enrollments:</span>
+          <strong>{{ enrollment_stats.completed }} / {{ enrollment_stats.total }}</strong>
+        </div>
+        <div class="d-flex justify-content-between small text-secondary mb-2">
+          <span>Quiz Pass Rate:</span>
+          <strong>{{ quiz_stats.passed }} / {{ quiz_stats.total }} passed</strong>
+        </div>
+        {% if average_rating is not None %}
+          <div class="d-flex justify-content-between small text-secondary mb-3">
+            <span>Average Rating:</span>
+            <strong class="text-warning"><i class="bi bi-star-fill"></i> {{ average_rating|floatformat:1 }} / 5.0</strong>
+          </div>
+        {% endif %}
+
+        <h6 class="fw-bold small text-secondary text-uppercase mt-3 mb-2" style="font-size: 0.75rem;">Active Learners</h6>
+        <ul class="list-unstyled small mb-0">
+          {% for enrollment in page %}
+            <li class="d-flex justify-content-between py-1 border-bottom" style="border-color: var(--skul-border-hairline) !important;">
+              <span>{{ enrollment.student.get_full_name|default:enrollment.student.username }}</span>
+              <strong style="color: var(--skul-cyan);">{{ enrollment.progress_percentage }}%</strong>
+            </li>
+          {% empty %}
+            <li class="text-secondary small">No enrollments yet.</li>
+          {% endfor %}
+        </ul>
+        {% include 'pagination.html' %}
+      </div>
+
+      <!-- Unanswered Classroom Questions -->
+      <div class="card p-4 border-0 shadow-sm">
+        <h5 class="fw-bold mb-3"><i class="bi bi-chat-dots-fill text-danger me-2"></i> Live Doubts to Answer</h5>
+        <ul class="list-unstyled small mb-0">
+          {% for doubt in unanswered_doubts %}
+            <li class="mb-2 pb-2 border-bottom" style="border-color: var(--skul-border-hairline) !important;">
+              <a href="{% url 'live_classes:live_class_room' doubt.session_id %}" class="text-decoration-none" style="color: var(--skul-indigo);">
+                {{ doubt.question|truncatechars:100 }}
+              </a>
+            </li>
+          {% empty %}
+            <li class="text-secondary small">No unanswered questions right now.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

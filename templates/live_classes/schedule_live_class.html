@@ -1,55 +1,54 @@
 {% extends 'base.html' %}
 
-{% block title %}Schedule Live Session - Live School{% endblock %}
+{% block title %}Schedule Live Session &bull; SKuL Instructor Studio{% endblock %}
 
 {% block content %}
 <div class="container py-5" style="max-width: 750px;">
-  <div class="card p-4 p-md-5 border custom-card shadow-sm">
-    <span class="badge bg-danger-subtle text-danger mb-2">Instructor Portal</span>
-    <h2 class="fw-bold mb-3"><i class="bi bi-camera-video me-2 text-danger"></i> Schedule Free Live Session</h2>
-    <p class="text-muted small mb-4">Schedule a class and optionally provide a meeting link.</p>
+  <div class="card p-4 p-md-5 border-0 shadow-lg">
+    <div class="skul-badge-pill mb-2"><i class="bi bi-broadcast me-1"></i> Instructor Portal</div>
+    <h2 class="fw-bold mb-2"><i class="bi bi-camera-video me-2 text-danger"></i> Schedule Free Live Session</h2>
+    <p class="text-secondary small mb-4">Schedule a synchronous interactive masterclass and provide meeting room details.</p>
 
     <form method="post">
       {% csrf_token %}
       <div class="mb-3">
-        <label class="form-label fw-semibold">Class Title</label>
+        <label class="form-label fw-semibold small text-secondary">Class Title</label>
         {{ form.title }}
       </div>
       <div class="mb-3">
-        <label class="form-label fw-semibold">Associated Course (Optional)</label>
+        <label class="form-label fw-semibold small text-secondary">Associated Course (Optional)</label>
         {{ form.course }}
       </div>
       <div class="row g-3 mb-3">
         <div class="col-md-6">
-          <label class="form-label fw-semibold" for="{{ form.scheduled_start.id_for_label }}">Scheduled date and time (IST)</label>
+          <label class="form-label fw-semibold small text-secondary" for="{{ form.scheduled_start.id_for_label }}">Scheduled Date and Time (IST)</label>
           {{ form.scheduled_start }}
           {{ form.scheduled_start.errors }}
         </div>
         <div class="col-md-6">
-          <label class="form-label fw-semibold">Duration (Minutes)</label>
+          <label class="form-label fw-semibold small text-secondary">Duration (Minutes)</label>
           {{ form.duration_minutes }}
         </div>
       </div>
       <div class="mb-3">
-        <label class="form-label fw-semibold">Target Demographics & Level</label>
+        <label class="form-label fw-semibold small text-secondary">Target Demographics & Level</label>
         {{ form.target_demographics }}
       </div>
       <div class="mb-4">
-        <label class="form-label fw-semibold">Class Description & Key Learning Objectives</label>
+        <label class="form-label fw-semibold small text-secondary">Class Description & Key Learning Objectives</label>
         {{ form.description }}
       </div>
       <div class="mb-4">
-        {{ form.meeting_url.label_tag }}
+        <label class="form-label fw-semibold small text-secondary" for="{{ form.meeting_url.id_for_label }}">Meeting URL (Optional)</label>
         {{ form.meeting_url }}
         {{ form.meeting_url.errors }}
       </div>
 
-      <div class="d-flex justify-content-between pt-3 border-top">
-        <a href="{% url 'live_classes:live_class_list' %}" class="btn btn-outline-secondary">Cancel</a>
-        <button type="submit" class="btn btn-danger px-4 fw-semibold">Schedule Live Classroom</button>
+      <div class="d-flex justify-content-between pt-3 border-top" style="border-color: var(--skul-border-hairline) !important;">
+        <a href="{% url 'live_classes:live_class_list' %}" class="btn btn-skul-secondary">Cancel</a>
+        <button type="submit" class="btn btn-skul-live px-4 fw-bold shadow-md">Schedule Live Classroom</button>
       </div>
     </form>
   </div>
 </div>
 {% endblock %}
-

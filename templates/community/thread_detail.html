@@ -1,38 +1,42 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ thread.title }} - Community Doubt{% endblock %}
+{% block title %}{{ thread.title }} &bull; SKuL Doubt Community{% endblock %}
 
 {% block content %}
 <div class="container py-5" style="max-width: 900px;">
-  <a href="{% url 'community:forum_list' %}" class="btn btn-sm btn-outline-secondary mb-3">
-    <i class="bi bi-arrow-left me-1"></i> Back to All Discussions
+  <a href="{% url 'community:forum_list' %}" class="btn btn-sm btn-skul-secondary mb-3">
+    <i class="bi bi-arrow-left me-1"></i> Back to Discussions
   </a>
 
   <!-- Question Card -->
-  <div class="card p-4 border custom-card mb-4">
+  <div class="card p-4 p-md-5 border-0 shadow-lg mb-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div class="d-flex align-items-center gap-2">
         {% if thread.is_resolved %}
-          <span class="badge bg-success"><i class="bi bi-check-circle-fill me-1"></i> Solved</span>
+          <span class="badge rounded-pill" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">
+            <i class="bi bi-check-circle-fill me-1"></i> Solved
+          </span>
         {% else %}
-          <span class="badge bg-secondary">Unsolved Doubt</span>
+          <span class="badge rounded-pill" style="background: var(--skul-surface-elevated); color: var(--skul-text-secondary); border: 1px solid var(--skul-border-subtle);">
+            Open Doubt
+          </span>
         {% endif %}
         {% if thread.course %}
-          <span class="badge bg-primary-subtle text-primary">{{ thread.course.title }}</span>
+          <span class="course-category-tag">{{ thread.course.title }}</span>
         {% endif %}
       </div>
-      <small class="text-muted"><i class="bi bi-eye me-1"></i>{{ thread.views_count }} views</small>
+      <small class="text-secondary"><i class="bi bi-eye me-1 text-primary"></i>{{ thread.views_count }} views</small>
     </div>
 
     <h2 class="fw-bold mb-3">{{ thread.title }}</h2>
 
-    <div class="p-3 bg-body-tertiary rounded-3 border mb-3 text-secondary" style="line-height: 1.8; font-size: 1.05rem;">
+    <div class="p-3 rounded-3 mb-3 text-secondary" style="background: var(--skul-surface-elevated); border: 1px solid var(--skul-border-hairline); line-height: 1.8; font-size: 1.05rem;">
       {{ thread.content|linebreaks }}
       {% url 'community:report_thread' thread.pk as report_url %}
       {% include 'community/report_form.html' with label='thread' item_id=thread.pk %}
     </div>
 
-    <div class="d-flex justify-content-between align-items-center small text-muted border-top pt-3">
+    <div class="d-flex justify-content-between align-items-center small text-secondary border-top pt-3" style="border-color: var(--skul-border-hairline) !important;">
       <div class="d-flex align-items-center gap-2">
         <i class="bi bi-person-circle fs-5 text-primary"></i>
         <span>Asked by <strong>{{ thread.author.get_full_name|default:thread.author.username }}</strong></span>
@@ -41,7 +45,7 @@
       <div>
         {% if thread.tags %}
           {% for tag in thread.tags.split %}
-            <span class="badge bg-body-secondary text-muted border">#{{ tag }}</span>
+            <span class="badge rounded-pill" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-hairline); color: var(--skul-text-secondary);">#{{ tag }}</span>
           {% endfor %}
         {% endif %}
       </div>
@@ -53,19 +57,21 @@
 
   <div class="d-flex flex-column gap-3 mb-5">
     {% for reply in replies %}
-      <div class="card p-4 border custom-card {% if reply.is_solution %}border-success bg-success-subtle bg-opacity-10{% endif %}">
+      <div class="card p-4 border-0 shadow-sm {% if reply.is_solution %}border-success{% endif %}" style="{% if reply.is_solution %}background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.4) !important;{% endif %}">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <div class="d-flex align-items-center gap-2">
             <i class="bi bi-person-fill text-secondary"></i>
             <strong>{{ reply.author.get_full_name|default:reply.author.username }}</strong>
             {% if reply.author.is_instructor %}
-              <span class="badge bg-primary text-white" style="font-size: 0.65rem;">Teacher</span>
+              <span class="badge rounded-pill bg-primary" style="font-size: 0.65rem;">Educator</span>
             {% endif %}
-            <small class="text-muted">{{ reply.created_at|timesince }} ago</small>
+            <small class="text-secondary">{{ reply.created_at|timesince }} ago</small>
           </div>
 
           {% if reply.is_solution %}
-            <span class="badge bg-success"><i class="bi bi-check2-all me-1"></i> Accepted Solution</span>
+            <span class="badge rounded-pill" style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4);">
+              <i class="bi bi-check2-all me-1"></i> Accepted Solution
+            </span>
           {% endif %}
         </div>
 
@@ -73,59 +79,60 @@
           {{ reply.content|linebreaks }}
         </div>
 
-        <div class="d-flex justify-content-between align-items-center pt-2 border-top small">
+        <div class="d-flex justify-content-between align-items-center pt-2 border-top small" style="border-color: var(--skul-border-hairline) !important;">
           <!-- Upvote Button (POST-only with CSRF) -->
           {% if user.is_authenticated %}
             <form method="post" action="{% url 'community:upvote_reply' reply.id %}" class="d-inline">
               {% csrf_token %}
-              <button type="submit" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1">
-                <i class="bi bi-hand-thumbs-up-fill"></i>
-                <span>Helpful ({{ reply.upvote_count }})</span>
+              <button type="submit" class="btn btn-sm btn-skul-secondary py-1 px-3">
+                <i class="bi bi-hand-thumbs-up-fill me-1 text-primary"></i> Helpful ({{ reply.upvotes_count }})
               </button>
             </form>
           {% else %}
-            <span class="text-muted"><i class="bi bi-hand-thumbs-up me-1"></i>{{ reply.upvote_count }} Helpful</span>
+            <span class="text-secondary"><i class="bi bi-hand-thumbs-up me-1"></i> {{ reply.upvotes_count }} upvotes</span>
           {% endif %}
 
-          <!-- Author solution marking (POST-only with CSRF) -->
-          {% if user == thread.author or user.is_staff %}
-            <form method="post" action="{% url 'community:toggle_solution' reply.id %}" class="d-inline">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-sm {% if reply.is_solution %}btn-outline-danger{% else %}btn-outline-success{% endif %}">
-                {% if reply.is_solution %}Unmark Solution{% else %}✓ Mark as Accepted Solution{% endif %}
-              </button>
-            </form>
-          {% endif %}
+          <div class="d-flex gap-2 align-items-center">
+            <!-- Mark as Solution (Thread author or staff only) -->
+            {% if user == thread.author or user.is_staff %}
+              <form method="post" action="{% url 'community:mark_solution' reply.id %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-success">
+                  <i class="bi bi-check2 me-1"></i> Mark as Solution
+                </button>
+              </form>
+            {% endif %}
+            {% url 'community:report_reply' reply.pk as report_url %}
+            {% include 'community/report_form.html' with label='reply' item_id=reply.pk %}
+          </div>
         </div>
       </div>
     {% empty %}
-      <div class="card p-4 border custom-card text-center text-muted">
-        No answers posted yet. Help out by replying below!
+      <div class="card p-4 text-center border-0 shadow-sm text-secondary">
+        <p class="mb-0">No answers posted yet. Share your insights to help a fellow learner!</p>
       </div>
-      {% url 'community:report_reply' thread.pk reply.pk as report_url %}
-      {% include 'community/report_form.html' with label='reply' item_id=reply.pk %}
     {% endfor %}
   </div>
 
-  <!-- Post a Reply -->
+  <!-- Post a Reply Form -->
   {% if user.is_authenticated %}
-    <div class="card p-4 border custom-card">
-      <h5 class="fw-bold mb-3">Your Answer / Contribution</h5>
-      <form method="post">
+    <div class="card p-4 p-md-5 border-0 shadow-lg">
+      <h5 class="fw-bold mb-3"><i class="bi bi-reply-fill text-primary me-2"></i> Post Your Answer / Solution</h5>
+      <form method="post" action="{% url 'community:post_reply' thread.id %}">
         {% csrf_token %}
         <div class="mb-3">
-          {{ form.content }}
+          {{ reply_form.content }}
         </div>
-        <button type="submit" class="btn btn-primary fw-semibold px-4">
-          <i class="bi bi-send me-1"></i> Post Answer (+15 XP)
+        <button type="submit" class="btn btn-skul-primary px-4 fw-bold shadow-md">
+          <i class="bi bi-send-fill me-1"></i> Submit Reply (+10 XP)
         </button>
       </form>
     </div>
   {% else %}
-    <div class="alert alert-info text-center py-3">
-      Please <a href="{% url 'accounts:login' %}" class="fw-bold text-decoration-none">log in</a> or <a href="{% url 'accounts:register' %}" class="fw-bold text-decoration-none">sign up for free</a> to join the conversation and answer doubts!
+    <div class="p-4 rounded-4 text-center" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-hairline);">
+      <p class="text-secondary mb-3">Please sign in to answer questions and contribute to the community.</p>
+      <a href="{% url 'accounts:login' %}" class="btn btn-skul-primary">Sign In to Post Reply</a>
     </div>
   {% endif %}
 </div>
 {% endblock %}
-

@@ -1,23 +1,23 @@
 {% extends 'base.html' %}
 
-{% block title %}Verify Certificate - Live School{% endblock %}
+{% block title %}Verify Credential &bull; SKuL{% endblock %}
 
 {% block content %}
-<section class="py-5 bg-body-tertiary border-bottom">
-  <div class="container text-center">
-    <span class="badge bg-warning-subtle text-warning-emphasis mb-2">Public Credential Verification</span>
-    <h1 class="fw-bold mb-3">Live School Certificate Verification</h1>
-    <p class="lead text-muted mx-auto mb-4" style="max-width: 650px;">
-      Confirm the authenticity of free world-class education certificates issued by Live School.
+<section class="py-5 ls-band border-bottom text-center">
+  <div class="container py-2">
+    <div class="skul-badge-pill mb-2"><i class="bi bi-patch-check-fill me-1"></i> Cryptographic Verification</div>
+    <h1 class="display-5 fw-bold mb-2">SKuL Credential Verification</h1>
+    <p class="text-secondary lead mx-auto mb-4" style="max-width: 650px;">
+      Confirm the authenticity of free world-class education certificates issued by SKuL Open Academy.
     </p>
 
     <!-- Search Form -->
     <div class="row justify-content-center">
       <div class="col-md-7 col-lg-6">
-        <form method="get" action="{% url 'certificates:verify' %}" class="card p-3 border custom-card shadow-sm">
+        <form method="get" action="{% url 'certificates:verify' %}" class="card p-3 border-0 shadow-lg">
           <div class="input-group">
             <input type="text" name="id" value="{{ cert_code }}" required class="form-control" placeholder="Enter Certificate ID (e.g. LS-2026-...)">
-            <button type="submit" class="btn btn-primary fw-semibold">
+            <button type="submit" class="btn btn-skul-primary fw-bold">
               <i class="bi bi-shield-check me-1"></i> Verify Now
             </button>
           </div>
@@ -30,75 +30,63 @@
 <div class="container py-5" style="max-width: 800px;">
   {% if searched %}
     {% if is_valid and certificate %}
-      <div class="card p-4 p-md-5 border border-success custom-card shadow-sm bg-success-subtle bg-opacity-10">
+      <div class="card p-4 p-md-5 border-0 shadow-lg" style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.4) !important;">
         <div class="d-flex align-items-center gap-3 mb-4">
           <div class="display-5 text-success"><i class="bi bi-patch-check-fill"></i></div>
           <div>
-            <span class="badge bg-success fw-bold">AUTHENTIC & VERIFIED</span>
-            <h3 class="fw-bold mb-0 mt-1">Official Live School Credential</h3>
+            <span class="badge rounded-pill bg-success fw-bold">AUTHENTIC & VERIFIED</span>
+            <h3 class="fw-bold mb-0 mt-1">Official SKuL Credential</h3>
           </div>
         </div>
 
         <div class="table-responsive">
-          <table class="table table-bordered bg-body">
+          <table class="table table-bordered" style="background: var(--skul-surface-card); border-color: var(--skul-border-hairline) !important;">
             <tbody>
               <tr>
-                <th style="width: 35%;" class="bg-body-tertiary">Certificate ID:</th>
-                <td class="font-monospace fw-bold text-primary">{{ certificate.certificate_id }}</td>
+                <th style="width: 35%; background: var(--skul-surface-elevated);" class="text-secondary">Certificate ID:</th>
+                <td class="font-monospace fw-bold" style="color: var(--skul-cyan);">{{ certificate.certificate_id }}</td>
               </tr>
               <tr>
-                <th class="bg-body-tertiary">Recipient Student:</th>
+                <th style="background: var(--skul-surface-elevated);" class="text-secondary">Recipient Student:</th>
                 <td class="fw-semibold">{{ certificate.student.get_full_name|default:certificate.student.username }}</td>
               </tr>
               <tr>
-                <th class="bg-body-tertiary">Course Completed:</th>
+                <th style="background: var(--skul-surface-elevated);" class="text-secondary">Course Completed:</th>
                 <td class="fw-bold">{{ certificate.course.title }}</td>
               </tr>
               <tr>
-                <th class="bg-body-tertiary">Instructor:</th>
+                <th style="background: var(--skul-surface-elevated);" class="text-secondary">Instructor:</th>
                 <td>{{ certificate.course.instructor.get_full_name|default:certificate.course.instructor.username }}</td>
               </tr>
               <tr>
-                <th class="bg-body-tertiary">Honors Level:</th>
-                <td><span class="badge bg-primary-subtle text-primary">{{ certificate.grade }}</span></td>
+                <th style="background: var(--skul-surface-elevated);" class="text-secondary">Honors Level:</th>
+                <td><span class="badge rounded-pill bg-primary">{{ certificate.grade }}</span></td>
               </tr>
               <tr>
-                <th class="bg-body-tertiary">Date Issued:</th>
+                <th style="background: var(--skul-surface-elevated);" class="text-secondary">Date Issued:</th>
                 <td>{{ certificate.issued_at|date:"F d, Y" }}</td>
               </tr>
               <tr>
-                <th class="bg-body-tertiary">Cryptographic Hash:</th>
-                <td class="font-monospace small text-muted">{{ certificate.verification_code }}</td>
+                <th style="background: var(--skul-surface-elevated);" class="text-secondary">Cryptographic Hash:</th>
+                <td class="font-monospace small text-secondary">{{ certificate.verification_code }}</td>
               </tr>
             </tbody>
           </table>
         </div>
 
         <div class="text-center mt-3">
-          <a href="{% url 'certificates:view_certificate' certificate.certificate_id %}" class="btn btn-primary fw-semibold">
+          <a href="{% url 'certificates:view_certificate' certificate.certificate_id %}" class="btn btn-skul-primary fw-bold">
             <i class="bi bi-file-earmark-pdf me-1"></i> View Full Printable Certificate
           </a>
         </div>
       </div>
     {% else %}
-      <div class="card p-4 p-md-5 border border-danger custom-card text-center bg-danger-subtle bg-opacity-10">
-        <i class="bi bi-x-circle-fill display-4 text-danger mb-2"></i>
-        <h3 class="fw-bold text-danger mb-2">Certificate Not Found</h3>
-        <p class="text-muted mb-4">
-          We could not verify any certificate matching ID <strong>"{{ cert_code }}"</strong> in our database. Please double check the code.
-        </p>
-        <a href="{% url 'certificates:verify' %}" class="btn btn-outline-secondary btn-sm mx-auto">Try Again</a>
+      <div class="card p-5 text-center border-0 shadow-lg text-danger">
+        <i class="bi bi-shield-x display-4 mb-2"></i>
+        <h4 class="fw-bold">Invalid or Unrecognized Certificate</h4>
+        <p class="text-secondary small">The certificate ID you entered was not found in the authentic registry.</p>
       </div>
     {% endif %}
-  {% else %}
-    <div class="card p-4 border custom-card text-center text-muted">
-      <i class="bi bi-qr-code fs-1 text-primary mb-2"></i>
-      <h5 class="fw-bold text-body">Instant Verification Guarantee</h5>
-      <p class="small text-muted mb-0" style="max-width: 600px; margin: 0 auto;">
-        Every certificate issued through the Live School initiative contains a unique tamper-evident verification ID. Prospective employers, university admissions, and scholarship committees can instantly authenticate completion records here.
-      </p>
-    </div>
   {% endif %}
 </div>
 {% endblock %}
-

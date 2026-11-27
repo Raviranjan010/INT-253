@@ -25,7 +25,7 @@ def public_stats() -> dict[str, int]:
 
 def global_context(request):
     return {
-        'SITE_NAME': 'LiveSchool',
-        'SITE_TAGLINE': 'Free Education for Everyone',
+        'SITE_NAME': 'SKuL',
+        'SITE_TAGLINE': 'Next-Gen Open Academy',
         'GLOBAL_STATS': SimpleLazyObject(public_stats),
     }

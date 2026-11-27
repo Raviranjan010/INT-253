@@ -1,36 +1,36 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Free Registration - Live School for World-Class Free Education{% endblock %}
+{% block title %}Free Registration &bull; SKuL Open Academy{% endblock %}
 
 {% block content %}
-<section class="py-5 bg-natural-canvas">
+<section class="py-5">
   <div class="container py-4">
     <div class="row justify-content-center">
       <div class="col-md-7 col-lg-6">
-        <div class="card p-4 p-md-5 border-0 shadow-2xl rounded-4 bg-white">
+        <div class="card p-4 p-md-5 border-0 shadow-lg" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-glow) !important;">
           <div class="text-center mb-4">
-            <div class="brand-icon-box d-inline-flex mb-2">
-              <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M20 11C15.8 7.5 7.5 7.5 3.5 8.8V29.5C8 28.2 15.5 28.2 20 31.8V11Z" fill="#10B981"/>
-                <path d="M20 11C24.2 7.5 32.5 7.5 36.5 8.8V29.5C32 28.2 24.5 28.2 20 31.8V11Z" fill="#059669"/>
-                <path d="M20 11V31.8" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-                <circle cx="20" cy="6" r="2" fill="#F59E0B"/>
+            <div class="brand-icon-box d-inline-flex mb-3" style="width: 48px; height: 48px;">
+              <svg width="32" height="32" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M42 16H24C19.58 16 16 19.58 16 24C16 28.42 19.58 32 24 32H40C44.42 32 48 35.58 48 40C48 44.42 44.42 48 40 48H22" stroke="#6366f1" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M42 16L34 24" stroke="#06b6d4" stroke-width="6" stroke-linecap="round"/>
+                <circle cx="43" cy="16" r="3.5" fill="#00f2fe"/>
+                <circle cx="21" cy="48" r="3.5" fill="#a855f7"/>
               </svg>
             </div>
-            <h2 class="section-title-editorial mb-1">
-              {% if account_type == 'instructor' %}Volunteer as Educator{% else %}Join Live School{% endif %}
+            <h2 class="display-6 fw-bold mb-1">
+              {% if account_type == 'instructor' %}Volunteer as Educator{% else %}Join SKuL Academy{% endif %}
             </h2>
-            <p class="text-muted small">
-              Free access to courses and learning resources
+            <p class="text-secondary small">
+              100% free barrier-free access to courses, live sessions, and verified credentials
             </p>
 
             <!-- Role Toggle -->
-            <div class="btn-group w-100 my-2 rounded-pill overflow-hidden" role="group">
-              <a href="{% url 'accounts:register' %}?type=student" class="btn btn-sm {% if account_type != 'instructor' %}btn-mint-action{% else %}btn-outline-secondary{% endif %}">
+            <div class="btn-group w-100 my-3 rounded-pill overflow-hidden" role="group">
+              <a href="{% url 'accounts:register' %}?type=student" class="btn btn-sm {% if account_type != 'instructor' %}btn-skul-primary{% else %}btn-skul-secondary{% endif %}">
                 🎓 Student / Learner
               </a>
-              <a href="{% url 'accounts:register' %}?type=instructor" class="btn btn-sm {% if account_type == 'instructor' %}btn-mint-action{% else %}btn-outline-secondary{% endif %}">
+              <a href="{% url 'accounts:register' %}?type=instructor" class="btn btn-sm {% if account_type == 'instructor' %}btn-skul-primary{% else %}btn-skul-secondary{% endif %}">
                 👨‍🏫 Volunteer Educator
               </a>
             </div>
@@ -41,10 +41,10 @@
             <input type="hidden" name="website" value="">
             {% for field in form %}
               <div class="mb-3">
-                <label class="form-label fw-semibold small text-dark">{{ field.label }}</label>
+                <label class="form-label fw-semibold small text-secondary">{{ field.label }}</label>
                 {{ field }}
                 {% if field.help_text %}
-                  <div class="form-text small text-muted">{{ field.help_text }}</div>
+                  <div class="form-text small text-secondary">{{ field.help_text }}</div>
                 {% endif %}
                 {% for error in field.errors %}
                   <div class="text-danger small mt-1">{{ error }}</div>
@@ -52,19 +52,19 @@
               </div>
             {% endfor %}
 
-            <div class="alert alert-success py-2 small mb-3 rounded-3 d-flex align-items-center">
-              <i class="bi bi-gift-fill me-2 fs-5 text-mint-dark"></i>
+            <div class="p-3 rounded-3 small mb-3 d-flex align-items-center" style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); color: #f59e0b;">
+              <i class="bi bi-gift-fill me-2 fs-5"></i>
               <div>Registering today automatically awards you <strong>+100 XP</strong> welcome bonus!</div>
             </div>
 
-            <button type="submit" class="btn btn-mint-action w-100 py-2 fw-bold mb-3 rounded-pill">
-              <i class="bi bi-mortarboard me-1"></i> Complete Free Registration
+            <button type="submit" class="btn btn-skul-primary btn-skul-shimmer w-100 py-3 fw-bold mb-3 shadow-md">
+              <i class="bi bi-mortarboard-fill me-1"></i> Complete Free Registration
             </button>
           </form>
 
-          <div class="border-top pt-3 text-center small text-muted">
+          <div class="border-top pt-3 text-center small text-secondary" style="border-color: var(--skul-border-hairline) !important;">
             Already have an account? 
-            <a href="{% url 'accounts:login' %}" class="text-mint-dark fw-bold text-decoration-none">Sign In &rarr;</a>
+            <a href="{% url 'accounts:login' %}" class="fw-bold text-decoration-none ms-1" style="color: var(--skul-indigo);">Sign In &rarr;</a>
           </div>
         </div>
       </div>

@@ -1,29 +1,29 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Confirm Sign Out - Live School{% endblock %}
+{% block title %}Confirm Sign Out &bull; SKuL{% endblock %}
 
 {% block content %}
-<section class="py-5 bg-natural-canvas min-vh-hero d-flex align-items-center">
+<section class="py-5 min-vh-hero d-flex align-items-center">
   <div class="container py-4">
     <div class="row justify-content-center">
       <div class="col-md-6 col-lg-5">
-        <div class="card p-4 p-md-5 border-0 shadow-2xl rounded-4 bg-white text-center">
-          <div class="mb-3 text-warning display-4">
+        <div class="card p-4 p-md-5 border-0 shadow-lg text-center" style="background: var(--skul-surface-card); border: 1px solid var(--skul-border-subtle) !important;">
+          <div class="mb-3 display-4 text-warning">
             <i class="bi bi-box-arrow-right"></i>
           </div>
-          <h3 class="section-title-editorial mb-2">Sign Out of Live School?</h3>
-          <p class="text-muted small mb-4">
-            Are you sure you want to end your current learning session? Your progress is securely saved.
+          <h3 class="fw-bold mb-2">Sign Out of SKuL?</h3>
+          <p class="text-secondary small mb-4">
+            Are you sure you want to end your current learning session? Your course progress, XP points, and streak are securely saved.
           </p>
 
           <form method="post" action="{% url 'accounts:logout' %}">
             {% csrf_token %}
             <div class="d-grid gap-2">
-              <button type="submit" class="btn btn-danger rounded-pill py-2 fw-bold">
-                <i class="bi bi-box-arrow-right me-1"></i> Yes, Log Out
+              <button type="submit" class="btn btn-skul-live py-3 fw-bold shadow-sm">
+                <i class="bi bi-box-arrow-right me-1"></i> Sign Out
               </button>
-              <a href="{% url 'accounts:dashboard_redirect' %}" class="btn btn-outline-secondary rounded-pill py-2">
+              <a href="{% url 'accounts:dashboard_redirect' %}" class="btn btn-skul-secondary py-2">
                 Cancel & Return to Dashboard
               </a>
             </div>

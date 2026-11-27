@@ -1,35 +1,35 @@
 {% extends 'base.html' %}
 
-{% block title %}Results: {{ quiz.title }} - Live School{% endblock %}
+{% block title %}Results: {{ quiz.title }} &bull; SKuL{% endblock %}
 
 {% block content %}
 <div class="container py-5" style="max-width: 850px;">
   <!-- Result Score Card -->
-  <div class="card p-4 p-md-5 border custom-card text-center mb-5 {% if passed %}border-success bg-success-subtle bg-opacity-10{% else %}border-warning bg-warning-subtle bg-opacity-10{% endif %}">
+  <div class="card p-4 p-md-5 border-0 shadow-lg text-center mb-5 {% if passed %}border-success{% endif %}" style="{% if passed %}background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.4) !important;{% else %}background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.4) !important;{% endif %}">
     <div class="display-3 mb-2">
       {% if passed %}🏆{% else %}📚{% endif %}
     </div>
-    <h2 class="fw-bold mb-2">
+    <h2 class="display-6 fw-bold mb-2">
       {% if passed %}Congratulations! You Passed!{% else %}Keep Practicing &bull; Try Again{% endif %}
     </h2>
-    <p class="text-muted mb-4">
+    <p class="text-secondary mb-4" style="font-size: 1.1rem;">
       {% if passed %}
-        You scored <strong>{{ score_percentage }}%</strong> ({{ correct_count }} of {{ total_questions }} correct). +50 XP awarded!
+        You scored <strong class="text-success">{{ score_percentage }}%</strong> ({{ correct_count }} of {{ total_questions }} correct). +50 XP awarded!
       {% else %}
-        You scored <strong>{{ score_percentage }}%</strong>. The passing threshold is {{ quiz.pass_percentage }}%. Review the explanations below and give it another try.
+        You scored <strong class="text-warning">{{ score_percentage }}%</strong>. The passing threshold is {{ quiz.pass_percentage }}%. Review the explanations below and give it another try.
       {% endif %}
     </p>
 
     <div class="d-flex justify-content-center gap-3">
       {% if not passed %}
-        <a href="{% url 'quizzes:take_quiz' quiz.id %}" class="btn btn-warning fw-semibold">
+        <a href="{% url 'quizzes:take_quiz' quiz.id %}" class="btn btn-skul-primary fw-bold shadow-sm">
           <i class="bi bi-arrow-repeat me-1"></i> Retake Quiz
         </a>
       {% endif %}
-      <a href="{% url 'courses:course_detail' quiz.course.slug %}" class="btn btn-primary fw-semibold">
+      <a href="{% url 'courses:course_detail' quiz.course.slug %}" class="btn btn-skul-secondary fw-semibold">
         <i class="bi bi-arrow-left me-1"></i> Back to Course
       </a>
-      <a href="{% url 'accounts:student_dashboard' %}" class="btn btn-outline-secondary fw-semibold">
+      <a href="{% url 'accounts:student_dashboard' %}" class="btn btn-skul-secondary fw-semibold">
         Go to Dashboard
       </a>
     </div>
@@ -40,17 +40,17 @@
 
   <div class="d-flex flex-column gap-3">
     {% for item in detailed_results %}
-      <div class="card p-4 border custom-card {% if item.is_correct %}border-success-subtle{% else %}border-danger-subtle{% endif %}">
+      <div class="card p-4 border-0 shadow-sm" style="background: var(--skul-surface-card); border-left: 4px solid {% if item.is_correct %}#10b981{% else %}#ef4444{% endif %} !important;">
         <div class="d-flex justify-content-between align-items-start mb-2">
           <h5 class="fw-bold mb-0">Q{{ forloop.counter }}: {{ item.question.text }}</h5>
-          <span class="badge {% if item.is_correct %}bg-success{% else %}bg-danger{% endif %}">
+          <span class="badge rounded-pill {% if item.is_correct %}bg-success{% else %}bg-danger{% endif %}">
             {% if item.is_correct %}✓ Correct{% else %}✗ Incorrect{% endif %}
           </span>
         </div>
 
-        <div class="small mb-2">
+        <div class="small mb-2 text-secondary">
           <div>Your Answer: 
-            <strong>{{ item.selected_choice.text|default:'(No answer)' }}</strong>
+            <strong style="color: var(--skul-text-primary);">{{ item.selected_choice.text|default:'(No answer)' }}</strong>
           </div>
           {% if not item.is_correct and item.correct_choice %}
             <div class="text-success mt-1">
@@ -60,8 +60,8 @@
         </div>
 
         {% if item.explanation %}
-          <div class="mt-2 p-3 rounded-2 bg-body-tertiary border small">
-            <strong><i class="bi bi-lightbulb-fill text-warning me-1"></i> Explanation:</strong>
+          <div class="mt-2 p-3 rounded-2 small" style="background: var(--skul-surface-elevated); border: 1px solid var(--skul-border-hairline);">
+            <strong class="text-warning"><i class="bi bi-lightbulb-fill me-1"></i> Explanation:</strong>
             <p class="mb-0 text-secondary mt-1">{{ item.explanation }}</p>
           </div>
         {% endif %}
@@ -70,4 +70,3 @@
   </div>
 </div>
 {% endblock %}
-

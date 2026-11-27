@@ -21,6 +21,6 @@ The architecture, route inventory, and permission rules are documented in [docs/
 
 ## Verification and limitations
 
-Local verification passed Django's application checks, migration drift checks, and 61 automated tests. All ten public smoke endpoints returned HTTP 200 against a freshly migrated in-memory database. Provider integration tests using a real storage bucket, email sender, and video tenant require operator credentials. A Lighthouse or axe score is not asserted.
+Local verification passed Django's application checks, migration drift checks, and 61 automated tests. Line coverage was 87% across models, views, and forms, and 86% across application code excluding tests and migrations. The production-like settings check returned zero warnings with HSTS subdomains and preload explicitly enabled for that check. All ten public smoke endpoints returned HTTP 200 against a freshly migrated in-memory database. Provider integration tests using a real storage bucket, email sender, and video tenant require operator credentials. A Lighthouse or axe score is not asserted.
 
 Course creation starts with a draft. Instructor approval and ownership govern access to the studio. Course deletion through the LMS preserves courses with learner records, and issued certificates prevent ORM deletion of their course. New certificate signatures cover the issuance record and are not regenerated on an ordinary save.

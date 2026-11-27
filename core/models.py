@@ -18,6 +18,7 @@ class ContactMessage(models.Model):
 class NewsletterSubscriber(models.Model):
     email = models.EmailField(unique=True)
     subscribed_at = models.DateTimeField(auto_now_add=True)
+    confirmed_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.email

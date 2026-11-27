@@ -1,5 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.conf import settings
+from django.core.mail import send_mail
+from django.db import transaction
 from .models import CustomUser, XPLedger
 
 
@@ -27,6 +30,11 @@ class CustomUserAdmin(UserAdmin):
             user.is_instructor_approved = approved
             user.save(update_fields=['is_instructor_approved'])
             self.log_change(request, user, 'Instructor approval granted.' if approved else 'Instructor approval revoked.')
+            if user.email and (settings.DEBUG or settings.RESEND_API_KEY):
+                notice = 'Your instructor application was approved.' if approved else 'Your instructor approval was revoked.'
+                transaction.on_commit(lambda email=user.email, body=notice: send_mail(
+                    'LiveSchool instructor status', body, settings.DEFAULT_FROM_EMAIL, [email], fail_silently=True,
+                ))
 
     @admin.action(permissions=['change'], description='Approve selected instructors')
     def approve_instructors(self, request, queryset):

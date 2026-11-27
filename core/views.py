@@ -2,13 +2,16 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.conf import settings
 from django.core.mail import send_mail
+from django.core import signing
+from django.utils import timezone
+from django.views.decorators.http import require_http_methods
 from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed
 from django.db import DatabaseError, connection
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.urls import reverse
 from courses.models import Course, Category
 from live_classes.models import LiveSession
-from .models import Announcement
+from .models import Announcement, NewsletterSubscriber
 from .forms import ContactForm, NewsletterForm
 from .throttle import rate_limited
 
@@ -70,8 +73,13 @@ def newsletter_subscribe(request):
 
     form = NewsletterForm(request.POST)
     if form.is_valid():
-        form.save()
-        messages.success(request, "You are now subscribed to free educational updates & live webinar alerts!")
+        subscriber = form.save()
+        confirm = newsletter_url(request, subscriber, 'confirm')
+        unsubscribe = newsletter_url(request, subscriber, 'unsubscribe')
+        send_mail('Confirm your LiveSchool subscription',
+                  f'Confirm your subscription: {confirm}\n\nRemove this address: {unsubscribe}',
+                  settings.DEFAULT_FROM_EMAIL, [subscriber.email], fail_silently=True)
+        messages.info(request, 'Check your email to confirm your subscription.')
     else:
         messages.info(request, "This email is already subscribed or invalid.")
 
@@ -83,6 +91,29 @@ def newsletter_subscribe(request):
     ):
         return redirect(referer)
     return redirect('core:home')
+
+
+def newsletter_url(request, subscriber, action):
+    token = signing.dumps({'id': subscriber.pk, 'email': subscriber.email}, salt=f'newsletter-{action}')
+    return request.build_absolute_uri(reverse(f'core:newsletter_{action}', args=[token]))
+
+
+@require_http_methods(['GET', 'POST'])
+def newsletter_manage(request, token, *, action):
+    try:
+        data = signing.loads(token, salt=f'newsletter-{action}', max_age=172800 if action == 'confirm' else None)
+        subscriber = NewsletterSubscriber.objects.get(pk=data['id'], email=data['email'])
+    except (signing.BadSignature, NewsletterSubscriber.DoesNotExist):
+        return render(request, 'core/newsletter_manage.html', {'invalid': True}, status=400)
+    if request.method == 'POST':
+        if action == 'confirm':
+            NewsletterSubscriber.objects.filter(pk=subscriber.pk, confirmed_at__isnull=True).update(confirmed_at=timezone.now())
+            messages.success(request, 'Subscription confirmed.')
+        else:
+            subscriber.delete()
+            messages.success(request, 'You are unsubscribed.')
+        return redirect('core:home')
+    return render(request, 'core/newsletter_manage.html', {'action': action})
 
 
 def health_check(request):

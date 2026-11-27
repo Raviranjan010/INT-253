@@ -54,7 +54,7 @@ def live_class_room(request, session_id):
         return redirect('live_classes:live_class_list')
 
     # 3. Track attendance & prevent XP manipulation (award attendance XP exactly once per session)
-    if not is_session_host and not request.user.is_instructor:
+    if session.is_live_now and not is_session_host and not request.user.is_instructor:
         SessionAttendee.objects.get_or_create(session=session, user=request.user)
         request.user.award_xp('live_attendance', session.id, 10)
 
@@ -133,7 +133,7 @@ def post_doubt(request, session_id):
         return HttpResponseNotAllowed(['POST'])
 
     session = get_object_or_404(LiveSession, id=session_id)
-    is_host = request.user == session.instructor or request.user.is_staff
+    is_host = request.user.is_staff or (request.user.is_instructor and request.user == session.instructor)
     if session.course and not is_host and not Enrollment.objects.filter(
         student=request.user, course=session.course
     ).exists():
@@ -160,7 +160,7 @@ def answer_doubt(request, doubt_id):
         return HttpResponseNotAllowed(['POST'])
 
     doubt = get_object_or_404(LiveClassDoubt, id=doubt_id)
-    if request.user != doubt.session.instructor and not request.user.is_staff:
+    if not (request.user.is_staff or (request.user.is_instructor and request.user == doubt.session.instructor)):
         messages.error(request, "Unauthorized: Only the host instructor can answer doubts for this session.")
         return redirect('live_classes:live_class_room', session_id=doubt.session.id)
 

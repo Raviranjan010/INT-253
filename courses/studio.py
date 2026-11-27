@@ -21,6 +21,7 @@ def studio(request, slug):
     course = owned_course(request.user, slug)
     return render(request, 'courses/studio.html', {
         'course': course, 'modules': course.modules.prefetch_related('lessons'),
+        'quizzes': course.quizzes.prefetch_related('questions'),
     })
 
 

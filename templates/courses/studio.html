@@ -33,8 +33,23 @@
   {% empty %}<p>No modules yet. Add a module to start building your course.</p>{% endfor %}
   <h2>Quizzes</h2>
   <ul>
-    {% for quiz in course.quizzes.all %}
-    <li>{{ quiz.title }} · <a href="{% url 'courses:studio_question_new' course.slug quiz.pk %}">Add question</a></li>
+    {% for quiz in quizzes %}
+    <li class="mb-3">
+      <strong>{{ quiz.title }}</strong>
+      <div class="ls-actions">
+        <a href="{% url 'courses:studio_quiz_edit' course.slug quiz.pk %}">Edit quiz</a>
+        <a href="{% url 'courses:studio_question_new' course.slug quiz.pk %}">Add question</a>
+        <form method="post" action="{% url 'courses:studio_quiz_delete' course.slug quiz.pk %}">{% csrf_token %}<button class="btn btn-sm btn-outline-danger" type="submit">Delete quiz</button></form>
+      </div>
+      <ol>
+        {% for question in quiz.questions.all %}
+        <li>
+          <a href="{% url 'courses:studio_question_edit' course.slug quiz.pk question.pk %}">{{ question.text }}</a>
+          <form class="d-inline" method="post" action="{% url 'courses:studio_question_delete' course.slug quiz.pk question.pk %}">{% csrf_token %}<button class="btn btn-sm btn-outline-danger" type="submit">Delete question</button></form>
+        </li>
+        {% empty %}<li>No questions yet.</li>{% endfor %}
+      </ol>
+    </li>
     {% empty %}<li>No quizzes yet.</li>{% endfor %}
   </ul>
 </section>

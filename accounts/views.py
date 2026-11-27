@@ -1,15 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.http import HttpResponse
 from .forms import StudentRegistrationForm, InstructorRegistrationForm, UserProfileForm, CustomLoginForm
 from .models import CustomUser
 from courses.models import Enrollment, Course
 from live_classes.models import LiveSession
 from quizzes.models import QuizAttempt
 from certificates.models import Certificate
+from core.throttle import rate_limited
 
 def register_view(request):
     account_type = request.GET.get('type', 'student')
@@ -18,6 +20,10 @@ def register_view(request):
         return redirect('accounts:dashboard_redirect')
 
     if request.method == 'POST':
+        if rate_limited(request, 'registration', 8, 900):
+            return HttpResponse('Too many registrations. Please try again later.', status=429)
+        if request.POST.get('website'):
+            return redirect('accounts:register')
         if account_type == 'instructor':
             form = InstructorRegistrationForm(request.POST)
         else:
@@ -63,6 +69,8 @@ def login_view(request):
         return redirect('accounts:dashboard_redirect')
 
     if request.method == 'POST':
+        if rate_limited(request, 'login', 15, 600):
+            return HttpResponse('Too many sign-in requests. Please try again later.', status=429)
         form = CustomLoginForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Learning updates | LiveSchool{% endblock %}
+{% block content %}
+<section class="ls-wrap ls-section">
+  <h1>Learning updates</h1>
+  {% if invalid %}
+  <p>This link is invalid, expired, or has already been used to remove your address.</p>
+  {% else %}
+  <form method="post">{% csrf_token %}
+    <button class="btn ls-primary" type="submit">{% if action == 'confirm' %}Confirm subscription{% else %}Unsubscribe{% endif %}</button>
+  </form>
+  {% endif %}
+</section>
+{% endblock %}

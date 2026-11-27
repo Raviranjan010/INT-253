@@ -9,6 +9,8 @@ from courses.models import Enrollment
 @login_required
 @transaction.atomic
 def take_quiz(request, quiz_id):
+    if request.method == 'POST':
+        get_object_or_404(Quiz.objects.select_for_update(), id=quiz_id)
     quiz = get_object_or_404(Quiz.objects.select_related('course').prefetch_related('questions__choices'), id=quiz_id)
     course = quiz.course
 
